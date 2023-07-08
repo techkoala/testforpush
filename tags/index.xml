@@ -1,0 +1,78 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>Tags - 标签 - TechKoala - Input/Output</title>
+        <link>https://www.techkoala.net/tags/</link>
+        <description>Tags - 标签 - TechKoala - Input/Output</description>
+        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>admin@techkoala.net (TechKoala)</managingEditor>
+            <webMaster>admin@techkoala.net (TechKoala)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Fri, 24 Feb 2023 20:22:43 &#43;0800</lastBuildDate><atom:link href="https://www.techkoala.net/tags/" rel="self" type="application/rss+xml" /><item>
+    <title>Google</title>
+    <link>https://www.techkoala.net/tags/google/</link>
+    <pubDate>Fri, 24 Feb 2023 20:22:43 &#43;0800</pubDate><author>
+        <name>TechKoala</name>
+    </author><guid>https://www.techkoala.net/tags/google/</guid>
+    <description><![CDATA[]]></description>
+</item><item>
+    <title>Openclash</title>
+    <link>https://www.techkoala.net/tags/openclash/</link>
+    <pubDate>Fri, 24 Feb 2023 20:22:43 &#43;0800</pubDate><author>
+        <name>TechKoala</name>
+    </author><guid>https://www.techkoala.net/tags/openclash/</guid>
+    <description><![CDATA[]]></description>
+</item><item>
+    <title>VPN</title>
+    <link>https://www.techkoala.net/tags/vpn/</link>
+    <pubDate>Fri, 24 Feb 2023 20:22:43 &#43;0800</pubDate><author>
+        <name>TechKoala</name>
+    </author><guid>https://www.techkoala.net/tags/vpn/</guid>
+    <description><![CDATA[]]></description>
+</item><item>
+    <title>Wi-Fi</title>
+    <link>https://www.techkoala.net/tags/wi-fi/</link>
+    <pubDate>Fri, 20 Jan 2023 11:20:05 &#43;0800</pubDate><author>
+        <name>TechKoala</name>
+    </author><guid>https://www.techkoala.net/tags/wi-fi/</guid>
+    <description><![CDATA[]]></description>
+</item><item>
+    <title>Hyper-V</title>
+    <link>https://www.techkoala.net/tags/hyper-v/</link>
+    <pubDate>Thu, 02 Sep 2021 11:25:59 &#43;0800</pubDate><author>
+        <name>TechKoala</name>
+    </author><guid>https://www.techkoala.net/tags/hyper-v/</guid>
+    <description><![CDATA[]]></description>
+</item><item>
+    <title>Linux</title>
+    <link>https://www.techkoala.net/tags/linux/</link>
+    <pubDate>Thu, 02 Sep 2021 11:25:59 &#43;0800</pubDate><author>
+        <name>TechKoala</name>
+    </author><guid>https://www.techkoala.net/tags/linux/</guid>
+    <description><![CDATA[]]></description>
+</item><item>
+    <title>Commands</title>
+    <link>https://www.techkoala.net/tags/commands/</link>
+    <pubDate>Fri, 04 Jun 2021 11:06:47 &#43;0800</pubDate><author>
+        <name>TechKoala</name>
+    </author><guid>https://www.techkoala.net/tags/commands/</guid>
+    <description><![CDATA[]]></description>
+</item><item>
+    <title>Trick</title>
+    <link>https://www.techkoala.net/tags/trick/</link>
+    <pubDate>Fri, 04 Jun 2021 11:06:47 &#43;0800</pubDate><author>
+        <name>TechKoala</name>
+    </author><guid>https://www.techkoala.net/tags/trick/</guid>
+    <description><![CDATA[]]></description>
+</item><item>
+    <title>Docker</title>
+    <link>https://www.techkoala.net/tags/docker/</link>
+    <pubDate>Fri, 28 May 2021 23:25:46 &#43;0800</pubDate><author>
+        <name>TechKoala</name>
+    </author><guid>https://www.techkoala.net/tags/docker/</guid>
+    <description><![CDATA[]]></description>
+</item><item>
+    <title>FreshRSS</title>
+    <link>https://www.techkoala.net/tags/freshrss/</link>
+    <pubDate>Fri, 28 May 2021 23:25:46 &#43;0800</pubDate><author>
+        <name>TechKoala</name>
+    </author><guid>https://www.techkoala.net/tags/freshrss/</guid>
+    <description><![CDATA[]]></description>
+</item></channel>
+</rss>

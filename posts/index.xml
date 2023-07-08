@@ -1,0 +1,2351 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>所有文章 - TechKoala - Input/Output</title>
+        <link>https://www.techkoala.net/posts/</link>
+        <description>所有文章 | TechKoala - Input/Output</description>
+        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>admin@techkoala.net (TechKoala)</managingEditor>
+            <webMaster>admin@techkoala.net (TechKoala)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Fri, 24 Feb 2023 20:22:43 &#43;0800</lastBuildDate><atom:link href="https://www.techkoala.net/posts/" rel="self" type="application/rss+xml" /><item>
+    <title>Google One VPN 愉快玩耍指南</title>
+    <link>https://www.techkoala.net/google_one_vpn/</link>
+    <pubDate>Fri, 24 Feb 2023 20:22:43 &#43;0800</pubDate><author>
+        <name>TechKoala</name>
+    </author><guid>https://www.techkoala.net/google_one_vpn/</guid>
+    <description><![CDATA[<blockquote>
+<p>连接 Google One VPN并避免 1G 断开。</p>
+</blockquote>
+<blockquote>
+<p><code>更新</code>
+三月份开始，谷歌又对检测方式进行了更改，要求域名（*.googleapis.com）和原本的检测服务器来自同一区域 IP，否则将一直提示<code>VPN连接中断</code>
+因此需增加将此网址加入检测分流中，见<code>先连接上</code>章节</p>
+</blockquote>
+<h2 id="机制说明" class="headerLink">
+    <a href="#%e6%9c%ba%e5%88%b6%e8%af%b4%e6%98%8e" class="header-mark"></a>机制说明</h2><p>首先，要想愉快使用，需要明确下面 Google One VPN 的下面几点机制：</p>
+<ol>
+<li>
+<p>目前仅 Android 手机可以正常连接。（当然如果你在 iPhone 上使用境外卡或使用 Android 虚拟机依然是可以的，但此不在本文讨论范围）</p>
+</li>
+<li>
+<p>该服务仅在如下国家提供（且对于大陆来说，通常只有部分地区有实用性）：</p>
+</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">- 奥地利
+</span></span><span class="line"><span class="cl">- 澳大利亚
+</span></span><span class="line"><span class="cl">- 比利时
+</span></span><span class="line"><span class="cl">- 加拿大
+</span></span><span class="line"><span class="cl">- 丹麦
+</span></span><span class="line"><span class="cl">- 芬兰
+</span></span><span class="line"><span class="cl">- 法国
+</span></span><span class="line"><span class="cl">- 德国
+</span></span><span class="line"><span class="cl">- 冰岛
+</span></span><span class="line"><span class="cl">- 爱尔兰
+</span></span><span class="line"><span class="cl">- 意大利
+</span></span><span class="line"><span class="cl">- 日本
+</span></span><span class="line"><span class="cl">- 墨西哥
+</span></span><span class="line"><span class="cl">- 荷兰
+</span></span><span class="line"><span class="cl">- 挪威
+</span></span><span class="line"><span class="cl">- 韩国
+</span></span><span class="line"><span class="cl">- 西班牙
+</span></span><span class="line"><span class="cl">- 瑞典
+</span></span><span class="line"><span class="cl">- 瑞士
+</span></span><span class="line"><span class="cl">- 台湾
+</span></span><span class="line"><span class="cl">- 英国
+</span></span><span class="line"><span class="cl">- 美国
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ol start="3">
+<li>基于第 2 点，即使真正的服务器可以直连，那我们也需要先欺骗 IP 检测服务器，具体机制如下：</li>
+</ol>
+<figure><a class="lightgallery" href="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/Network/Google_One_VPN/Policy1.png" title="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/Network/Google_One_VPN/Policy1.png" data-thumbnail="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/Network/Google_One_VPN/Policy1.png" data-sub-html="<h2>准入 IP 限制</h2>">
+        <img
+            
+            loading="lazy"
+            src="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/Network/Google_One_VPN/Policy1.png"
+            srcset="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/Network/Google_One_VPN/Policy1.png, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/Network/Google_One_VPN/Policy1.png 1.5x, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/Network/Google_One_VPN/Policy1.png 2x"
+            sizes="auto"
+            alt="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/Network/Google_One_VPN/Policy1.png">
+    </a><figcaption class="image-caption">准入 IP 限制</figcaption>
+    </figure>
+<ol start="4">
+<li>即便通过了第 3 点连接上服务器后，Google 依然还会在你每使用 1G 流量的后，再次对你的原始 IP 进行检测。如果此时检测到你的 IP 不在上述地区了，就会强制断开 VPN 连接。</li>
+</ol>
+<p>因此，不仅在于连上，还要避免 1G 断开，才叫做愉快玩耍！So,go on&hellip;</p>
+<h2 id="先连接上" class="headerLink">
+    <a href="#%e5%85%88%e8%bf%9e%e6%8e%a5%e4%b8%8a" class="header-mark"></a>先连接上</h2><p>想要连接上，其实不难，从上面的就可以看出，只需要使用受支持地区的 IP 欺骗检测服务器就可以了。
+并且，检测服务器的地址是固定的，后缀如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">*.cloud.cupronickel.goog
+</span></span><span class="line"><span class="cl">*.googleapis.com
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>于是，我们需要在代理工具（如 clash for android）中，将此连接加入代理清单即可。</p>
+<p>如果你使用 rule-provider，那么可以如下写规则：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">payload:
+</span></span><span class="line"><span class="cl">- DOMAIN-SUFFIX,cloud.cupronickel.goog
+</span></span><span class="line"><span class="cl">- DOMAIN-SUFFIX,googleapis.com
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>手机通过代理后，即可使用 Google One app 成功连接上对应地区的 Google One VPN 服务器</p>
+<h2 id="再共享出来" class="headerLink">
+    <a href="#%e5%86%8d%e5%85%b1%e4%ba%ab%e5%87%ba%e6%9d%a5" class="header-mark"></a>再共享出来</h2><p>等手机连接上后，那么你可以使用诸如 everyproxy 这样的软件在手机上开启 HTTP 或者 socks 代理，分享给局域网的其他设备使用。</p>
+<h2 id="愉快使用" class="headerLink">
+    <a href="#%e6%84%89%e5%bf%ab%e4%bd%bf%e7%94%a8" class="header-mark"></a>愉快使用</h2><p>经过上面两步，你其实已经可以正常使用 VPN 了，但是前面说到了，每当你使用了 1G 流量，Google 会再次检测你的 IP，这样你就会掉线。因为手机上只能同时开启一个 VPN 软件，所以 clash 此时没有代理这个检测服务器流量了。</p>
+<h3 id="你有软路由" class="headerLink">
+    <a href="#%e4%bd%a0%e6%9c%89%e8%bd%af%e8%b7%af%e7%94%b1" class="header-mark"></a>你有软路由？</h3><p>如果你有软路由的话，那一切都简单很多。以 opeclash 为例：</p>
+<ol>
+<li>首先，同样将上面检测服务器加入代理，并一直保持代理</li>
+<li>将手机共享出来的 socks 代理或和 HTTP 代理作为一个节点加入文件文件中，如这样：</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">  - name: &#34;🪜 GoogleOne&#34;
+</span></span><span class="line"><span class="cl">    type: socks5
+</span></span><span class="line"><span class="cl">    server: 192.168.XXX.XXX
+</span></span><span class="line"><span class="cl">    port: 1080
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ol>
+<li>为了避免嵌套代理，请添加 VPN 服务器 IP 端到新的 rule-provider 中：</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span><span class="lnt">69
+</span><span class="lnt">70
+</span><span class="lnt">71
+</span><span class="lnt">72
+</span><span class="lnt">73
+</span><span class="lnt">74
+</span><span class="lnt">75
+</span><span class="lnt">76
+</span><span class="lnt">77
+</span><span class="lnt">78
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">  - &#39;136.22.64.0/24&#39;
+</span></span><span class="line"><span class="cl">  - &#39;136.22.65.0/24&#39;
+</span></span><span class="line"><span class="cl">  - &#39;136.22.67.0/24&#39;
+</span></span><span class="line"><span class="cl">  - &#39;136.22.76.0/24&#39;
+</span></span><span class="line"><span class="cl">  - &#39;136.22.83.0/24&#39;
+</span></span><span class="line"><span class="cl">  - &#39;136.22.85.0/24&#39;
+</span></span><span class="line"><span class="cl">  - &#39;136.22.86.0/24&#39;
+</span></span><span class="line"><span class="cl">  - &#39;136.22.87.0/24&#39;
+</span></span><span class="line"><span class="cl">  - &#39;136.22.92.0/24&#39;
+</span></span><span class="line"><span class="cl">  - &#39;136.22.93.0/24&#39;
+</span></span><span class="line"><span class="cl">  - &#39;136.22.94.0/24&#39;
+</span></span><span class="line"><span class="cl">  - &#39;136.22.95.0/24&#39;
+</span></span><span class="line"><span class="cl">  - &#39;136.22.96.0/24&#39;
+</span></span><span class="line"><span class="cl">  - &#39;136.22.97.0/24&#39;
+</span></span><span class="line"><span class="cl">  - &#39;136.22.98.0/24&#39;
+</span></span><span class="line"><span class="cl">  - &#39;136.22.99.0/24&#39;
+</span></span><span class="line"><span class="cl">  - &#39;136.22.100.0/24&#39;
+</span></span><span class="line"><span class="cl">  - &#39;136.22.101.0/24&#39;
+</span></span><span class="line"><span class="cl">  - &#39;136.22.102.0/24&#39;
+</span></span><span class="line"><span class="cl">  - &#39;136.22.103.0/24&#39;
+</span></span><span class="line"><span class="cl">  - &#39;136.22.104.0/24&#39;
+</span></span><span class="line"><span class="cl">  - &#39;136.22.105.0/24&#39;
+</span></span><span class="line"><span class="cl">  - &#39;136.22.106.0/24&#39;
+</span></span><span class="line"><span class="cl">  - &#39;136.22.107.0/24&#39;
+</span></span><span class="line"><span class="cl">  - &#39;136.22.108.0/24&#39;
+</span></span><span class="line"><span class="cl">  - &#39;136.22.109.0/24&#39;
+</span></span><span class="line"><span class="cl">  - &#39;136.22.110.0/24&#39;
+</span></span><span class="line"><span class="cl">  - &#39;136.23.1.0/24&#39;
+</span></span><span class="line"><span class="cl">  - &#39;136.23.2.0/24&#39;
+</span></span><span class="line"><span class="cl">  - &#39;136.23.3.0/24&#39;
+</span></span><span class="line"><span class="cl">  - &#39;136.23.4.0/24&#39;
+</span></span><span class="line"><span class="cl">  - &#39;136.23.5.0/24&#39;
+</span></span><span class="line"><span class="cl">  - &#39;136.23.6.0/24&#39;
+</span></span><span class="line"><span class="cl">  - &#39;136.23.7.0/24&#39;
+</span></span><span class="line"><span class="cl">  - &#39;136.23.8.0/24&#39;
+</span></span><span class="line"><span class="cl">  - &#39;136.23.9.0/24&#39;
+</span></span><span class="line"><span class="cl">  - &#39;136.23.10.0/24&#39;
+</span></span><span class="line"><span class="cl">  - &#39;136.23.11.0/24&#39;
+</span></span><span class="line"><span class="cl">  - &#39;136.23.12.0/24&#39;
+</span></span><span class="line"><span class="cl">  - &#39;136.23.13.0/24&#39;
+</span></span><span class="line"><span class="cl">  - &#39;136.23.14.0/24&#39;
+</span></span><span class="line"><span class="cl">  - &#39;136.23.15.0/24&#39;
+</span></span><span class="line"><span class="cl">  - &#39;136.23.16.0/24&#39;
+</span></span><span class="line"><span class="cl">  - &#39;136.23.17.0/24&#39;
+</span></span><span class="line"><span class="cl">  - &#39;136.23.18.0/24&#39;
+</span></span><span class="line"><span class="cl">  - &#39;136.23.19.0/24&#39;
+</span></span><span class="line"><span class="cl">  - &#39;136.23.20.0/24&#39;
+</span></span><span class="line"><span class="cl">  - &#39;136.23.21.0/24&#39;
+</span></span><span class="line"><span class="cl">  - &#39;136.23.22.0/24&#39;
+</span></span><span class="line"><span class="cl">  - &#39;136.23.23.0/24&#39;
+</span></span><span class="line"><span class="cl">  - &#39;136.23.24.0/24&#39;
+</span></span><span class="line"><span class="cl">  - &#39;136.23.25.0/24&#39;
+</span></span><span class="line"><span class="cl">  - &#39;136.23.26.0/24&#39;
+</span></span><span class="line"><span class="cl">  - &#39;136.23.27.0/24&#39;
+</span></span><span class="line"><span class="cl">  - &#39;136.23.28.0/24&#39;
+</span></span><span class="line"><span class="cl">  - &#39;136.23.29.0/24&#39;
+</span></span><span class="line"><span class="cl">  - &#39;136.23.30.0/24&#39;
+</span></span><span class="line"><span class="cl">  - &#39;136.23.31.0/24&#39;
+</span></span><span class="line"><span class="cl">  - &#39;136.23.32.0/24&#39;
+</span></span><span class="line"><span class="cl">  - &#39;136.23.33.0/24&#39;
+</span></span><span class="line"><span class="cl">  - &#39;136.23.34.0/24&#39;
+</span></span><span class="line"><span class="cl">  - &#39;136.23.35.0/24&#39;
+</span></span><span class="line"><span class="cl">  - &#39;209.107.176.0/24&#39;
+</span></span><span class="line"><span class="cl">  - &#39;209.107.177.0/24&#39;
+</span></span><span class="line"><span class="cl">  - &#39;209.107.178.0/24&#39;
+</span></span><span class="line"><span class="cl">  - &#39;209.107.179.0/24&#39;
+</span></span><span class="line"><span class="cl">  - &#39;209.107.180.0/24&#39;
+</span></span><span class="line"><span class="cl">  - &#39;209.107.181.0/24&#39;
+</span></span><span class="line"><span class="cl">  - &#39;209.107.182.0/24&#39;
+</span></span><span class="line"><span class="cl">  - &#39;209.107.183.0/24&#39;
+</span></span><span class="line"><span class="cl">  - &#39;209.107.184.0/24&#39;
+</span></span><span class="line"><span class="cl">  - &#39;209.107.185.0/24&#39;
+</span></span><span class="line"><span class="cl">  - &#39;209.107.186.0/24&#39;
+</span></span><span class="line"><span class="cl">  - &#39;209.107.187.0/24&#39;
+</span></span><span class="line"><span class="cl">  - &#39;209.107.188.0/24&#39;
+</span></span><span class="line"><span class="cl">  - &#39;209.107.189.0/24&#39;
+</span></span><span class="line"><span class="cl">  - &#39;209.107.190.0/24&#39;
+</span></span><span class="line"><span class="cl">  - &#39;209.107.191.0/24&#39;
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>可以更加精确的将协议限定为 UDP（虽然实际上也只会走 UDP）</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">script:
+</span></span><span class="line"><span class="cl">    shortcuts:
+</span></span><span class="line"><span class="cl">      GoogleVPNbypass: match_provider(&#39;GoogleVPNbypass&#39;) and network == &#39;udp&#39;
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>并将其加入直连：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">  - SCRIPT,GoogleVPNbypass,🚀 直接连接
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>至此，你每使用 1G 流量，由于你的前置代理一直都在，也不会掉线。并且通过将其作为节点，可以更加灵活的控制分流规则。</p>
+<h3 id="没有软路由" class="headerLink">
+    <a href="#%e6%b2%a1%e6%9c%89%e8%bd%af%e8%b7%af%e7%94%b1" class="header-mark"></a>没有软路由？</h3><p>那也没关系，你可以在电脑上使用 clash for windows 实现类似的效果（其他设备也一样，如 iPhone 上的 stash）。思路如下：</p>
+<ol>
+<li>clash for windows 的配置文件里要对代理检测服务器进行代理</li>
+<li>手机 WiFi 代理中设置电电脑 IP 以及 7890（clash 默认代理地址）</li>
+<li>在 clash for windows 配置文件里面新增一个 http 或者 socks 代理地址就是手机 IP 和 every proxy 共享出来的 http 或 socks 端口</li>
+</ol>
+<h3 id="你只有安卓" class="headerLink">
+    <a href="#%e4%bd%a0%e5%8f%aa%e6%9c%89%e5%ae%89%e5%8d%93" class="header-mark"></a>你只有安卓？</h3><p>抱歉，目前我还没有发现如何避免断开的方法。
+但是你可以使用如下两种方式，出门外面的时候也能仅使用单设备连接上 VPN。</p>
+<p>方法 1：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">1. clash-设置-网络-关闭 自动路由系统流量
+</span></span><span class="line"><span class="cl">2. 打开clash开关 global选项卡选择一个支持的国家，例如美国，日本，台湾等
+</span></span><span class="line"><span class="cl">3. WiFi-设置-高级-代理-服务器写入127.0.0.1 端口填入7890 排除项填入 1.com
+</span></span><span class="line"><span class="cl">4. 开启Google One VPN
+</span></span><span class="line"><span class="cl">5. 成功后 clash global 选择direct
+</span></span><span class="line"><span class="cl">6. WiFi-高级设置-代理 修改 排除项1.com为任意 比如1.cn。没有排除选项的会造成网页无法打开
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>方法 2：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">1. clash-设置-网络-关闭 自动路由系统流量
+</span></span><span class="line"><span class="cl">2. clash 挂一个支持的国家，例如美国，日本，台湾等。只用代理模式，不要用全局模式。
+</span></span><span class="line"><span class="cl">3. 在数据卡的设置里，设置一个新的 APN ，把 APN 的代理服务器里面设置为 127.0.0.1:7890
+</span></span><span class="line"><span class="cl">4. 直接用 Google one VPN 连接成功，成功后打开 wifi 和关闭 clash 均能保持连接状态
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">注意：连接成功后记得把clash设置为直连模式，且不可切换APN或关闭clash
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="参考" class="headerLink">
+    <a href="#%e5%8f%82%e8%80%83" class="header-mark"></a>参考</h2><ul>
+<li><a href="https://outti.me/25CA97FE-A9DB-4070-95EE-CA8D324F59FA/" target="_blank" rel="noopener noreferrer">开始使用 Google One VPN</a></li>
+</ul>]]></description>
+</item><item>
+    <title>Wi-Fi 7 物理层解读</title>
+    <link>https://www.techkoala.net/wi-fi7_phy_synopsis/</link>
+    <pubDate>Fri, 20 Jan 2023 11:20:05 &#43;0800</pubDate><author>
+        <name>TechKoala</name>
+    </author><guid>https://www.techkoala.net/wi-fi7_phy_synopsis/</guid>
+    <description><![CDATA[<blockquote>
+<p>Wi-Fi 7 物理层变化总结</p>
+</blockquote>
+<h1 id="phy-变化" class="headerLink">
+    <a href="#phy-%e5%8f%98%e5%8c%96" class="header-mark"></a>PHY 变化</h1><p>以目前的 802.11be Draft 1.0 版本为蓝本，Wi-Fi 7 相比 Wi-Fi 6 在技术上没有根本性的改变，主要是在原来的基础上对以下特性进行了加强或改进：</p>
+<ol>
+<li>6GHz 频段和 320MHz 带宽</li>
+<li>4K QAM 调制</li>
+<li>增强 MIMO</li>
+<li>MLD（MLO 的基础）</li>
+<li>OFDMA 改进</li>
+</ol>
+<p>下两图展示了 WiFi 发展历程中重要的参数信息的变化：</p>
+<a class="lightgallery" href="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/1.png" title="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/1.png" data-thumbnail="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/1.png">
+        <img
+            
+            loading="lazy"
+            src="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/1.png"
+            srcset="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/1.png, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/1.png 1.5x, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/1.png 2x"
+            sizes="auto"
+            alt="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/1.png">
+    </a>
+<a class="lightgallery" href="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/2.png" title="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/2.png" data-thumbnail="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/2.png">
+        <img
+            
+            loading="lazy"
+            src="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/2.png"
+            srcset="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/2.png, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/2.png 1.5x, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/2.png 2x"
+            sizes="auto"
+            alt="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/2.png">
+    </a>
+<h1 id="6ghz320mhz" class="headerLink">
+    <a href="#6ghz320mhz" class="header-mark"></a>6GHz&amp;320MHz</h1><p>6GHz 的频段并非 Wi-Fi 7 首次采用（由 Wi-Fi 6E 引入），但是 Wi-Fi 7 在此基础上将 Wi-Fi 6/6E 最大单信道宽带由 160MHz 提升到了 320MHz 。</p>
+<h2 id="6ghz" class="headerLink">
+    <a href="#6ghz" class="header-mark"></a>6GHz</h2><p>随着 6GHz 频段的引入，未来 Wi-Fi 的频段一共将有三部分组成，如下图所示：</p>
+<a class="lightgallery" href="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/3.png" title="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/3.png" data-thumbnail="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/3.png">
+        <img
+            
+            loading="lazy"
+            src="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/3.png"
+            srcset="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/3.png, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/3.png 1.5x, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/3.png 2x"
+            sizes="auto"
+            alt="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/3.png">
+    </a>
+<p>具体到 6GHz 的位置，其可容纳的信道数量如下：</p>
+<a class="lightgallery" href="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/4.png" title="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/4.png" data-thumbnail="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/4.png">
+        <img
+            
+            loading="lazy"
+            src="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/4.png"
+            srcset="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/4.png, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/4.png 1.5x, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/4.png 2x"
+            sizes="auto"
+            alt="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/4.png">
+    </a>
+<p>新的 6GHz 频段 (5925-7125 MHz)，宽度为 1.2 GHz，可容纳 3 或 6 个 320MHz 的频带，4 个 240MHz 的频带，7 个 160MHz 的频带，或 14 个 80MHz 的频带。支持首选扫描信道 (PSC) 的通道 (5, 21, 37, 53, 69, 85, 101, 117, 133, 149, 165, 181, 197) , 进行快速被动扫描。</p>
+<h2 id="320mhz" class="headerLink">
+    <a href="#320mhz" class="header-mark"></a>320MHz</h2><p>320MHz信道化: 由6GHz的任意2个连续160MHz组成，包含2种类型：</p>
+<ul>
+<li>320MHz-1（信道号为 31, 95, 159）</li>
+<li>320MHz-2（信道号为 63, 127, 191）</li>
+</ul>
+<a class="lightgallery" href="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/5.png" title="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/5.png" data-thumbnail="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/5.png">
+        <img
+            
+            loading="lazy"
+            src="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/5.png"
+            srcset="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/5.png, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/5.png 1.5x, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/5.png 2x"
+            sizes="auto"
+            alt="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/5.png">
+    </a>
+<h2 id="冲突" class="headerLink">
+    <a href="#%e5%86%b2%e7%aa%81" class="header-mark"></a>冲突</h2><p>虽然一些国家和地区（如美国和欧盟）已经批准 6GHz 中或宽或窄的频段用于 Wi-Fi，但采用 6GHz 也需要考虑如下几种场景可能占用 6GHz 带来冲突：</p>
+<ul>
+<li>5G NR-U（5G New Radio in Unlicensed Spectrum）在 3GPP R16 版本里定义，5G 空中接口可工作于免许可频段。在一些地区，如美国，NR-U 也将被用于部署在 6GHz 频段的服务。此外，基于 NR-U Sidelink 的 C-V2X 服务如果部署，也会占用 6GHz 部分频宽。</li>
+<li>美国已经划分了 5.9GHz 的 20MHz 给 5G C-V2X，部署需要考虑共存问题。</li>
+<li>2023 年世界无线大会 WRC-23 将会讨论是否将 6GHz 频谱授权给 6G。</li>
+</ul>
+<h1 id="4k-qam" class="headerLink">
+    <a href="#4k-qam" class="header-mark"></a>4K-QAM</h1><h2 id="为什么要有-qam" class="headerLink">
+    <a href="#%e4%b8%ba%e4%bb%80%e4%b9%88%e8%a6%81%e6%9c%89-qam" class="header-mark"></a>为什么要有 QAM？</h2><p>QAM 在用于 <a href="https://info.support.huawei.com/info-finder/encyclopedia/zh/WiFi.html" title="WiFi" target="_blank" rel="noopener noreferrer">Wi-Fi</a> 数字信号调制时，与普通幅度调制和相位调制相比能得到更高的速率。因为幅度调制和相位调制仅有 2 种符号（symbol）来区分 0 或 1。</p>
+<ul>
+<li>幅度调制：通过改变载波的振幅来区分 0 和 1。</li>
+<li>相位调制：通过改变载波的相位来区分 0 和 1。例如我们常见的 BPSK，就是使用 0° 和 180° 共 2 个相位表示 0 和 1，即 2 种符号；QPSK 则是使用 0°、90°、180° 和 270° 共 4 个相位，能够表示 00、01、10 和 11 共 4 种符号，传递 2 bit 的信息。其实 QPSK 就是一种特殊的 QAM，即 4-QAM。</li>
+</ul>
+<p>而 QAM 则有更多的符号，每个符号都有相应的相位和幅度值。</p>
+<p>以 16-QAM 为例，通过 QAM 调制可得到 16 个不同的波形，分别代表 0000，0001&hellip;. 这也意味着一共有 16 种符号，一个符号可以传递 4 bit 信息。</p>
+<figure><a class="lightgallery" href="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/6.png" title="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/6.png" data-thumbnail="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/6.png" data-sub-html="<h2>16-QAM示意图</h2>">
+        <img
+            
+            loading="lazy"
+            src="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/6.png"
+            srcset="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/6.png, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/6.png 1.5x, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/6.png 2x"
+            sizes="auto"
+            alt="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/6.png">
+    </a><figcaption class="image-caption">16-QAM示意图</figcaption>
+    </figure>
+<h2 id="qam-是如何工作的" class="headerLink">
+    <a href="#qam-%e6%98%af%e5%a6%82%e4%bd%95%e5%b7%a5%e4%bd%9c%e7%9a%84" class="header-mark"></a>QAM 是如何工作的？</h2><p>QAM 是将信号加载到 2 个正交的载波上（通常是正弦和余弦），通过对这两个载波幅度调整并叠加，最终得到相位和幅度都调制过的信号。这两个载波通常被称为 I 信号，另一个被称为 Q 信号，所以这种调制方式也被称为 IQ 调制。</p>
+<figure><a class="lightgallery" href="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/7.png" title="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/7.png" data-thumbnail="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/7.png" data-sub-html="<h2>IQ 调制</h2>">
+        <img
+            
+            loading="lazy"
+            src="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/7.png"
+            srcset="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/7.png, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/7.png 1.5x, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/7.png 2x"
+            sizes="auto"
+            alt="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/7.png">
+    </a><figcaption class="image-caption">IQ 调制</figcaption>
+    </figure>
+<p>由于 QAM 最终调制后的信号包含了相位和幅度的变换，因此 QAM 也被认为相位调制和幅度调制的组合。</p>
+<h2 id="qam-的星座图" class="headerLink">
+    <a href="#qam-%e7%9a%84%e6%98%9f%e5%ba%a7%e5%9b%be" class="header-mark"></a>QAM 的星座图</h2><p>在数字信号调制中，星座图通常用于表示 QAM 调制二维图形。星座图相对于 IQ 调制而言，将数据调制信息映射到极坐标中，这些信息包含了信号的幅度信息和相位信息。</p>
+<p>星座图上的每一个点，都表示一个符号。该点 I 轴和 Q 轴的分量分别代表着正交的载波上的幅度调整。该点到原点的距离 <strong>A</strong> 就是调制后的幅度，夹角 <strong>φ</strong> 就是调制后的相位。</p>
+<p>而星座图上点的数量，决定了每个符号传输的比特数。例如：</p>
+<ul>
+<li>256-QAM，256 是 2 的 8 次方，每个符号能传输 8bit 的数据。</li>
+<li>1024-QAM，1024 是 2 的 10 次方，每个符号能传输 10bit 的数据。</li>
+<li>4096-QAM，4096 是 2 的 12 次方，每个符号能传输 12bit 的数据。</li>
+</ul>
+<p>因此，作为比 Wi-Fi 6 1024-QAM 更高阶的 4096-QAM，数据传输的峰值速率进一步提高 20%。</p>
+<a class="lightgallery" href="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/8.png" title="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/8.png" data-thumbnail="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/8.png">
+        <img
+            
+            loading="lazy"
+            src="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/8.png"
+            srcset="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/8.png, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/8.png 1.5x, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/8.png 2x"
+            sizes="auto"
+            alt="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/8.png">
+    </a>
+<h2 id="qam-对-wi-fi-标准速率影响" class="headerLink">
+    <a href="#qam-%e5%af%b9-wi-fi-%e6%a0%87%e5%87%86%e9%80%9f%e7%8e%87%e5%bd%b1%e5%93%8d" class="header-mark"></a>QAM 对 Wi-Fi 标准速率影响</h2><p>在 Wi-Fi 标准中，定义了调制和编码方案 MCS（Modulation and Coding Scheme）。MCS 对应一组调制和编码方式。以 <a href="https://info.support.huawei.com/info-finder/encyclopedia/zh/WiFi&#43;6.html" title="WiFi 6" target="_blank" rel="noopener noreferrer">Wi-Fi 6</a> 为例，MCS 索引有 12 个。</p>
+<figure><a class="lightgallery" href="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/9.png" title="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/9.png" data-thumbnail="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/9.png" data-sub-html="<h2>Wi-Fi 6 中 MCS 索引对应的调制方式以及编码率</h2>">
+        <img
+            
+            loading="lazy"
+            src="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/9.png"
+            srcset="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/9.png, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/9.png 1.5x, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/9.png 2x"
+            sizes="auto"
+            alt="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/9.png">
+    </a><figcaption class="image-caption">Wi-Fi 6 中 MCS 索引对应的调制方式以及编码率</figcaption>
+    </figure>
+<p>如果 MCS 为 1，则使用的是 QPSK 的调制方式；如果 MCS 为 11，则使用的是 1024 的调制方式。
+对于每个 MCS 的索引值，根据信道带宽、空间流数和保护间隔（Guard Interval，GI）可以计算出不同的速率。
+计算公式如下：</p>
+<figure><a class="lightgallery" href="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/10.png" title="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/10.png" data-thumbnail="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/10.png" data-sub-html="<h2>Wi-Fi 标准的速率计算公式</h2>">
+        <img
+            
+            loading="lazy"
+            src="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/10.png"
+            srcset="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/10.png, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/10.png 1.5x, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/10.png 2x"
+            sizes="auto"
+            alt="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/10.png">
+    </a><figcaption class="image-caption">Wi-Fi 标准的速率计算公式</figcaption>
+    </figure>
+<h2 id="代价" class="headerLink">
+    <a href="#%e4%bb%a3%e4%bb%b7" class="header-mark"></a>代价</h2><p>尽管较高阶的调制速率能够为无线电通信系统提供更快的数据速率和更高水平的频谱效率，但这是有代价的。较高阶的调制方案对噪声和干扰的适应性要差得多。</p>
+<p>因为发送一个符号所用的载波频宽是固定的，发送时长也是一定的，较高阶意味着两个符号之间差异就越小。这不仅对接收双方的器件要求很高，而且对环境的要求也很高。也就是说，如果环境过于恶劣，终端将无法使用高阶的 QAM 模式通信，只能使用较低阶次的调制模式。</p>
+<p>4K-QAM 对信号的 EVM 要求已经到了 -38dB 了，已经是一个非常高的要求了</p>
+<h1 id="mimo-增强" class="headerLink">
+    <a href="#mimo-%e5%a2%9e%e5%bc%ba" class="header-mark"></a>MIMO 增强</h1><p>在 Wi-Fi 6 里面，最大的空间流是 8×8，在 Wi-Fi 7 里面，最大空间流提升到了 16×16。不过需要注意一点的是，这个空间流实际上是跑的 MU-MIMO，而不是单纯的 MIMO，实际里面终端部分不会有那么多的天线链路。</p>
+<h1 id="mld" class="headerLink">
+    <a href="#mld" class="header-mark"></a>MLD</h1><p>MLD（Multi-Link Device）其实是MLO在物理层（PHY）的体现，传统的WiFi仅仅包含单个链路的连接能力，MLD能够允许一块IC里面包含多个device的连接能力。在之前部分厂商已经具备并实现该技术，如QCA的DBS以及MTK的DBDC，落实到具体的功能为双WiFi技术。</p>
+<p>下图为传统的芯片结构，由两个独立的RF前端，一个基带处理部分，然后对应到上层接口，该方案只可以做到双频单发（DBSC）。</p>
+<a class="lightgallery" href="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/11.png" title="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/11.png" data-thumbnail="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/11.png">
+        <img
+            
+            loading="lazy"
+            src="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/11.png"
+            srcset="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/11.png, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/11.png 1.5x, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/11.png 2x"
+            sizes="auto"
+            alt="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/11.png">
+    </a>
+<p>改进后的芯片结构大致如下图，由两个独立的 RF 前端，这两个独立的 RF 前端对应到两个独立的基带处理，然后对应到上层接口，因此可以在一块 IC 内部，做到两个频段同时连接，即双频双发（DBDC）。</p>
+<a class="lightgallery" href="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/12.png" title="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/12.png" data-thumbnail="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/12.png">
+        <img
+            
+            loading="lazy"
+            src="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/12.png"
+            srcset="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/12.png, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/12.png 1.5x, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/12.png 2x"
+            sizes="auto"
+            alt="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/12.png">
+    </a>
+<a class="lightgallery" href="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/13.png" title="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/13.png" data-thumbnail="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/13.png">
+        <img
+            
+            loading="lazy"
+            src="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/13.png"
+            srcset="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/13.png, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/13.png 1.5x, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/13.png 2x"
+            sizes="auto"
+            alt="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/13.png">
+    </a>
+<p>802.11be对MLD部分做了一些改动，一个MLD设备由多个AP或者多个STA组成，并且引入新的MAC来标识MLD设备。新增的功能总结大致如下三点：</p>
+<ul>
+<li>多链路发现和设置：MLD具有能够动态更新每对链路上同时进行帧交换的能力。每个单独的AP/STA还可以提供关于同一MLD内其他附属AP/STA的操作参数的信息。</li>
+<li>流量链路映射：在多链路集里面，对数据帧进行分类的服务质量（QoS）标识符（TID）会映射到所有链路中。该映射会被MLD下所有链路协商更新。此外，MLD接收方将利用buff缓存对多个链路传输的相同TID的QoS数据帧进行重排。</li>
+<li>信道访问和节省功率：MLD的每个AP/STA都会通过它自己所在链路频段接入信道，并独自维护其自身的功率状态。为了更有效的对STA功率管理，AP还可以利用多条链路中已连接的其中一条链路，通过缓冲数据来通知其他链路的功率调整。</li>
+</ul>
+<h1 id="ofdma-增强" class="headerLink">
+    <a href="#ofdma-%e5%a2%9e%e5%bc%ba" class="header-mark"></a>OFDMA 增强</h1><h2 id="ru" class="headerLink">
+    <a href="#ru" class="header-mark"></a>RU</h2><p>OFDMA 允许同时提供具有不同带宽需求的多个用户，从而有效利用可用频谱。子载波被分成若干组，每组表示为具有最小尺寸为 26 个子载波（2MHz 宽）和最大尺寸为 996 个子载波（77.8MHz 宽）的资源单元（RU）。</p>
+<a class="lightgallery" href="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/14.png" title="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/14.png" data-thumbnail="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/14.png">
+        <img
+            
+            loading="lazy"
+            src="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/14.png"
+            srcset="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/14.png, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/14.png 1.5x, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/14.png 2x"
+            sizes="auto"
+            alt="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/14.png">
+    </a>
+<h2 id="前导码打孔--mru" class="headerLink">
+    <a href="#%e5%89%8d%e5%af%bc%e7%a0%81%e6%89%93%e5%ad%94--mru" class="header-mark"></a>前导码打孔 &amp; MRU</h2><a class="lightgallery" href="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/15.png" title="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/15.png" data-thumbnail="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/15.png">
+        <img
+            
+            loading="lazy"
+            src="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/15.png"
+            srcset="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/15.png, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/15.png 1.5x, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/15.png 2x"
+            sizes="auto"
+            alt="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/15.png">
+    </a>
+<p>假设 S20 被雷达信号占用：</p>
+<ul>
+<li>Wi-Fi 6，STA 只能使用 P20 传输信号，40MHz 带宽被浪费</li>
+<li>Wi-Fi 7，允许分配打孔 RU 组成 MRU，STA 可以使用 60MHz 带宽</li>
+</ul>
+<p>打孔的类型：1. 静态打孔（建立 BSS 时打孔）；2. 动态打孔（传输 PPDU 时，在静态打孔的基础上，打孔附加的信道）
+80MHz 允许打孔 20MHz 信道，160MHz 允许打孔 20/40MHz，320MHz 允许打孔 40/80/80+40MHz</p>
+<p>Wi-Fi 7 支持在 EHT PPDU 中使用 MRU，以获得更高的频谱效率，实际上 MRU 就是支持多种 tone 根据需要进行组合，使得 RU 分配更加灵活，减小延迟。</p>
+<a class="lightgallery" href="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/16.png" title="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/16.png" data-thumbnail="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/16.png">
+        <img
+            
+            loading="lazy"
+            src="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/16.png"
+            srcset="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/16.png, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/16.png 1.5x, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/16.png 2x"
+            sizes="auto"
+            alt="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/16.png">
+    </a>
+<a class="lightgallery" href="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/17.png" title="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/17.png" data-thumbnail="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/17.png">
+        <img
+            
+            loading="lazy"
+            src="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/17.png"
+            srcset="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/17.png, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/17.png 1.5x, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/17.png 2x"
+            sizes="auto"
+            alt="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/17.png">
+    </a>
+<a class="lightgallery" href="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/18.png" title="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/18.png" data-thumbnail="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/18.png">
+        <img
+            
+            loading="lazy"
+            src="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/18.png"
+            srcset="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/18.png, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/18.png 1.5x, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/18.png 2x"
+            sizes="auto"
+            alt="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/18.png">
+    </a>
+<a class="lightgallery" href="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/19.png" title="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/19.png" data-thumbnail="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/19.png">
+        <img
+            
+            loading="lazy"
+            src="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/19.png"
+            srcset="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/19.png, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/19.png 1.5x, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/19.png 2x"
+            sizes="auto"
+            alt="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7-PHY/19.png">
+    </a>
+<h1 id="参考" class="headerLink">
+    <a href="#%e5%8f%82%e8%80%83" class="header-mark"></a>参考</h1><p>[1] Key Advantages of Wi-Fi 7 MediaTek Whitepaper</p>]]></description>
+</item><item>
+    <title>Wi-Fi 7 概述</title>
+    <link>https://www.techkoala.net/wi-fi7_synopsis/</link>
+    <pubDate>Fri, 20 Jan 2023 11:03:05 &#43;0800</pubDate><author>
+        <name>TechKoala</name>
+    </author><guid>https://www.techkoala.net/wi-fi7_synopsis/</guid>
+    <description><![CDATA[<blockquote>
+<p>Wi-Fi 7 变化的总结</p>
+</blockquote>
+<h2 id="wi-fi-7-的发布时间" class="headerLink">
+    <a href="#wi-fi-7-%e7%9a%84%e5%8f%91%e5%b8%83%e6%97%b6%e9%97%b4" class="header-mark"></a>Wi-Fi 7 的发布时间</h2><p>IEEE 802.11be EHT 工作组已于 2019 年 5 月成立，802.11be（Wi-Fi 7）的开发工作仍在进行中，整个协议标准将按照两个 Release 发布，Release1 预计在 2021 年将发布第一版草案 Draft1.0，预期在 2022 年底发布标准；Release2 预计在 2022 年初启动，并且在 2024 年底完成标准发布。</p>
+<figure><a class="lightgallery" href="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7/20220505143230.png" title="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7/20220505143230.png" data-thumbnail="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7/20220505143230.png" data-sub-html="<h2>会议进程</h2>">
+        <img
+            
+            loading="lazy"
+            src="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7/20220505143230.png"
+            srcset="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7/20220505143230.png, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7/20220505143230.png 1.5x, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7/20220505143230.png 2x"
+            sizes="auto"
+            alt="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7/20220505143230.png">
+    </a><figcaption class="image-caption">会议进程</figcaption>
+    </figure>
+<h2 id="wi-fi-7-vs-wi-fi-6" class="headerLink">
+    <a href="#wi-fi-7-vs-wi-fi-6" class="header-mark"></a>Wi-Fi 7 vs Wi-Fi 6</h2><figure><a class="lightgallery" href="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7/20220427104250.png" title="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7/20220427104250.png" data-thumbnail="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7/20220427104250.png" data-sub-html="<h2>特性对比</h2>">
+        <img
+            
+            loading="lazy"
+            src="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7/20220427104250.png"
+            srcset="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7/20220427104250.png, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7/20220427104250.png 1.5x, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7/20220427104250.png 2x"
+            sizes="auto"
+            alt="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7/20220427104250.png">
+    </a><figcaption class="image-caption">特性对比</figcaption>
+    </figure>
+<h2 id="wi-fi-7-支持的新特性" class="headerLink">
+    <a href="#wi-fi-7-%e6%94%af%e6%8c%81%e7%9a%84%e6%96%b0%e7%89%b9%e6%80%a7" class="header-mark"></a>Wi-Fi 7 支持的新特性</h2><p>Wi-Fi 7 协议的目标是将 <a href="https://info.support.huawei.com/info-finder/encyclopedia/zh/WLAN.html" title="WLAN" target="_blank" rel="noopener noreferrer">WLAN</a> 网络的吞吐率提升到 30Gbps，并且提供低时延的接入保障。为了满足这个目标，整个协议在 PHY 层和 MAC 层都做了相应的改变。相对于 <a href="https://info.support.huawei.com/info-finder/encyclopedia/zh/WiFi&#43;6.html" title="WiFi 6" target="_blank" rel="noopener noreferrer">Wi-Fi 6</a> 协议，Wi-Fi 7 协议带来的主要技术变革点如下：</p>
+<h3 id="新频段" class="headerLink">
+    <a href="#%e6%96%b0%e9%a2%91%e6%ae%b5" class="header-mark"></a>新频段</h3><p>相比 Wi-Fi 6，7 引入了 6GHz 频段（6e 也有），上下限分别为 5.925 —— 7.125 GHz：
+<figure><a class="lightgallery" href="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7/20220429105054.png" title="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7/20220429105054.png" data-thumbnail="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7/20220429105054.png" data-sub-html="<h2>频段说明</h2>">
+        <img
+            
+            loading="lazy"
+            src="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7/20220429105054.png"
+            srcset="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7/20220429105054.png, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7/20220429105054.png 1.5x, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7/20220429105054.png 2x"
+            sizes="auto"
+            alt="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/Wi-Fi/7/20220429105054.png">
+    </a><figcaption class="image-caption">频段说明</figcaption>
+    </figure></p>
+<h3 id="支持最大-320mhz-带宽" class="headerLink">
+    <a href="#%e6%94%af%e6%8c%81%e6%9c%80%e5%a4%a7-320mhz-%e5%b8%a6%e5%ae%bd" class="header-mark"></a>支持最大 320MHz 带宽</h3><p>2.4GHz 和 5GHz 频段免授权频谱有限且拥挤，现有 <a href="https://info.support.huawei.com/info-finder/encyclopedia/zh/WiFi.html" title="WiFi" target="_blank" rel="noopener noreferrer">Wi-Fi</a> 在运行 VR/AR 等新兴应用时，不可避免地会遇到 <a href="https://info.support.huawei.com/info-finder/encyclopedia/zh/QoS.html" title="QoS" target="_blank" rel="noopener noreferrer">QoS</a> 低的问题。为了实现最大吞吐量不低于 30Gbps 的目标，Wi-Fi 7 将继续引入 6GHz 频段，并增加新的带宽模式，包括连续 240MHz，非连续 160+80MHz，连续 320 MHz 和非连续 160+160MHz。</p>
+<h3 id="支持-multi-ru-机制" class="headerLink">
+    <a href="#%e6%94%af%e6%8c%81-multi-ru-%e6%9c%ba%e5%88%b6" class="header-mark"></a>支持 Multi-RU 机制</h3><p>在 Wi-Fi 6 中，每个用户只能在分配到的特定 RU 上发送或接收帧，大大限制了频谱资源调度的灵活性。为解决该问题，进一步提升频谱效率，Wi-Fi 7 中定义了允许将多个 RU 分配给单用户的机制。当然，为了平衡实现的复杂度和频谱的利用率，协议中对 RU 的组合做了一定的限制，即：小规格 RU（小于 242-Tone 的 RU）只能与小规格 RU 合并，大规格 RU（大于等于 242-Tone 的 RU）只能与大规格 RU 合并，不允许小规格 RU 和大规格 RU 混合使用。</p>
+<h3 id="引入更高阶的-4096-qam-调制技术" class="headerLink">
+    <a href="#%e5%bc%95%e5%85%a5%e6%9b%b4%e9%ab%98%e9%98%b6%e7%9a%84-4096-qam-%e8%b0%83%e5%88%b6%e6%8a%80%e6%9c%af" class="header-mark"></a>引入更高阶的 4096-QAM 调制技术</h3><p>Wi-Fi 6 的最高调制方式是 1024-QAM，其中调制符号承载 10bits。为了进一步提升速率，Wi-Fi 7 将会引入 4096-QAM，使得调制符号承载 12bit。在相同的编码下，Wi-Fi 7 的 4096-QAM 比 Wi-Fi 6 的 1024-QAM 可以获得 20% 的速率提升。</p>
+<h3 id="引入-multi-link-多链路机制" class="headerLink">
+    <a href="#%e5%bc%95%e5%85%a5-multi-link-%e5%a4%9a%e9%93%be%e8%b7%af%e6%9c%ba%e5%88%b6" class="header-mark"></a>引入 Multi-Link 多链路机制</h3><p>为了实现所有可用频谱资源的高效利用，迫切需要在 2.4 GHz、5 GHz 和 6 GHz 上建立新的频谱管理、协调和传输机制。工作组定义了多<a href="https://info.support.huawei.com/info-finder/encyclopedia/zh/LACP.html" title="LACP" target="_blank" rel="noopener noreferrer">链路聚合</a>相关的技术，主要包括增强型多链路聚合的 MAC 架构、多链路信道接入和多链路传输等相关技术。</p>
+<h3 id="支持更多的数据流mimo-功能增强" class="headerLink">
+    <a href="#%e6%94%af%e6%8c%81%e6%9b%b4%e5%a4%9a%e7%9a%84%e6%95%b0%e6%8d%ae%e6%b5%81mimo-%e5%8a%9f%e8%83%bd%e5%a2%9e%e5%bc%ba" class="header-mark"></a>支持更多的数据流，MIMO 功能增强</h3><p>在 Wi-Fi 7 中，空间流的数从 Wi-Fi 6 的 8 个增加到 16 个，理论上可以将物理传输速率提升两倍以上。支持更多的数据流也将会带来更强大的特性——分布式 <a href="https://info.support.huawei.com/info-finder/encyclopedia/zh/MIMO.html" title="MIMO" target="_blank" rel="noopener noreferrer">MIMO</a>，意为 16 条数据流可以不由一个接入点提供，而是由多个接入点同时提供，这意味着多个 AP 之间需要相互协同进行工作。</p>
+<h3 id="支持多-ap-间的协同调度" class="headerLink">
+    <a href="#%e6%94%af%e6%8c%81%e5%a4%9a-ap-%e9%97%b4%e7%9a%84%e5%8d%8f%e5%90%8c%e8%b0%83%e5%ba%a6" class="header-mark"></a>支持多 AP 间的协同调度</h3><p>目前在 802.11 的协议框架内，AP 之间实际上是没有太多协作的关系。自动调优、智能漫游等常见的 WLAN 功能都属于厂商自定义的特性。AP 间协作的目的也仅是优化信道选择，调整 AP 间负载等，以实现射频资源高效利用、均衡分配的目的。Wi-Fi 7 中的多 AP 间的协同调度，包括小区间的在时域和频域的协调规划，小区间的干扰协调，以及分布式 MIMO，可以有效降低 AP 之间的干扰，极大的提升空口资源的利用率。</p>
+<p>多 AP 间的协同调度的方式有很多，包括 C-OFDMA（Coordinated <a href="https://info.support.huawei.com/info-finder/encyclopedia/zh/OFDMA.html" title="OFDMA" target="_blank" rel="noopener noreferrer">Orthogonal Frequency-Division Multiple Access</a>）、CSR（Coordinated Spatial Reuse）、CBF（Coordinated <a href="https://info.support.huawei.com/info-finder/encyclopedia/zh/%E6%B3%A2%E6%9D%9F%E6%88%90%E5%BD%A2.html" title="波束成形" target="_blank" rel="noopener noreferrer">Beamforming</a>）和 JXT（Joint Transmission）等。</p>]]></description>
+</item><item>
+    <title>快速调整 Hyper-V 虚拟机磁盘大小</title>
+    <link>https://www.techkoala.net/resize_vm_lvm_disk_size/</link>
+    <pubDate>Thu, 02 Sep 2021 11:25:59 &#43;0800</pubDate><author>
+        <name>TechKoala</name>
+    </author><guid>https://www.techkoala.net/resize_vm_lvm_disk_size/</guid>
+    <description><![CDATA[<blockquote>
+<p>如何调整已建立的 Hyper-V 虚拟机磁盘大小？本文以 Ubuntu 为例，对此进行介绍。</p>
+</blockquote>
+<h2 id="说明" class="headerLink">
+    <a href="#%e8%af%b4%e6%98%8e" class="header-mark"></a>说明</h2><p>此教程适用于使用 LVM 格式化的任何 Ubuntu 文件系统。</p>
+<p>如果你在使用 VMware，基本步骤与下面的教程类似，区别参见<a href="https://unix.stackexchange.com/questions/196512/how-to-extend-filesystem-partition-on-ubuntu-vm" target="_blank" rel="noopener noreferrer">这里</a>。</p>
+<h2 id="tldr" class="headerLink">
+    <a href="#tldr" class="header-mark"></a>TL;DR</h2><ol>
+<li>fdisk -l (note it’s partition 3 by looking at the current Size)</li>
+<li>parted</li>
+<li>resizepart, Fix, 3, 100% (type this instead), quit</li>
+<li>pvresize /dev/sda3</li>
+<li>lvextend -l +100%FREE /dev/mapper/ubuntu–vg-ubuntu–lv</li>
+<li>resize2fs /dev/mapper/ubuntu–vg-ubuntu–lv</li>
+<li>df -h</li>
+</ol>
+<h2 id="具体步骤" class="headerLink">
+    <a href="#%e5%85%b7%e4%bd%93%e6%ad%a5%e9%aa%a4" class="header-mark"></a>具体步骤</h2><h3 id="查看剩余磁盘大小" class="headerLink">
+    <a href="#%e6%9f%a5%e7%9c%8b%e5%89%a9%e4%bd%99%e7%a3%81%e7%9b%98%e5%a4%a7%e5%b0%8f" class="header-mark"></a>查看剩余磁盘大小</h3><p>在下面的输出中，请注意 /root 卷只有 3.9 GB 的磁盘空间：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">user@server:~$ df -h
+</span></span><span class="line"><span class="cl">Filesystem Size Used Avail Use% Mounted on
+</span></span><span class="line"><span class="cl">udev 1.9G <span class="m">0</span> 1.9G 0% /dev
+</span></span><span class="line"><span class="cl">tmpfs 394M 1.1M 393M 1% /run
+</span></span><span class="line"><span class="cl">/dev/mapper/ubuntu--vg-ubuntu--lv 3.9G 3.2G 489M 87% /
+</span></span><span class="line"><span class="cl">tmpfs 2.0G <span class="m">0</span> 2.0G 0% /dev/shm
+</span></span><span class="line"><span class="cl">tmpfs 5.0M <span class="m">0</span> 5.0M 0% /run/lock
+</span></span><span class="line"><span class="cl">tmpfs 2.0G <span class="m">0</span> 2.0G 0% /sys/fs/cgroup
+</span></span><span class="line"><span class="cl">/dev/loop0 89M 89M <span class="m">0</span> 100% /snap/core/7270
+</span></span><span class="line"><span class="cl">/dev/sda2 976M 77M 833M 9% /boot
+</span></span><span class="line"><span class="cl">/dev/loop1 90M 90M <span class="m">0</span> 100% /snap/core/7713
+</span></span><span class="line"><span class="cl">tmpfs 394M <span class="m">0</span> 394M 0% /run/user/1000
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>接下来，在输出中可以看出实际上还有更多可用空间未利用。例如 /dev/sda3 卷上有 24G。另一个 1GB 用于启动卷和 BIOS 启动</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">user@server:~# fdisk -l
+</span></span><span class="line"><span class="cl">Disk /dev/loop0: 88.5 MiB, <span class="m">92778496</span> bytes, <span class="m">181208</span> sectors
+</span></span><span class="line"><span class="cl">Units: sectors of <span class="m">1</span> * <span class="nv">512</span> <span class="o">=</span> <span class="m">512</span> bytes
+</span></span><span class="line"><span class="cl">Sector size <span class="o">(</span>logical/physical<span class="o">)</span>: <span class="m">512</span> bytes / <span class="m">512</span> bytes
+</span></span><span class="line"><span class="cl">I/O size <span class="o">(</span>minimum/optimal<span class="o">)</span>: <span class="m">512</span> bytes / <span class="m">512</span> bytes
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Disk /dev/loop1: <span class="m">89</span> MiB, <span class="m">93327360</span> bytes, <span class="m">182280</span> sectors
+</span></span><span class="line"><span class="cl">Units: sectors of <span class="m">1</span> * <span class="nv">512</span> <span class="o">=</span> <span class="m">512</span> bytes
+</span></span><span class="line"><span class="cl">Sector size <span class="o">(</span>logical/physical<span class="o">)</span>: <span class="m">512</span> bytes / <span class="m">512</span> bytes
+</span></span><span class="line"><span class="cl">I/O size <span class="o">(</span>minimum/optimal<span class="o">)</span>: <span class="m">512</span> bytes / <span class="m">512</span> bytes
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">...
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Disk /dev/sda: <span class="m">25</span> GiB, <span class="m">26843545600</span> bytes, <span class="m">52428800</span> sectors
+</span></span><span class="line"><span class="cl">Units: sectors of <span class="m">1</span> * <span class="nv">512</span> <span class="o">=</span> <span class="m">512</span> bytes
+</span></span><span class="line"><span class="cl">Sector size <span class="o">(</span>logical/physical<span class="o">)</span>: <span class="m">512</span> bytes / <span class="m">4096</span> bytes
+</span></span><span class="line"><span class="cl">I/O size <span class="o">(</span>minimum/optimal<span class="o">)</span>: <span class="m">4096</span> bytes / <span class="m">4096</span> bytes
+</span></span><span class="line"><span class="cl">Disklabel type: gpt
+</span></span><span class="line"><span class="cl">Disk identifier: ED41F7A6-5D09-457B-A55C-C7F1E30DE419
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Device Start End Sectors Size Type
+</span></span><span class="line"><span class="cl">/dev/sda1 <span class="m">2048</span> <span class="m">4095</span> <span class="m">2048</span> 1M BIOS boot
+</span></span><span class="line"><span class="cl">/dev/sda2 <span class="m">4096</span> <span class="m">2101247</span> <span class="m">2097152</span> 1G Linux filesystem
+</span></span><span class="line"><span class="cl">/dev/sda3 <span class="m">2101248</span> <span class="m">52426751</span> <span class="m">50325504</span> 24G Linux filesystem
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Disk /dev/mapper/ubuntu--vg-ubuntu--lv: <span class="m">4</span> GiB, <span class="m">4294967296</span> bytes, <span class="m">8388608</span> sectors
+</span></span><span class="line"><span class="cl">Units: sectors of <span class="m">1</span> * <span class="nv">512</span> <span class="o">=</span> <span class="m">512</span> bytes
+</span></span><span class="line"><span class="cl">Sector size <span class="o">(</span>logical/physical<span class="o">)</span>: <span class="m">512</span> bytes / <span class="m">4096</span> bytes
+</span></span><span class="line"><span class="cl">I/O size <span class="o">(</span>minimum/optimal<span class="o">)</span>: <span class="m">4096</span> bytes / <span class="m">4096</span> bytes
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="调整虚拟机磁盘大小" class="headerLink">
+    <a href="#%e8%b0%83%e6%95%b4%e8%99%9a%e6%8b%9f%e6%9c%ba%e7%a3%81%e7%9b%98%e5%a4%a7%e5%b0%8f" class="header-mark"></a>调整虚拟机磁盘大小</h3><p>进入 Hyper-V 虚拟机设置界面，编辑硬盘驱动器，然后对此进行扩容，此后重启虚拟机。</p>
+<h3 id="重新分区" class="headerLink">
+    <a href="#%e9%87%8d%e6%96%b0%e5%88%86%e5%8c%ba" class="header-mark"></a>重新分区</h3><p>下面利用 parted 进行对新加的磁盘进行分区。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">user@server:~# parted
+</span></span><span class="line"><span class="cl">GNU Parted 3.2
+</span></span><span class="line"><span class="cl">Using /dev/sda
+</span></span><span class="line"><span class="cl">Welcome to GNU Parted! Type <span class="s1">&#39;help&#39;</span> to view a list of commands.
+</span></span><span class="line"><span class="cl"><span class="o">(</span>parted<span class="o">)</span> print
+</span></span><span class="line"><span class="cl">Model: Msft Virtual Disk <span class="o">(</span>scsi<span class="o">)</span>
+</span></span><span class="line"><span class="cl">Disk /dev/sda: 26.8GB
+</span></span><span class="line"><span class="cl">Sector size <span class="o">(</span>logical/physical<span class="o">)</span>: 512B/4096B
+</span></span><span class="line"><span class="cl">Partition Table: gpt
+</span></span><span class="line"><span class="cl">Disk Flags:
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Number Start End Size File system Name Flags
+</span></span><span class="line"><span class="cl"><span class="m">1</span> 1049kB 2097kB 1049kB bios_grub
+</span></span><span class="line"><span class="cl"><span class="m">2</span> 2097kB 1076MB 1074MB ext4
+</span></span><span class="line"><span class="cl"><span class="m">3</span> 1076MB 26.8GB 25.8GB
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">(</span>parted<span class="o">)</span> quit
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">user@server:~# parted
+</span></span><span class="line"><span class="cl">GNU Parted 3.2
+</span></span><span class="line"><span class="cl">Using /dev/sda
+</span></span><span class="line"><span class="cl">Welcome to GNU Parted! Type <span class="s1">&#39;help&#39;</span> to view a list of commands.
+</span></span><span class="line"><span class="cl"><span class="o">(</span>parted<span class="o">)</span> resizepart
+</span></span><span class="line"><span class="cl">Partition number? <span class="m">3</span>
+</span></span><span class="line"><span class="cl">End? <span class="o">[</span>26.8GB<span class="o">]</span>?
+</span></span><span class="line"><span class="cl"><span class="o">(</span>parted<span class="o">)</span> quit
+</span></span><span class="line"><span class="cl">Information: You may need to update /etc/fstab.
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">user@server:~# pvresize /dev/sda3
+</span></span><span class="line"><span class="cl">Physical volume <span class="s2">&#34;/dev/sda3&#34;</span> changed
+</span></span><span class="line"><span class="cl"><span class="m">1</span> physical volume<span class="o">(</span>s<span class="o">)</span> resized / <span class="m">0</span> physical volume<span class="o">(</span>s<span class="o">)</span> not resized
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="扩容" class="headerLink">
+    <a href="#%e6%89%a9%e5%ae%b9" class="header-mark"></a>扩容</h3><p>接下来，对 LVM 虚拟磁盘进行扩容。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">user@server:~# resize2fs /dev/mapper/ubuntu--vg-ubuntu--lv
+</span></span><span class="line"><span class="cl">resize2fs 1.44.1 <span class="o">(</span>24-Mar-2018<span class="o">)</span>
+</span></span><span class="line"><span class="cl">Filesystem at /dev/mapper/ubuntu--vg-ubuntu--lv is mounted on /<span class="p">;</span> on-line resizing required
+</span></span><span class="line"><span class="cl"><span class="nv">old_desc_blocks</span> <span class="o">=</span> 1, <span class="nv">new_desc_blocks</span> <span class="o">=</span> <span class="m">3</span>
+</span></span><span class="line"><span class="cl">The filesystem on /dev/mapper/ubuntu--vg-ubuntu--lv is now <span class="m">6029312</span> <span class="o">(</span>4k<span class="o">)</span> blocks long.
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="确认" class="headerLink">
+    <a href="#%e7%a1%ae%e8%ae%a4" class="header-mark"></a>确认</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">user@server:~# df -h
+</span></span><span class="line"><span class="cl">Filesystem Size Used Avail Use% Mounted on
+</span></span><span class="line"><span class="cl">udev 1.9G <span class="m">0</span> 1.9G 0% /dev
+</span></span><span class="line"><span class="cl">tmpfs 394M 1.1M 393M 1% /run
+</span></span><span class="line"><span class="cl">/dev/mapper/ubuntu--vg-ubuntu--lv 23G 3.2G 19G 15% /
+</span></span><span class="line"><span class="cl">tmpfs 2.0G <span class="m">0</span> 2.0G 0% /dev/shm
+</span></span><span class="line"><span class="cl">tmpfs 5.0M <span class="m">0</span> 5.0M 0% /run/lock
+</span></span><span class="line"><span class="cl">tmpfs 2.0G <span class="m">0</span> 2.0G 0% /sys/fs/cgroup
+</span></span><span class="line"><span class="cl">/dev/loop0 89M 89M <span class="m">0</span> 100% /snap/core/7270
+</span></span><span class="line"><span class="cl">/dev/sda2 976M 77M 833M 9% /boot
+</span></span><span class="line"><span class="cl">/dev/loop1 90M 90M <span class="m">0</span> 100% /snap/core/7713
+</span></span><span class="line"><span class="cl">tmpfs 394M <span class="m">0</span> 394M 0% /run/user/1000
+</span></span><span class="line"><span class="cl">user@server:~#
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="参考" class="headerLink">
+    <a href="#%e5%8f%82%e8%80%83" class="header-mark"></a>参考</h2><ul>
+<li>[1] <a href="https://vander.host/knowledgebase/operating-systems/how-to-resize-an-ubuntu-18-04-lvm-disk/" target="_blank" rel="noopener noreferrer">How to resize an Ubuntu 18.04/20.04 LVM disk</a></li>
+</ul>]]></description>
+</item><item>
+    <title>不容错过的 Bash 技巧</title>
+    <link>https://www.techkoala.net/bash_tricks/</link>
+    <pubDate>Fri, 04 Jun 2021 11:06:47 &#43;0800</pubDate><author>
+        <name>TechKoala</name>
+    </author><guid>https://www.techkoala.net/bash_tricks/</guid>
+    <description><![CDATA[<blockquote>
+<p>一些提升 Bash 使用效率的小技巧</p>
+</blockquote>
+<p>在使用 Bash 时，我们通常使用 上 ↑ 下 ↓ 箭头来快速切换历史命令，然而一些重复的、不想要的命令（例如最简单的 ls，敲击比切换快，同时也会增加切换到别的命令的按键次数）也在历史记录里保存，这降低了切换的效率。下面一些技巧可以更好的帮助我们切换到想要的命令：</p>
+<div class="details admonition info open">
+        <div class="details-summary admonition-title">
+            <i class="icon fas fa-info-circle fa-fw"></i>说明<i class="details-icon fas fa-angle-right fa-fw"></i>
+        </div>
+        <div class="details-content">
+            <div class="admonition-content"><p>下文中需要编辑的内容均在<code>.bashrc</code>中，使用常用的文本编辑器打开它，例如：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">$ vim ~/.bashrc
+</span></span></code></pre></td></tr></table>
+</div>
+</div></div>
+        </div>
+    </div>
+<h2 id="使用-histignore-移除历史记录中无意义的命令" class="headerLink">
+    <a href="#%e4%bd%bf%e7%94%a8-histignore-%e7%a7%bb%e9%99%a4%e5%8e%86%e5%8f%b2%e8%ae%b0%e5%bd%95%e4%b8%ad%e6%97%a0%e6%84%8f%e4%b9%89%e7%9a%84%e5%91%bd%e4%bb%a4" class="header-mark"></a>使用 HISTIGNORE 移除历史记录中无意义的命令</h2><p>有一些命令极为常用常用、或者敲击简单，我们不想它出现在历史记录里，那么在<code>.bashrc</code>中添加下述内容忽略它即可：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">HISTIGNORE</span><span class="o">=</span><span class="s1">&#39;pwd:exit:fg:bg:top:clear:history:ls:uptime:df&#39;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>作为补充，如果我们不希望某些敏感的命令出现在历史记录中，例如在命令行中指定密码或 API 密钥，那么可以使用下面的选项来确保任何以<strong>空格</strong>开头的命令不会出现在历史文件中：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">HISTCONTROL</span><span class="o">=</span>ignorespace
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>另外：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">HISTCONTROL</span><span class="o">=</span>ignoredups
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>则表示当同一个命令重复出现时，只存储命令的一个副本。</p>
+<h2 id="设置历史记录数量" class="headerLink">
+    <a href="#%e8%ae%be%e7%bd%ae%e5%8e%86%e5%8f%b2%e8%ae%b0%e5%bd%95%e6%95%b0%e9%87%8f" class="header-mark"></a>设置历史记录数量</h2><p>为了防止不必要的丢失，可以适当的将记录数量调整的更大：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="nb">shopt</span> -s histappend
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">HISTSIZE</span><span class="o">=</span><span class="m">10000</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="更有效的调用命令" class="headerLink">
+    <a href="#%e6%9b%b4%e6%9c%89%e6%95%88%e7%9a%84%e8%b0%83%e7%94%a8%e5%91%bd%e4%bb%a4" class="header-mark"></a>更有效的调用命令</h2><p><code>!!</code>可以调用前一行的命令。</p>
+<p>例如：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">$ <span class="nb">pwd</span>
+</span></span><span class="line"><span class="cl">/etc
+</span></span><span class="line"><span class="cl">$ !!
+</span></span><span class="line"><span class="cl"><span class="nb">pwd</span>
+</span></span><span class="line"><span class="cl">/etc
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>同时，<code>!!</code>也可以作为参数加入别的命令配合使用，例如：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">$ sudo !!
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>就将使用 root 权限再次执行此前的命令。</p>
+<p>此外，我们还可以通过在历史命令提供的<strong>行号</strong>前加一个<code>!</code>来运行历史上的命令，但是请注意不要打错行号，避免执行出错：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">$ rm -r temp/
+</span></span><span class="line"><span class="cl">$ mkdir temp
+</span></span><span class="line"><span class="cl">$ touch temp/test
+</span></span><span class="line"><span class="cl">$ !!
+</span></span><span class="line"><span class="cl">touch temp/test
+</span></span><span class="line"><span class="cl">$ <span class="nb">history</span> <span class="p">|</span> tail -4
+</span></span><span class="line"><span class="cl">  <span class="m">179</span>  rm -r temp/
+</span></span><span class="line"><span class="cl">  <span class="m">180</span>  mkdir temp
+</span></span><span class="line"><span class="cl">  <span class="m">181</span>  touch temp/test
+</span></span><span class="line"><span class="cl">  <span class="m">182</span>  touch temp/test
+</span></span><span class="line"><span class="cl">  <span class="m">183</span>  <span class="nb">history</span> <span class="p">|</span> tail -5
+</span></span><span class="line"><span class="cl">$ !179:p
+</span></span><span class="line"><span class="cl">rm -r temp
+</span></span><span class="line"><span class="cl">$ !180
+</span></span><span class="line"><span class="cl">touch temp/test
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>我们也可以用前面的<code>!</code>来调用一个命令的最后一次出现，例如:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">$ !ping
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>将运行我们最后运行的以 <code>ping</code> 开头的命令。</p>
+<p>为了上述内容出错，可以添加一个<code>:p</code>来显示命令内容，而不实际执行它们。</p>
+<h2 id="使用--和--调用前一行参数" class="headerLink">
+    <a href="#%e4%bd%bf%e7%94%a8--%e5%92%8c--%e8%b0%83%e7%94%a8%e5%89%8d%e4%b8%80%e8%a1%8c%e5%8f%82%e6%95%b0" class="header-mark"></a>使用 !$ 和 !* 调用前一行参数</h2><p>和<code>!!</code>不同，<code>!$</code>和<code>!*</code>仅指代前一行，命令的部分内容。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">$ mv list.txt items.txt
+</span></span><span class="line"><span class="cl">$ vim !$
+</span></span><span class="line"><span class="cl">vim items.txt
+</span></span><span class="line"><span class="cl">$ cp !$ shopping.txt
+</span></span><span class="line"><span class="cl">cp items.txt shopping.txt
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>可以看到<code>!$</code>指代上一行命令的最后一个参数。</p>
+<p>而<code>!*</code>指代上一行命令<strong>除了第一个</strong>以外的所有参数：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">$ rm /var/log/httpd/access.log /var/log/httpd/error.log
+</span></span><span class="line"><span class="cl">$ touch !*
+</span></span><span class="line"><span class="cl">touch /var/log/httpd/access.log /var/log/httpd/error.log
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="用--替换前一行的匹配词" class="headerLink">
+    <a href="#%e7%94%a8--%e6%9b%bf%e6%8d%a2%e5%89%8d%e4%b8%80%e8%a1%8c%e7%9a%84%e5%8c%b9%e9%85%8d%e8%af%8d" class="header-mark"></a>用 ^ 替换前一行的匹配词</h2><p><code>^</code>符号允许你在切换一个匹配的单词后重复前一个命令，比如说：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">$ rm /var/log/httpd/error.log
+</span></span><span class="line"><span class="cl">$ ^error^access
+</span></span><span class="line"><span class="cl">rm /var/log/httpd/access.log
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="参考" class="headerLink">
+    <a href="#%e5%8f%82%e8%80%83" class="header-mark"></a>参考</h2><ul>
+<li>[1] <a href="https://cyb.org.uk/2021/05/03/bash-productivity.html" target="_blank" rel="noopener noreferrer">Be more productive with use of your BASH history</a></li>
+</ul>]]></description>
+</item><item>
+    <title>Docker 搭建 FreshRSS 专属 RSS 服务 </title>
+    <link>https://www.techkoala.net/frsshrss/</link>
+    <pubDate>Fri, 28 May 2021 23:25:46 &#43;0800</pubDate><author>
+        <name>TechKoala</name>
+    </author><guid>https://www.techkoala.net/frsshrss/</guid>
+    <description><![CDATA[<blockquote>
+<p>inoreader 等现有服务要么付费要么有限制，有服务器的话自建 FreshRSS 是一个很好的选择</p>
+</blockquote>
+<div class="details admonition info open">
+        <div class="details-summary admonition-title">
+            <i class="icon fas fa-info-circle fa-fw"></i>注意<i class="details-icon fas fa-angle-right fa-fw"></i>
+        </div>
+        <div class="details-content">
+            <div class="admonition-content">境外服务器是保证服务可用性的条件之一</div>
+        </div>
+    </div>
+<h2 id="freshrss-docker-配置" class="headerLink">
+    <a href="#freshrss-docker-%e9%85%8d%e7%bd%ae" class="header-mark"></a>FreshRSS Docker 配置</h2><p>创建一个新目录 <code>~/freshrss</code> 并进入该位置，新建 docker-compose.yml</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl"># 创建 FreshRSS 目录并进入
+</span></span><span class="line"><span class="cl">mkdir ~/freshrss &amp;&amp; cd ~/freshrss
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># 新建&amp;编辑配置文件
+</span></span><span class="line"><span class="cl">vim docker-compose.yml
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="docker-composeyml" class="headerLink">
+    <a href="#docker-composeyml" class="header-mark"></a>docker-compose.yml</h3><p>配置文件内容见下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl"># ~/freshrss/docker-compose.yml
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">version: &#34;3&#34;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">services:
+</span></span><span class="line"><span class="cl">  freshrss-db:
+</span></span><span class="line"><span class="cl">    image: postgres:latest            # 官方示例中给出了 MySQL/MarriaDB/PostgreSQL 三种方案
+</span></span><span class="line"><span class="cl">    container_name: freshrss-db
+</span></span><span class="line"><span class="cl">    hostname: freshrss-db
+</span></span><span class="line"><span class="cl">    restart: always
+</span></span><span class="line"><span class="cl">    volumes:
+</span></span><span class="line"><span class="cl">      - freshrss-db:/var/lib/postgresql/data
+</span></span><span class="line"><span class="cl">    environment:
+</span></span><span class="line"><span class="cl">      POSTGRES_USER: freshrss       # 数据库配置，请自行修改、避免使用默认配置
+</span></span><span class="line"><span class="cl">      POSTGRES_PASSWORD: freshrss   # 数据库配置，请自行修改、避免使用默认配置
+</span></span><span class="line"><span class="cl">      POSTGRES_DB: freshrss         # 数据库配置，请自行修改、避免使用默认配置
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  freshrss-app:
+</span></span><span class="line"><span class="cl">    image: freshrss/freshrss:latest
+</span></span><span class="line"><span class="cl">    container_name: freshrss-app
+</span></span><span class="line"><span class="cl">    hostname: freshrss-app
+</span></span><span class="line"><span class="cl">    restart: always
+</span></span><span class="line"><span class="cl">    ports:
+</span></span><span class="line"><span class="cl">      - &#34;39954:80&#34;                   # 映射端口
+</span></span><span class="line"><span class="cl">    depends_on:
+</span></span><span class="line"><span class="cl">      - freshrss-db
+</span></span><span class="line"><span class="cl">    volumes:
+</span></span><span class="line"><span class="cl">      - ./data:/var/www/FreshRSS/data
+</span></span><span class="line"><span class="cl">      - ./extensions:/var/www/FreshRSS/extensions
+</span></span><span class="line"><span class="cl">    environment:
+</span></span><span class="line"><span class="cl">      CRON_MIN: &#39;*/45&#39;             # RSS 刷新周期，单位为分钟，*/45 表示每 45 分钟刷新一次
+</span></span><span class="line"><span class="cl">      TZ: Asia/Shanghai            # 时区
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">volumes:
+</span></span><span class="line"><span class="cl">  freshrss-db:
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>确认配置后，运行：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">$ docker-compose up -d
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="freshrss-设置" class="headerLink">
+    <a href="#freshrss-%e8%ae%be%e7%bd%ae" class="header-mark"></a>FreshRSS 设置</h2><h3 id="初始化" class="headerLink">
+    <a href="#%e5%88%9d%e5%a7%8b%e5%8c%96" class="header-mark"></a>初始化</h3><p>数据库连接需要注意的点：</p>
+<ul>
+<li>主机名填写 <code>freshrss-db</code>（数据库 docker 容器名）</li>
+<li>用户名、密码、数据库分别对应之前 Docker Compose 配置文件中的 POSTGRES_USER、POSTGRES_PASSWORD、POSTGRES_DB</li>
+<li>表前缀任意填</li>
+</ul>
+<h3 id="设置" class="headerLink">
+    <a href="#%e8%ae%be%e7%bd%ae" class="header-mark"></a>设置</h3><p>最好关闭<code>阅读 =&gt; 合适将文章标记为已读</code>的<code>在滚动浏览后</code>，否则即便不点击打开文章、只要你划过去就标记为已读</p>
+<h3 id="扩展" class="headerLink">
+    <a href="#%e6%89%a9%e5%b1%95" class="header-mark"></a>扩展</h3><p>一个重要的扩展是 <code>Auto Refresh</code>，实现自动刷新源</p>
+<p>点击扩展页面中的相应扩展，会跳转到相应的下载地址，将扩展下载后上传到 FreshRSS 安装目录下的 extensions 文件夹（之前部署 FreshRSS 的 Docker Compose 配置文件中已经将 <code>~/freshrss/extensions/</code> 对应了 FreshRSS 在容器内的扩展位置，所以只需要将扩展拖至 <code>~/freshrss/extensions/</code> 即可）</p>
+<p>将解压后的 xExtension-AutoRefresh 文件夹放到 ~/freshrss/extensions 目中，到 FreshRSS <code>设置-&gt; 扩展</code> 启用，刷新时间需要修改 <code>xExtension-AutoRefresh/static/script.js</code> ，其中时间相关单位是 ms</p>
+<h2 id="nginx-反向代理" class="headerLink">
+    <a href="#nginx-%e5%8f%8d%e5%90%91%e4%bb%a3%e7%90%86" class="header-mark"></a>Nginx 反向代理</h2><p>参见<a href="/nginx_port_reuse/" rel="">使用 Nginx 实现多服务复用端口</a></p>
+<h2 id="配合第三方软件" class="headerLink">
+    <a href="#%e9%85%8d%e5%90%88%e7%ac%ac%e4%b8%89%e6%96%b9%e8%bd%af%e4%bb%b6" class="header-mark"></a>配合第三方软件</h2><p>推荐搭配<code>Feedme</code> 、<code>Fluent reader</code>食用更佳</p>
+<p>在此之前需要到开启<code>认证 =&gt; 允许 API 访问</code>，并在<code>用户账户 =&gt; API 管理</code>中设置相应的 API 密码</p>
+<p>需要注意，<code>Feedme</code>服务应选择<code>FreshRSS</code></p>
+<p>参数配置如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">域名：https://xxx.techkoala.top/api/fever.php   # Fluent reader
+</span></span><span class="line"><span class="cl">域名：https://xxx.techkoala.top/api/greader.php # Feedme 使用 fever会出现 Auth Failed
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">用户名：注册用户名
+</span></span><span class="line"><span class="cl">密码：API 密码
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="参考" class="headerLink">
+    <a href="#%e5%8f%82%e8%80%83" class="header-mark"></a>参考</h2><ul>
+<li>[1] <a href="https://blog.ichr.me/post/docker-freshrss-setup/" target="_blank" rel="noopener noreferrer">使用 Docker 部署 FreshRSS 自建专属 RSS 服务</a></li>
+</ul>]]></description>
+</item><item>
+    <title>常用 youtube-dl 命令</title>
+    <link>https://www.techkoala.net/youtube-dl_tricks/</link>
+    <pubDate>Tue, 18 May 2021 15:19:43 &#43;0800</pubDate><author>
+        <name>TechKoala</name>
+    </author><guid>https://www.techkoala.net/youtube-dl_tricks/</guid>
+    <description><![CDATA[<blockquote>
+<p>记录一些常用的 youtube-dl 命令，拯救脑容量。</p>
+</blockquote>
+<h2 id="下载播放列表视频音频" class="headerLink">
+    <a href="#%e4%b8%8b%e8%bd%bd%e6%92%ad%e6%94%be%e5%88%97%e8%a1%a8%e8%a7%86%e9%a2%91%e9%9f%b3%e9%a2%91" class="header-mark"></a>下载播放列表视频+音频</h2><p>Windows</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">youtube-dl.exe -o <span class="s2">&#34;D:\xxxxxx\</span><span class="nv">%(title)s.%</span><span class="s2">(ext)s&#34;</span> -f bestvideo+bestaudio https://www.youtube.com/playlist?list=x
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="仅下载播放列表音频" class="headerLink">
+    <a href="#%e4%bb%85%e4%b8%8b%e8%bd%bd%e6%92%ad%e6%94%be%e5%88%97%e8%a1%a8%e9%9f%b3%e9%a2%91" class="header-mark"></a>仅下载播放列表音频</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">youtububedl.exe -o D:\<span class="nv">%(title)s.%</span>(ext)s -f bestaudio --extract-audio --audio-format mp3 --audio-quality 0 https://www.youtube.com/playlist?list=xxxxxxxxxxxx
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">-o D:\%(title)s.%(ext)s     #保留原始名称和后缀
+</span></span><span class="line"><span class="cl">-f bestaudio                #最佳音频
+</span></span><span class="line"><span class="cl">--extract-audio             #提取音频
+</span></span><span class="line"><span class="cl">--audio-format mp3          #设置音频格式，下载文件若不同，则调用ffmpeg转换
+</span></span><span class="line"><span class="cl">--playlist-items 1,2,5      #下载播放列表中的哪些项
+</span></span><span class="line"><span class="cl">--playstart-start 2         #从第二项开始下载播放列表
+</span></span><span class="line"><span class="cl">--playstart-end 2
+</span></span><span class="line"><span class="cl">-f &#39;bestvideo[height&lt;=1080]+bestaudio/best[height&lt;=1080]&#39;             #设置最大下载分辨率
+</span></span></code></pre></td></tr></table>
+</div>
+</div>]]></description>
+</item><item>
+    <title>持久化 Gist file raw 链接</title>
+    <link>https://www.techkoala.net/permalink_gist_raw_file/</link>
+    <pubDate>Mon, 03 May 2021 22:22:32 &#43;0800</pubDate><author>
+        <name>TechKoala</name>
+    </author><guid>https://www.techkoala.net/permalink_gist_raw_file/</guid>
+    <description><![CDATA[<blockquote>
+<p>如何持久化 Gist file raw 链接地址？</p>
+</blockquote>
+<h2 id="问题" class="headerLink">
+    <a href="#%e9%97%ae%e9%a2%98" class="header-mark"></a>问题</h2><p>通常，Gist 文件的 raw 链接会随着版本二更改，但在使用上往往不便，因此需要持久化文件的 raw 链接地址。</p>
+<h2 id="解决方法" class="headerLink">
+    <a href="#%e8%a7%a3%e5%86%b3%e6%96%b9%e6%b3%95" class="header-mark"></a>解决方法</h2><ul>
+<li>
+<p>获得 Gist 文件列表中的第一个文件： <code>https://gist.github.com/gist_user/gist_id/raw/</code></p>
+<p>例如: <a href="https://gist.github.com/atenni/5604522/raw/" target="_blank" rel="noopener noreferrer">https://gist.github.com/atenni/5604522/raw/</a></p>
+<p>即便更改了文件名，上述方法依然可以获得列表中的第一个文件。</p>
+</li>
+<li>
+<p>获得多个文件： <code>https://gist.github.com/gist_user/gist_id/raw/file_name</code></p>
+<p>例如: <a href="https://gist.github.com/atenni/5604522/raw/README.md" target="_blank" rel="noopener noreferrer">https://gist.github.com/atenni/5604522/raw/README.md</a></p>
+</li>
+</ul>
+<h2 id="参考" class="headerLink">
+    <a href="#%e5%8f%82%e8%80%83" class="header-mark"></a>参考</h2><ul>
+<li>[1] <a href="https://gist.github.com/atenni/5604615" target="_blank" rel="noopener noreferrer">How to permalink to a gist&rsquo;s raw file</a></li>
+</ul>]]></description>
+</item><item>
+    <title>Windows 网络连接优先级设置</title>
+    <link>https://www.techkoala.net/windows_10_network_priority/</link>
+    <pubDate>Thu, 29 Apr 2021 20:42:25 &#43;0800</pubDate><author>
+        <name>TechKoala</name>
+    </author><guid>https://www.techkoala.net/windows_10_network_priority/</guid>
+    <description><![CDATA[<blockquote>
+<p>Windows10 默认优先使用有线连接，但是如需优先使用无线连接，除了拔网线/禁用有线网卡外，还可以通过修改接口跃点数，实现不同网络连接的优先级。</p>
+</blockquote>
+<h2 id="优先级设置方法" class="headerLink">
+    <a href="#%e4%bc%98%e5%85%88%e7%ba%a7%e8%ae%be%e7%bd%ae%e6%96%b9%e6%b3%95" class="header-mark"></a>优先级设置方法</h2><h3 id="方法一控制面板中修改" class="headerLink">
+    <a href="#%e6%96%b9%e6%b3%95%e4%b8%80%e6%8e%a7%e5%88%b6%e9%9d%a2%e6%9d%bf%e4%b8%ad%e4%bf%ae%e6%94%b9" class="header-mark"></a>方法一：控制面板中修改</h3><p>接口跃点数通过以下步骤找到：</p>
+<p>首先打开<code>控制面板 &gt; 网络和 Internet &gt; 网络连接</code></p>
+<p>找到想要修改的网络连接，右键打开<code>属性</code></p>
+<p>接下来打开<code>Internet 协议版本 4 属性 &gt; 高级</code></p>
+<figure><a class="lightgallery" href="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/Network/Network_Priority/GUI.webp" title="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/Network/Network_Priority/GUI.webp" data-thumbnail="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/Network/Network_Priority/GUI.webp" data-sub-html="<h2>控制面板设置界面</h2>">
+        <img
+            
+            loading="lazy"
+            src="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/Network/Network_Priority/GUI.webp"
+            srcset="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/Network/Network_Priority/GUI.webp, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/Network/Network_Priority/GUI.webp 1.5x, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/Network/Network_Priority/GUI.webp 2x"
+            sizes="auto"
+            alt="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/Network/Network_Priority/GUI.webp">
+    </a><figcaption class="image-caption">控制面板设置界面</figcaption>
+    </figure>
+<p>取消勾选<code>自动跃点</code>，填入需要设置的数值即可，有关数值设置的注意事项将在后续说明。</p>
+<h3 id="方法二powershell-中修改" class="headerLink">
+    <a href="#%e6%96%b9%e6%b3%95%e4%ba%8cpowershell-%e4%b8%ad%e4%bf%ae%e6%94%b9" class="header-mark"></a>方法二：Powershell 中修改</h3><p>更便捷的方式是通过 Powershell 进行修改。</p>
+<p>首先以管理员身份运行 Windows PowerShell，并使用命令</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="nb">PS </span><span class="n">C:</span><span class="p">\</span><span class="n">Users</span><span class="p">\</span><span class="n">xxxx</span><span class="p">&gt;</span> <span class="nb">Get-NetIPInterface</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>获得当前所有的网络连接，其中<code>InterfaceMetric</code>即为接口跃点数的值。</p>
+<figure><a class="lightgallery" href="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/Network/Network_Priority/powershell.webp" title="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/Network/Network_Priority/powershell.webp" data-thumbnail="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/Network/Network_Priority/powershell.webp" data-sub-html="<h2>Powershell 设置界面</h2>">
+        <img
+            
+            loading="lazy"
+            src="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/Network/Network_Priority/powershell.webp"
+            srcset="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/Network/Network_Priority/powershell.webp, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/Network/Network_Priority/powershell.webp 1.5x, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/Network/Network_Priority/powershell.webp 2x"
+            sizes="auto"
+            alt="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/Network/Network_Priority/powershell.webp">
+    </a><figcaption class="image-caption">Powershell 设置界面</figcaption>
+    </figure>
+<p>找到想要修改的网络连接以及它的 ifIndex (接口索引)值，例如 x，使用命令</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="nb">PS </span><span class="n">C:</span><span class="p">\</span><span class="n">Users</span><span class="p">\</span><span class="n">xxxx</span><span class="p">&gt;</span> <span class="nb">Set-NetIPInterface</span> <span class="n">-InterfaceIndex</span> <span class="n">x</span> <span class="n">-InterfaceMetric</span> <span class="mf">10</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>即可将其跃点数设置为 10。</p>
+<p>想要恢复跃点数的话，运行以下命令即可：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="nb">PS </span><span class="n">C:</span><span class="p">\</span><span class="n">Users</span><span class="p">\</span><span class="n">xxxx</span><span class="p">&gt;</span> <span class="nb">Set-NetIPInterface</span> <span class="n">-InterfaceIndex</span> <span class="n">x</span> <span class="n">-AutomaticMetric</span> <span class="n">enabled</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="跃点数的设置范围" class="headerLink">
+    <a href="#%e8%b7%83%e7%82%b9%e6%95%b0%e7%9a%84%e8%ae%be%e7%bd%ae%e8%8c%83%e5%9b%b4" class="header-mark"></a>跃点数的设置范围</h3><p>跃点数越小，网络优先级越高。</p>
+<p>跃点数的理论范围是 1 ~ 999，但跃点数低于 10 ，可能会导致某些网络访问失败，同时，合理的跃点数值也要参考网络带宽。</p>
+<h2 id="分流方法" class="headerLink">
+    <a href="#%e5%88%86%e6%b5%81%e6%96%b9%e6%b3%95" class="header-mark"></a>分流方法</h2><p>在同时使用 Wi-Fi 和有线网络的环境下可以用 route 命令实现特定网段使用特定接口。</p>
+<p>举例：</p>
+<p>可以连接到互联网的 Wi-Fi 网关地址是 <code>192.168.0.1</code>，有线网网关 IP 是 <code>10.0.0.1</code>。
+分流：需要访问的内网资源都位于 <code>10.0.0.0/8</code> 段，其他流量都走 Wi-Fi。</p>
+<ol>
+<li>首先打开管理员身份的命令提示符，输入以下命令删除默认的路由表。</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">route delete 0.0.0.0
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ol start="2">
+<li>添加一个默认路由，指定所有流量走 Wi-Fi。</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">route add 0.0.0.0 mask 0.0.0.0 192.168.0.1
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ol start="3">
+<li>添加另一个路由，指定 <code>10.0.0.1~10.255.255.254</code> 流量走有线网络。</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">route add 10.0.0.0 mask 255.0.0.0 10.0.0.1
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="参考" class="headerLink">
+    <a href="#%e5%8f%82%e8%80%83" class="header-mark"></a>参考</h2><ul>
+<li>
+<p>[1] <a href="https://windows10.pro/set-netipinterface-interfaceindex-interfacemetric/" target="_blank" rel="noopener noreferrer">修改接口跃点数，让 Win10 优先使用无线网络连接</a></p>
+</li>
+<li>
+<p>[2] <a href="https://www.appinn.com/wi-fi-or-lan/" target="_blank" rel="noopener noreferrer">同时连接网线和 Wi-Fi，如何优先使用 Wi-Fi？试试接口跃点数</a></p>
+</li>
+</ul>]]></description>
+</item><item>
+    <title>使用 Nginx 实现多服务复用端口</title>
+    <link>https://www.techkoala.net/nginx_port_reuse/</link>
+    <pubDate>Tue, 20 Apr 2021 14:17:01 &#43;0800</pubDate><author>
+        <name>TechKoala</name>
+    </author><guid>https://www.techkoala.net/nginx_port_reuse/</guid>
+    <description><![CDATA[<blockquote>
+<p>利用 Nginx 在单一服务器上搭建多个同端口的服务</p>
+</blockquote>
+<h2 id="说明" class="headerLink">
+    <a href="#%e8%af%b4%e6%98%8e" class="header-mark"></a>说明</h2><p>目前服务器上运行以下服务：</p>
+<ul>
+<li><code>Trojan</code></li>
+<li><code>Xray</code></li>
+<li><code>frp</code> + <code>Bitwarden</code> 实现内网穿透访问</li>
+<li><code>FreshRSS</code></li>
+</ul>
+<p>三个服务使用了不同域名进行区分，但为了便捷，都使用 <code>443</code> 端口。</p>
+<h2 id="流程概览" class="headerLink">
+    <a href="#%e6%b5%81%e7%a8%8b%e6%a6%82%e8%a7%88" class="header-mark"></a>流程概览</h2><ol>
+<li>采用 <code>Docker</code> 在本地服务器上搭建 <code>Bitwarden</code>，配置并运行 <code>frpc</code> 指向服务器上的 <code>frps</code></li>
+<li>在服务器上搭建其他网站或者需要使用 <code>443</code> 端口的服务（如：<code>Trojan</code>)，配置运行 <code>frps</code></li>
+<li>采用 <code>Docker</code> 搭建 FreshRSS，首先使用 IP:Port 完成相关配置，然后配置域名，申请证书</li>
+<li>安装 <code>Nginx</code>，这里需要利用 <code>Nginx</code> 的 <code>stream_ssl_preread</code> 模块，使用<code>nginx -V</code>查看是否包含该模块。（该模块在 <code>Nginx 1.19.2</code> 已默认包含，但 <code>Ubuntu</code> 等发行版还在使用更老的 <code>stable</code> 版本，需要手动添加 <code>mainline</code> 版本源，并更新 <code>Nginx</code> 到最新版本）</li>
+</ol>
+<h2 id="获取-ssl-证书" class="headerLink">
+    <a href="#%e8%8e%b7%e5%8f%96-ssl-%e8%af%81%e4%b9%a6" class="header-mark"></a>获取 SSL 证书</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">$ sudo apt install certbot python3-certbot-nginx
+</span></span><span class="line"><span class="cl">$ sudo certbot --nginx -d example.com -d www.example.com
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="本地配置文件" class="headerLink">
+    <a href="#%e6%9c%ac%e5%9c%b0%e9%85%8d%e7%bd%ae%e6%96%87%e4%bb%b6" class="header-mark"></a>本地配置文件</h2><h3 id="frpcini" class="headerLink">
+    <a href="#frpcini" class="header-mark"></a>frpc.ini</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">[common]
+</span></span><span class="line"><span class="cl">server_addr = xxx.xxx.xxx.xxx           # 服务器地址
+</span></span><span class="line"><span class="cl">server_port = xxx                       # 与服务器 frps 通信的端口
+</span></span><span class="line"><span class="cl">token = xxxxxx                          # frp 验证密钥
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[bitwarden_https]
+</span></span><span class="line"><span class="cl">type = https
+</span></span><span class="line"><span class="cl">local_port = 443
+</span></span><span class="line"><span class="cl">custom_domains = xxx.xxx.xxx            # Bitwarden 域名
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="本地-nginxcof" class="headerLink">
+    <a href="#%e6%9c%ac%e5%9c%b0-nginxcof" class="header-mark"></a>本地 nginx.cof</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span><span class="lnt">69
+</span><span class="lnt">70
+</span><span class="lnt">71
+</span><span class="lnt">72
+</span><span class="lnt">73
+</span><span class="lnt">74
+</span><span class="lnt">75
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">user www www;
+</span></span><span class="line"><span class="cl">worker_processes auto;
+</span></span><span class="line"><span class="cl">error_log /var/log/nginx/error.log warn;
+</span></span><span class="line"><span class="cl">pid /var/run/nginx.pid;
+</span></span><span class="line"><span class="cl">worker_rlimit_nofile 8192;
+</span></span><span class="line"><span class="cl">events {
+</span></span><span class="line"><span class="cl">    worker_connections 4096;
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">http {
+</span></span><span class="line"><span class="cl">    include mime.types;
+</span></span><span class="line"><span class="cl">    default_type application/octet-stream;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    client_max_body_size 0;
+</span></span><span class="line"><span class="cl">    client_body_buffer_size 512k;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    sendfile on;
+</span></span><span class="line"><span class="cl">    sendfile_max_chunk 1m;
+</span></span><span class="line"><span class="cl">    tcp_nopush on;
+</span></span><span class="line"><span class="cl">    tcp_nodelay on;
+</span></span><span class="line"><span class="cl">    keepalive_timeout 65;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    types_hash_max_size 4096;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    proxy_cache_path /var/run/nginx-proxy-cache levels=1:2 keys_zone=cache_one:20m inactive=1d max_size=500m;
+</span></span><span class="line"><span class="cl">    proxy_cache cache_one;
+</span></span><span class="line"><span class="cl">    proxy_temp_path /var/run/proxy_temp_dir;
+</span></span><span class="line"><span class="cl">    proxy_temp_file_write_size 128k;
+</span></span><span class="line"><span class="cl">    proxy_next_upstream error timeout invalid_header http_500 http_503 http_404;
+</span></span><span class="line"><span class="cl">    proxy_buffer_size 16k;
+</span></span><span class="line"><span class="cl">    proxy_busy_buffers_size 24k;
+</span></span><span class="line"><span class="cl">    proxy_buffers 64 4k;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    gzip on;
+</span></span><span class="line"><span class="cl">    gzip_min_length 1k;
+</span></span><span class="line"><span class="cl">    gzip_buffers 4 16k;
+</span></span><span class="line"><span class="cl">    gzip_http_version 1.1;
+</span></span><span class="line"><span class="cl">    gzip_comp_level 2;
+</span></span><span class="line"><span class="cl">    gzip_types text/plain application/javascript application/x-javascript text/javascript text/css application/xml;
+</span></span><span class="line"><span class="cl">    gzip_vary on;
+</span></span><span class="line"><span class="cl">    gzip_proxied expired no-cache no-store private auth;
+</span></span><span class="line"><span class="cl">    gzip_disable &#34;MSIE [1-6]\.&#34;;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    server_tokens off;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    server {
+</span></span><span class="line"><span class="cl">        listen 443 ssl http2;
+</span></span><span class="line"><span class="cl">        server_name xxx.xxx.xxx;                        # 域名
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        ssl_certificate /xxx/cert/fullchain.pem;        # 证书路径
+</span></span><span class="line"><span class="cl">        ssl_certificate_key /xxx/cert/privkey.pem;
+</span></span><span class="line"><span class="cl">        ssl_protocols TLSv1.2 TLSv1.3;
+</span></span><span class="line"><span class="cl">        ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384;
+</span></span><span class="line"><span class="cl">        ssl_prefer_server_ciphers off;
+</span></span><span class="line"><span class="cl">        ssl_session_cache shared:SSL:10m;
+</span></span><span class="line"><span class="cl">        ssl_session_timeout 1d;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        location / {
+</span></span><span class="line"><span class="cl">            proxy_pass http://127.0.0.1:8080;
+</span></span><span class="line"><span class="cl">            proxy_set_header Host $host;
+</span></span><span class="line"><span class="cl">            proxy_set_header X-Real-IP $remote_addr;
+</span></span><span class="line"><span class="cl">            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+</span></span><span class="line"><span class="cl">            proxy_set_header X-Forwarded-Proto $scheme;
+</span></span><span class="line"><span class="cl">        }
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        location /notifications/hub {
+</span></span><span class="line"><span class="cl">            proxy_pass http://127.0.0.1:3012;
+</span></span><span class="line"><span class="cl">            proxy_set_header Upgrade $http_upgrade;
+</span></span><span class="line"><span class="cl">            proxy_set_header Connection &#34;upgrade&#34;;
+</span></span><span class="line"><span class="cl">        }
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        location /notifications/hub/negotiate {
+</span></span><span class="line"><span class="cl">            proxy_pass http://127.0.0.1:8080;
+</span></span><span class="line"><span class="cl">        }
+</span></span><span class="line"><span class="cl">    }
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="服务器配置文件" class="headerLink">
+    <a href="#%e6%9c%8d%e5%8a%a1%e5%99%a8%e9%85%8d%e7%bd%ae%e6%96%87%e4%bb%b6" class="header-mark"></a>服务器配置文件</h2><h3 id="服务器-nginxcof" class="headerLink">
+    <a href="#%e6%9c%8d%e5%8a%a1%e5%99%a8-nginxcof" class="header-mark"></a>服务器 nginx.cof</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span><span class="lnt">69
+</span><span class="lnt">70
+</span><span class="lnt">71
+</span><span class="lnt">72
+</span><span class="lnt">73
+</span><span class="lnt">74
+</span><span class="lnt">75
+</span><span class="lnt">76
+</span><span class="lnt">77
+</span><span class="lnt">78
+</span><span class="lnt">79
+</span><span class="lnt">80
+</span><span class="lnt">81
+</span><span class="lnt">82
+</span><span class="lnt">83
+</span><span class="lnt">84
+</span><span class="lnt">85
+</span><span class="lnt">86
+</span><span class="lnt">87
+</span><span class="lnt">88
+</span><span class="lnt">89
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">user www-data;
+</span></span><span class="line"><span class="cl">worker_processes auto;
+</span></span><span class="line"><span class="cl">pid /var/run/nginx.pid;
+</span></span><span class="line"><span class="cl">include /etc/nginx/modules-enabled/*.conf;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">events {
+</span></span><span class="line"><span class="cl">	worker_connections 768;
+</span></span><span class="line"><span class="cl">	# multi_accept on;
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">stream {
+</span></span><span class="line"><span class="cl">    map $ssl_preread_server_name $name {
+</span></span><span class="line"><span class="cl">        xxx.techkoala.net frps-bitwarden;   # Bitwarden 域名
+</span></span><span class="line"><span class="cl">        xxx.techkoala.net trojan;           # Trojan 域名
+</span></span><span class="line"><span class="cl">        xxx.techkoala.net rss;              # FreshRSS 域名
+</span></span><span class="line"><span class="cl">        xxx.techkoala.net xtls;             # Xray 域名
+</span></span><span class="line"><span class="cl">    }
+</span></span><span class="line"><span class="cl">    upstream frps-bitwarden {
+</span></span><span class="line"><span class="cl">        server 127.0.0.1:8080;         # Bitwarden的 frps 端口
+</span></span><span class="line"><span class="cl">    }
+</span></span><span class="line"><span class="cl">    upstream trojan {
+</span></span><span class="line"><span class="cl">        server 127.0.0.1:4443;         # Trojan 本地监听端口
+</span></span><span class="line"><span class="cl">    }
+</span></span><span class="line"><span class="cl">    upstream rss {
+</span></span><span class="line"><span class="cl">        server 172.17.0.1:39955;       # FreshRSS Docker IP 以及映射本地监听端口
+</span></span><span class="line"><span class="cl">    }
+</span></span><span class="line"><span class="cl">    upstream xtls {
+</span></span><span class="line"><span class="cl">        server 127.0.0.1:8443;       # Xray 本地监听端口
+</span></span><span class="line"><span class="cl">    }
+</span></span><span class="line"><span class="cl">    server {
+</span></span><span class="line"><span class="cl">        listen 443 reuseport;
+</span></span><span class="line"><span class="cl">        listen [::]:443 reuseport;
+</span></span><span class="line"><span class="cl">        proxy_pass	$name;
+</span></span><span class="line"><span class="cl">        ssl_preread on;               # 开启 ssl_preread
+</span></span><span class="line"><span class="cl">    }
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">http {
+</span></span><span class="line"><span class="cl">	##
+</span></span><span class="line"><span class="cl">	# Basic Settings
+</span></span><span class="line"><span class="cl">	##
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	sendfile on;
+</span></span><span class="line"><span class="cl">	tcp_nopush on;
+</span></span><span class="line"><span class="cl">	tcp_nodelay on;
+</span></span><span class="line"><span class="cl">	keepalive_timeout 65;
+</span></span><span class="line"><span class="cl">	types_hash_max_size 2048;
+</span></span><span class="line"><span class="cl">	# server_tokens off;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	# server_names_hash_bucket_size 64;
+</span></span><span class="line"><span class="cl">	# server_name_in_redirect off;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	include /etc/nginx/mime.types;
+</span></span><span class="line"><span class="cl">	default_type application/octet-stream;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	##
+</span></span><span class="line"><span class="cl">	# SSL Settings
+</span></span><span class="line"><span class="cl">	##
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	ssl_protocols TLSv1 TLSv1.1 TLSv1.2 TLSv1.3; # Dropping SSLv3, ref: POODLE
+</span></span><span class="line"><span class="cl">	ssl_prefer_server_ciphers on;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	##
+</span></span><span class="line"><span class="cl">	# Logging Settings
+</span></span><span class="line"><span class="cl">	##
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	access_log /var/log/nginx/access.log;
+</span></span><span class="line"><span class="cl">	error_log /var/log/nginx/error.log;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	##
+</span></span><span class="line"><span class="cl">	# Gzip Settings
+</span></span><span class="line"><span class="cl">	##
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	gzip on;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	# gzip_vary on;
+</span></span><span class="line"><span class="cl">	# gzip_proxied any;
+</span></span><span class="line"><span class="cl">	# gzip_comp_level 6;
+</span></span><span class="line"><span class="cl">	# gzip_buffers 16 8k;
+</span></span><span class="line"><span class="cl">	# gzip_http_version 1.1;
+</span></span><span class="line"><span class="cl">	# gzip_types text/plain text/css application/json application/javascript text/xml application/xml application/xml+rss text/javascript;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	##
+</span></span><span class="line"><span class="cl">	# Virtual Host Configs
+</span></span><span class="line"><span class="cl">	##
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	include /etc/nginx/conf.d/*.conf;
+</span></span><span class="line"><span class="cl">	include /etc/nginx/sites-enabled/*;     # 启用的网站配置放置在此文件夹下
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="bitwarden-相关配置" class="headerLink">
+    <a href="#bitwarden-%e7%9b%b8%e5%85%b3%e9%85%8d%e7%bd%ae" class="header-mark"></a>Bitwarden 相关配置</h3><h4 id="frpsini" class="headerLink">
+    <a href="#frpsini" class="header-mark"></a>frps.ini</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">[common]
+</span></span><span class="line"><span class="cl">bind_port = xxxx                # 与本地 frpc 通信的端口
+</span></span><span class="line"><span class="cl">vhost_https_port = xxxx         # 虚拟 https 端口，需要和 nginx.conf 内一致
+</span></span><span class="line"><span class="cl">authentication_method = token
+</span></span><span class="line"><span class="cl">token = xxxxxx                  # frp 验证密钥
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="bitwarden-nginx-站点配置" class="headerLink">
+    <a href="#bitwarden-nginx-%e7%ab%99%e7%82%b9%e9%85%8d%e7%bd%ae" class="header-mark"></a>Bitwarden Nginx 站点配置</h4><p>放置在<code>/etc/nginx/sites-available/</code>下，文件与域名同名</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">## Bitwarden 配置。只负责只将 http 重定向至 https
+</span></span><span class="line"><span class="cl">## Bitwarden 的 SSL 握手交给本地服务器端的 Nginx 处理
+</span></span><span class="line"><span class="cl">server {
+</span></span><span class="line"><span class="cl">        listen 80;
+</span></span><span class="line"><span class="cl">        listen [::]:80;
+</span></span><span class="line"><span class="cl">        server_name xxx.techkoala.net;                    # Bitwarden 域名
+</span></span><span class="line"><span class="cl">        return 301 https://xxx.techkoala.net$request_uri; # Bitwarden 域名
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>链接配置文件</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">ln -s /etc/nginx/sites-available/xxx.techkoala.net /etc/nginx/sites-enabled/
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="trojan-相关配置" class="headerLink">
+    <a href="#trojan-%e7%9b%b8%e5%85%b3%e9%85%8d%e7%bd%ae" class="header-mark"></a>Trojan 相关配置</h3><h4 id="trojan-nginx-配置" class="headerLink">
+    <a href="#trojan-nginx-%e9%85%8d%e7%bd%ae" class="header-mark"></a>Trojan Nginx 配置</h4><p>放置在<code>/etc/nginx/sites-available/</code>下，文件与域名同名</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">server {
+</span></span><span class="line"><span class="cl">    listen 127.0.0.1:80 default_server;
+</span></span><span class="line"><span class="cl">    server_name xxx.techkoala.net;             # 自己的域名
+</span></span><span class="line"><span class="cl">    location / {
+</span></span><span class="line"><span class="cl">        proxy_pass https://www.digitalocean.com; # 伪装的网站
+</span></span><span class="line"><span class="cl">    }
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">server {
+</span></span><span class="line"><span class="cl">    listen 127.0.0.1:80;
+</span></span><span class="line"><span class="cl">    server_name xxx.techkoala.net;                 # 自己服务器的 IP
+</span></span><span class="line"><span class="cl">    return 301 https://xxx.techkoala.net$request_uri;  # 自己的域名
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">server {
+</span></span><span class="line"><span class="cl">    listen 0.0.0.0:80;
+</span></span><span class="line"><span class="cl">    listen [::]:80;
+</span></span><span class="line"><span class="cl">    server_name _;
+</span></span><span class="line"><span class="cl">    return 301 https://$host$request_uri;
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>链接配置文件</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">ln -s /etc/nginx/sites-available/xxx.techkoala.net /etc/nginx/sites-enabled/
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="trojan-配置文件" class="headerLink">
+    <a href="#trojan-%e9%85%8d%e7%bd%ae%e6%96%87%e4%bb%b6" class="header-mark"></a>Trojan 配置文件</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">{
+</span></span><span class="line"><span class="cl">    &#34;run_type&#34;: &#34;server&#34;,
+</span></span><span class="line"><span class="cl">    &#34;local_addr&#34;: &#34;0.0.0.0&#34;,
+</span></span><span class="line"><span class="cl">    &#34;local_port&#34;: 4443,             # 本地监听端口，与 nginx.conf 保持一致
+</span></span><span class="line"><span class="cl">    &#34;remote_addr&#34;: &#34;127.0.0.1&#34;,
+</span></span><span class="line"><span class="cl">    &#34;remote_port&#34;: 80,              # 伪装站点的端口
+</span></span><span class="line"><span class="cl">    &#34;password&#34;: [
+</span></span><span class="line"><span class="cl">        &#34;xxxxxx&#34;                    # 密钥
+</span></span><span class="line"><span class="cl">    ],
+</span></span><span class="line"><span class="cl">    &#34;log_level&#34;: 1,
+</span></span><span class="line"><span class="cl">    &#34;ssl&#34;: {
+</span></span><span class="line"><span class="cl">        &#34;cert&#34;: &#34;/usr/local/etc/ssl/certificate.crt&#34;,
+</span></span><span class="line"><span class="cl">        &#34;key&#34;: &#34;/usr/local/etc/ssl/private.key&#34;,
+</span></span><span class="line"><span class="cl">        &#34;key_password&#34;: &#34;&#34;,
+</span></span><span class="line"><span class="cl">        &#34;cipher&#34;: &#34;ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384&#34;,
+</span></span><span class="line"><span class="cl">        &#34;cipher_tls13&#34;: &#34;TLS_AES_128_GCM_SHA256:TLS_CHACHA20_POLY1305_SHA256:TLS_AES_256_GCM_SHA384&#34;,
+</span></span><span class="line"><span class="cl">        &#34;prefer_server_cipher&#34;: true,
+</span></span><span class="line"><span class="cl">        &#34;alpn&#34;: [
+</span></span><span class="line"><span class="cl">            &#34;http/1.1&#34;
+</span></span><span class="line"><span class="cl">        ],
+</span></span><span class="line"><span class="cl">        &#34;alpn_port_override&#34;: {
+</span></span><span class="line"><span class="cl">            &#34;h2&#34;: 81
+</span></span><span class="line"><span class="cl">        },
+</span></span><span class="line"><span class="cl">        &#34;reuse_session&#34;: true,
+</span></span><span class="line"><span class="cl">        &#34;session_ticket&#34;: false,
+</span></span><span class="line"><span class="cl">        &#34;session_timeout&#34;: 600,
+</span></span><span class="line"><span class="cl">        &#34;plain_http_response&#34;: &#34;&#34;,
+</span></span><span class="line"><span class="cl">        &#34;curves&#34;: &#34;&#34;,
+</span></span><span class="line"><span class="cl">        &#34;dhparam&#34;: &#34;&#34;
+</span></span><span class="line"><span class="cl">    },
+</span></span><span class="line"><span class="cl">    &#34;tcp&#34;: {
+</span></span><span class="line"><span class="cl">        &#34;prefer_ipv4&#34;: false,
+</span></span><span class="line"><span class="cl">        &#34;no_delay&#34;: true,
+</span></span><span class="line"><span class="cl">        &#34;keep_alive&#34;: true,
+</span></span><span class="line"><span class="cl">        &#34;reuse_port&#34;: false,
+</span></span><span class="line"><span class="cl">        &#34;fast_open&#34;: false,
+</span></span><span class="line"><span class="cl">        &#34;fast_open_qlen&#34;: 20
+</span></span><span class="line"><span class="cl">    },
+</span></span><span class="line"><span class="cl">    &#34;mysql&#34;: {
+</span></span><span class="line"><span class="cl">        &#34;enabled&#34;: false,
+</span></span><span class="line"><span class="cl">        &#34;server_addr&#34;: &#34;127.0.0.1&#34;,
+</span></span><span class="line"><span class="cl">        &#34;server_port&#34;: 3306,
+</span></span><span class="line"><span class="cl">        &#34;database&#34;: &#34;trojan&#34;,
+</span></span><span class="line"><span class="cl">        &#34;username&#34;: &#34;trojan&#34;,
+</span></span><span class="line"><span class="cl">        &#34;password&#34;: &#34;&#34;,
+</span></span><span class="line"><span class="cl">        &#34;key&#34;: &#34;&#34;,
+</span></span><span class="line"><span class="cl">        &#34;cert&#34;: &#34;&#34;,
+</span></span><span class="line"><span class="cl">        &#34;ca&#34;: &#34;&#34;
+</span></span><span class="line"><span class="cl">    }
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="freshrss-站点配置" class="headerLink">
+    <a href="#freshrss-%e7%ab%99%e7%82%b9%e9%85%8d%e7%bd%ae" class="header-mark"></a>FreshRSS 站点配置</h3><p>放置在<code>/etc/nginx/sites-available/</code>下，文件与域名同名</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">server {
+</span></span><span class="line"><span class="cl">        listen 80;
+</span></span><span class="line"><span class="cl">        listen [::]:80;
+</span></span><span class="line"><span class="cl">        server_name xxx.techkoala.net;
+</span></span><span class="line"><span class="cl">        return 301 https://xxx.techkoala.net$request_uri;
+</span></span><span class="line"><span class="cl">    }
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">server {
+</span></span><span class="line"><span class="cl">    listen 39955 ssl http2;          # FreshRSS 本地监听端口
+</span></span><span class="line"><span class="cl">    #===注意，nginx 1.25.1之后这里需要修改为
+</span></span><span class="line"><span class="cl">    listen 39955 ssl; 
+</span></span><span class="line"><span class="cl">    http2 on;
+</span></span><span class="line"><span class="cl">    #===
+</span></span><span class="line"><span class="cl">    server_name rss.techkoala.net;
+</span></span><span class="line"><span class="cl">    ssl_certificate /etc/letsencrypt/live/xxx.techkoala.net/fullchain.pem;
+</span></span><span class="line"><span class="cl">    ssl_certificate_key /etc/letsencrypt/live/xxx.techkoala.net/privkey.pem;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    location / {
+</span></span><span class="line"><span class="cl">       proxy_pass http://127.0.0.1:39954;   # 转发到 FreshRSS 容器映射的端口
+</span></span><span class="line"><span class="cl">    }
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>链接配置文件</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">ln -s /etc/nginx/sites-available/xxx.techkoala.net /etc/nginx/sites-enabled/
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="xray" class="headerLink">
+    <a href="#xray" class="header-mark"></a>Xray</h3><h4 id="xray-nginx-配置" class="headerLink">
+    <a href="#xray-nginx-%e9%85%8d%e7%bd%ae" class="header-mark"></a>Xray Nginx 配置</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">server {
+</span></span><span class="line"><span class="cl">        listen 80;
+</span></span><span class="line"><span class="cl">        server_name xxx.techkoala.net;
+</span></span><span class="line"><span class="cl">        if ($host = xxxx.techkoala.net) {
+</span></span><span class="line"><span class="cl">                return 301 https://$host$request_uri;
+</span></span><span class="line"><span class="cl">        }
+</span></span><span class="line"><span class="cl">        return 404;
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">server {
+</span></span><span class="line"><span class="cl">        listen 127.0.0.1:23333;
+</span></span><span class="line"><span class="cl">        server_name xxxx.techkoala.net;
+</span></span><span class="line"><span class="cl">        location / {
+</span></span><span class="line"><span class="cl">                proxy_pass https://www.digitalocean.com; # 伪装的网站
+</span></span><span class="line"><span class="cl">        }
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="xray-配置" class="headerLink">
+    <a href="#xray-%e9%85%8d%e7%bd%ae" class="header-mark"></a>Xray 配置</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">{
+</span></span><span class="line"><span class="cl">    &#34;log&#34;: {
+</span></span><span class="line"><span class="cl">        &#34;loglevel&#34;: &#34;warning&#34;
+</span></span><span class="line"><span class="cl">    },
+</span></span><span class="line"><span class="cl">    &#34;inbounds&#34;: [
+</span></span><span class="line"><span class="cl">        {
+</span></span><span class="line"><span class="cl">            &#34;listen&#34;: &#34;127.0.0.1&#34;, # 仅监听在本地防止探测到下面的 8443 端口
+</span></span><span class="line"><span class="cl">            &#34;port&#34;: 8443, # 这里的端口对应 nginx 主配置文件内的 upstream 端口
+</span></span><span class="line"><span class="cl">            &#34;protocol&#34;: &#34;vless&#34;,
+</span></span><span class="line"><span class="cl">            &#34;settings&#34;: {
+</span></span><span class="line"><span class="cl">                &#34;clients&#34;: [
+</span></span><span class="line"><span class="cl">                    {
+</span></span><span class="line"><span class="cl">                        &#34;id&#34;: &#34;7f46753a-6a4b-4284-94c0-760340f96f1e&#34;, # 填写你的UUID
+</span></span><span class="line"><span class="cl">                        &#34;flow&#34;: &#34;xtls-rprx-direct&#34;,
+</span></span><span class="line"><span class="cl">                        &#34;level&#34;: 0
+</span></span><span class="line"><span class="cl">                    }
+</span></span><span class="line"><span class="cl">                ],
+</span></span><span class="line"><span class="cl">                &#34;decryption&#34;: &#34;none&#34;,
+</span></span><span class="line"><span class="cl">                &#34;fallbacks&#34;: [
+</span></span><span class="line"><span class="cl">                    {
+</span></span><span class="line"><span class="cl">                        &#34;dest&#34;: &#34;23333&#34; # 回落站点的端口号，与 Xray Nginx 配置一致
+</span></span><span class="line"><span class="cl">                    }
+</span></span><span class="line"><span class="cl">                 ]
+</span></span><span class="line"><span class="cl">            },
+</span></span><span class="line"><span class="cl">            &#34;streamSettings&#34;: {
+</span></span><span class="line"><span class="cl">                &#34;network&#34;: &#34;tcp&#34;,
+</span></span><span class="line"><span class="cl">                &#34;security&#34;: &#34;xtls&#34;,
+</span></span><span class="line"><span class="cl">                &#34;xtlsSettings&#34;: {
+</span></span><span class="line"><span class="cl">                    &#34;alpn&#34;: [
+</span></span><span class="line"><span class="cl">                        &#34;http/1.1&#34;
+</span></span><span class="line"><span class="cl">                    ],
+</span></span><span class="line"><span class="cl">                    &#34;certificates&#34;: [
+</span></span><span class="line"><span class="cl">                        {
+</span></span><span class="line"><span class="cl">                            &#34;certificateFile&#34;: &#34;/usr/local/etc/ssl/fullchain.pem&#34;, # 你的域名证书
+</span></span><span class="line"><span class="cl">                            &#34;keyFile&#34;: &#34;/usr/local/etc/ssl/privkey.pem&#34; # 你的证书私钥
+</span></span><span class="line"><span class="cl">                        }
+</span></span><span class="line"><span class="cl">                    ]
+</span></span><span class="line"><span class="cl">                }
+</span></span><span class="line"><span class="cl">            }
+</span></span><span class="line"><span class="cl">        }
+</span></span><span class="line"><span class="cl">    ],
+</span></span><span class="line"><span class="cl">    &#34;outbounds&#34;: [
+</span></span><span class="line"><span class="cl">        {
+</span></span><span class="line"><span class="cl">            &#34;protocol&#34;: &#34;freedom&#34;
+</span></span><span class="line"><span class="cl">        }
+</span></span><span class="line"><span class="cl">    ]
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="防火墙设置" class="headerLink">
+    <a href="#%e9%98%b2%e7%81%ab%e5%a2%99%e8%ae%be%e7%bd%ae" class="header-mark"></a>防火墙设置</h2><p>上述操作后，服务器需要打开<code>80</code>,<code>443</code>,<code>xxx</code>（frp 通信端口）</p>]]></description>
+</item></channel>
+</rss>

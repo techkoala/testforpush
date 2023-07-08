@@ -1,0 +1,356 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>Router - 标签 - TechKoala - Input/Output</title>
+        <link>https://www.techkoala.net/tags/router/</link>
+        <description>Router - 标签 - TechKoala - Input/Output</description>
+        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>admin@techkoala.net (TechKoala)</managingEditor>
+            <webMaster>admin@techkoala.net (TechKoala)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Fri, 29 Jan 2021 20:36:35 &#43;0800</lastBuildDate><atom:link href="https://www.techkoala.net/tags/router/" rel="self" type="application/rss+xml" /><item>
+    <title>OpenWRT 使用 dnscrypt-proxy2 实现 DoH 查询及分流</title>
+    <link>https://www.techkoala.net/openwrt_doh/</link>
+    <pubDate>Fri, 29 Jan 2021 20:36:35 &#43;0800</pubDate><author>
+        <name>TechKoala</name>
+    </author><guid>https://www.techkoala.net/openwrt_doh/</guid>
+    <description><![CDATA[<blockquote>
+<p>OpenWRT 默认并不支持 DoH 或 DoT，存在 DNS 泄露问题，本文介绍如何 dnscrypt-proxy2 进行加密查询，以及如何与上网插件进行搭配使用</p>
+</blockquote>
+<h2 id="安裝-dnscrypt-proxy2" class="headerLink">
+    <a href="#%e5%ae%89%e8%a3%9d-dnscrypt-proxy2" class="header-mark"></a>安裝 dnscrypt-proxy2</h2><p>如果使用 OpenWrt 19.07+版本，那么直接使用 opkg 即可完成安装，命令如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">opkg update
+</span></span><span class="line"><span class="cl">opkg install dnscrypt-proxy2
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>不过，版本可能不是最新，如果需要最新版本可以自行编译。</p>
+<h2 id="配置" class="headerLink">
+    <a href="#%e9%85%8d%e7%bd%ae" class="header-mark"></a>配置</h2><p>基本使用只需要</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">vim /etc/dnscrypt-proxy2/dnscrypt-proxy.toml
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>修改</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">listen_addresses = [&#39;127.0.0.1:5335&#39;]
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">server_names = [&#39;google&#39;, &#39;cloudflare&#39;]
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>即可</p>
+<p>软件已经内置了常见的 DoH/DoT 服务器了，因此只需要填入名称即可</p>
+<p>然后</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">/etc/init.d/dnscrypt-proxy restart
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>重启软件，dnscrypt-proxy2 就会监听在 5335 这个端口了。</p>
+<h2 id="分流搭配-ssr" class="headerLink">
+    <a href="#%e5%88%86%e6%b5%81%e6%90%ad%e9%85%8d-ssr" class="header-mark"></a>分流（搭配 SSR+）</h2><ol>
+<li>SSR+ 使用大陆 IP 白名单 并使用 5335 的 DNS 解析的方式</li>
+<li>dnscyrpt-proxy2 配置监听在 5335，仅使用 DoH 协议向 <code>Cloudflare/Google</code> 服务器查询（这些 <code>Https</code> 的查询请求全部会被 SSR+ 代理转发）</li>
+<li>iptables 劫持所有目标为 53 端口的流量到路由器的 53 端口（默认）</li>
+<li>53 端口使用默认的 <code>dnsmasq</code> 作为 <code>DNS</code> 服务，上游设置为 <code>127.0.0.1#5335</code>，配置文件<code>/etc/dnsmasq.conf</code>最后添加 <code>conf-dir=/etc/dnsmasq.d</code></li>
+<li>在<code>/etc/dnsmasq.d/</code>(如无则新建）中放入<code>https://github.com/felixonmars/dnsmasq-china-list/blob/master/accelerated-domains.china.conf</code></li>
+</ol>
+<p>这样实现了凡是大陆的和在大陆有 cdn 的以及返回 AAAA 记录的域名全部直连查询并直连访问，其余的全部走代理查询，且结果在大陆以外的走代理访问（IP+域名的双白名单机制）</p>
+<h2 id="参考" class="headerLink">
+    <a href="#%e5%8f%82%e8%80%83" class="header-mark"></a>参考</h2><ul>
+<li>
+<p>[1] <a href="https://github.com/coolsnowwolf/lede/issues/2551" target="_blank" rel="noopener noreferrer">lede</a></p>
+</li>
+<li>
+<p>[2] <a href="https://github.com/DNSCrypt/dnscrypt-proxy/wiki/Installation-on-OpenWrt" target="_blank" rel="noopener noreferrer">Installation on OpenWrt</a></p>
+</li>
+</ul>]]></description>
+</item><item>
+    <title>OpenWRT overlay 空间扩容</title>
+    <link>https://www.techkoala.net/openwrt_resize/</link>
+    <pubDate>Fri, 09 Oct 2020 15:57:29 &#43;0800</pubDate><author>
+        <name>TechKoala</name>
+    </author><guid>https://www.techkoala.net/openwrt_resize/</guid>
+    <description><![CDATA[<blockquote>
+<p>安装 AdguardHome 运行几天后，可怜的剩余空间被日志耗尽，不得不对 OpenWRT overlay 进行扩容，本文对此进行了记录</p>
+</blockquote>
+<h2 id="什么是-overlay" class="headerLink">
+    <a href="#%e4%bb%80%e4%b9%88%e6%98%af-overlay" class="header-mark"></a>什么是 overlay</h2><p><code>OpenWRT</code> 一般使用的文件系统是 <code>SquashFS</code> ，这个文件系统的特点就是：<strong>只读</strong>。</p>
+<p>一个只读的文件系统要怎么做到保存设置和安装软件的呢？这里就是使用 <code>/overlay</code> 的分区，<code>overlay</code> 顾名思义就是覆盖在上面一层的意思。虽然原来的文件不能修改，但把修改的部分放在 <code>overlay</code> 分区上，然后映射到原来的位置，读取的时候就可以读到修改过的文件了。</p>
+<p>为什么要用这么复杂的方法呢？ <code>OpenWRT</code> 当然也可以使用 <code>EXT4</code> 文件系统，但使用 <code>SquashFS + overlay</code> 的方式有一定的优点。</p>
+<ul>
+<li><code>SquashFS</code> 是经过压缩的，在路由器这种小型 <code>ROM</code> 的设备可以放下更多的东西。</li>
+<li><code>OpenWRT</code> 的恢复出厂设置也要依赖于这个方式。在你重置的时候，它只需要把 <code>overlay</code> 分区清空就可以了，一切都回到了刚刷进去的样子。</li>
+</ul>
+<p>如果是 <code>EXT4</code> 文件系统，就只能够备份每个修改的文件，在恢复出厂设置的时候复制回来，十分复杂。</p>
+<p>当然，<code>SquashFS + overlay</code> 也有它的缺点：</p>
+<ul>
+<li>修改文件的时候会占用更多的空间。首先你不能够删除文件，因为删除文件实际上是在 <code>overlay</code> 分区中写入一个删除的标识，反而占用更多的空间。</li>
+<li>另外在修改文件的时候相当于增加了一份文件的副本，占用了双份的空间。</li>
+</ul>
+<figure><a class="lightgallery" href="/images/Network/OpenWRT_overlay/overlay.webp" title="/images/Network/OpenWRT_overlay/overlay.webp" data-thumbnail="/images/Network/OpenWRT_overlay/overlay.webp" data-sub-html="<h2>overlay 示意图</h2>">
+        <img
+            
+            loading="lazy"
+            src="/images/Network/OpenWRT_overlay/overlay.webp"
+            srcset="/images/Network/OpenWRT_overlay/overlay.webp, /images/Network/OpenWRT_overlay/overlay.webp 1.5x, /images/Network/OpenWRT_overlay/overlay.webp 2x"
+            sizes="auto"
+            alt="/images/Network/OpenWRT_overlay/overlay.webp">
+    </a><figcaption class="image-caption">overlay 示意图</figcaption>
+    </figure>
+<h2 id="创建新分区" class="headerLink">
+    <a href="#%e5%88%9b%e5%bb%ba%e6%96%b0%e5%88%86%e5%8c%ba" class="header-mark"></a>创建新分区</h2><p>首先，需要创建一个新的分区，这里使用的是 <code>cfdisk</code></p>
+<p>如果此前没有安装，首先使用下列命令进行安装：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">opkg update
+</span></span><span class="line"><span class="cl">opkg install cfdisk
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>然后输入</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">cfdisk
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>打开磁盘管理界面：</p>
+<figure><a class="lightgallery" href="/images/Network/OpenWRT_overlay/cfdisk.webp" title="/images/Network/OpenWRT_overlay/cfdisk.webp" data-thumbnail="/images/Network/OpenWRT_overlay/cfdisk.webp" data-sub-html="<h2>磁盘界面</h2>">
+        <img
+            
+            loading="lazy"
+            src="/images/Network/OpenWRT_overlay/cfdisk.webp"
+            srcset="/images/Network/OpenWRT_overlay/cfdisk.webp, /images/Network/OpenWRT_overlay/cfdisk.webp 1.5x, /images/Network/OpenWRT_overlay/cfdisk.webp 2x"
+            sizes="auto"
+            alt="/images/Network/OpenWRT_overlay/cfdisk.webp">
+    </a><figcaption class="image-caption">磁盘界面</figcaption>
+    </figure>
+<p>这里可以看到，目前一共有两个已有分区，现在新建一个分区：</p>
+<p>选中 <code>Free Space</code>，再选中 <code>New</code>，输入需要的大小，比如 5G。</p>
+<p>接着选择 <code>primary</code></p>
+<figure><a class="lightgallery" href="/images/Network/OpenWRT_overlay/primary.webp" title="/images/Network/OpenWRT_overlay/primary.webp" data-thumbnail="/images/Network/OpenWRT_overlay/primary.webp" data-sub-html="<h2>选择主分区</h2>">
+        <img
+            
+            loading="lazy"
+            src="/images/Network/OpenWRT_overlay/primary.webp"
+            srcset="/images/Network/OpenWRT_overlay/primary.webp, /images/Network/OpenWRT_overlay/primary.webp 1.5x, /images/Network/OpenWRT_overlay/primary.webp 2x"
+            sizes="auto"
+            alt="/images/Network/OpenWRT_overlay/primary.webp">
+    </a><figcaption class="image-caption">选择主分区</figcaption>
+    </figure>
+<p>选择 <code>Write</code>
+<figure><a class="lightgallery" href="/images/Network/OpenWRT_overlay/write.webp" title="/images/Network/OpenWRT_overlay/write.webp" data-thumbnail="/images/Network/OpenWRT_overlay/write.webp" data-sub-html="<h2>写入更改</h2>">
+        <img
+            
+            loading="lazy"
+            src="/images/Network/OpenWRT_overlay/write.webp"
+            srcset="/images/Network/OpenWRT_overlay/write.webp, /images/Network/OpenWRT_overlay/write.webp 1.5x, /images/Network/OpenWRT_overlay/write.webp 2x"
+            sizes="auto"
+            alt="/images/Network/OpenWRT_overlay/write.webp">
+    </a><figcaption class="image-caption">写入更改</figcaption>
+    </figure></p>
+<p>输入 <code>yes</code>，完成新分区的创建</p>
+<figure><a class="lightgallery" href="/images/Network/OpenWRT_overlay/yes.webp" title="/images/Network/OpenWRT_overlay/yes.webp" data-thumbnail="/images/Network/OpenWRT_overlay/yes.webp" data-sub-html="<h2>确认</h2>">
+        <img
+            
+            loading="lazy"
+            src="/images/Network/OpenWRT_overlay/yes.webp"
+            srcset="/images/Network/OpenWRT_overlay/yes.webp, /images/Network/OpenWRT_overlay/yes.webp 1.5x, /images/Network/OpenWRT_overlay/yes.webp 2x"
+            sizes="auto"
+            alt="/images/Network/OpenWRT_overlay/yes.webp">
+    </a><figcaption class="image-caption">确认</figcaption>
+    </figure>
+<h2 id="格式化分区" class="headerLink">
+    <a href="#%e6%a0%bc%e5%bc%8f%e5%8c%96%e5%88%86%e5%8c%ba" class="header-mark"></a>格式化分区</h2><p>使用命令：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">mkfs.ext4 /dev/sda3
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>格式化分区</p>
+<figure><a class="lightgallery" href="/images/Network/OpenWRT_overlay/format.webp" title="/images/Network/OpenWRT_overlay/format.webp" data-thumbnail="/images/Network/OpenWRT_overlay/format.webp" data-sub-html="<h2>格式化分区</h2>">
+        <img
+            
+            loading="lazy"
+            src="/images/Network/OpenWRT_overlay/format.webp"
+            srcset="/images/Network/OpenWRT_overlay/format.webp, /images/Network/OpenWRT_overlay/format.webp 1.5x, /images/Network/OpenWRT_overlay/format.webp 2x"
+            sizes="auto"
+            alt="/images/Network/OpenWRT_overlay/format.webp">
+    </a><figcaption class="image-caption">格式化分区</figcaption>
+    </figure>
+<h2 id="挂载新分区" class="headerLink">
+    <a href="#%e6%8c%82%e8%bd%bd%e6%96%b0%e5%88%86%e5%8c%ba" class="header-mark"></a>挂载新分区</h2><p>使用命令：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">mount /dev/sda3 /mnt/sda3
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>挂载分区</p>
+<h2 id="转移到新分区" class="headerLink">
+    <a href="#%e8%bd%ac%e7%a7%bb%e5%88%b0%e6%96%b0%e5%88%86%e5%8c%ba" class="header-mark"></a>转移到新分区</h2><p>然后将原来 <code>upper</code> 层中的数据复制到新的分区中：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">cp -r /overlay/* /mnt/sda3
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="web-界面配置修改" class="headerLink">
+    <a href="#web-%e7%95%8c%e9%9d%a2%e9%85%8d%e7%bd%ae%e4%bf%ae%e6%94%b9" class="header-mark"></a>Web 界面配置修改</h2><p>进入 <code>OpenWRT</code> Web 界面的<code>挂载点</code>对配置进行修改：</p>
+<figure><a class="lightgallery" href="/images/Network/OpenWRT_overlay/openwrt.webp" title="/images/Network/OpenWRT_overlay/openwrt.webp" data-thumbnail="/images/Network/OpenWRT_overlay/openwrt.webp" data-sub-html="<h2>Web 界面</h2>">
+        <img
+            
+            loading="lazy"
+            src="/images/Network/OpenWRT_overlay/openwrt.webp"
+            srcset="/images/Network/OpenWRT_overlay/openwrt.webp, /images/Network/OpenWRT_overlay/openwrt.webp 1.5x, /images/Network/OpenWRT_overlay/openwrt.webp 2x"
+            sizes="auto"
+            alt="/images/Network/OpenWRT_overlay/openwrt.webp">
+    </a><figcaption class="image-caption">Web 界面</figcaption>
+    </figure>
+<p>在<code>挂载点</code>下方点击<code>添加</code>，然后如下配置：</p>
+<figure><a class="lightgallery" href="/images/Network/OpenWRT_overlay/mountpoint.webp" title="/images/Network/OpenWRT_overlay/mountpoint.webp" data-thumbnail="/images/Network/OpenWRT_overlay/mountpoint.webp" data-sub-html="<h2>挂载点配置</h2>">
+        <img
+            
+            loading="lazy"
+            src="/images/Network/OpenWRT_overlay/mountpoint.webp"
+            srcset="/images/Network/OpenWRT_overlay/mountpoint.webp, /images/Network/OpenWRT_overlay/mountpoint.webp 1.5x, /images/Network/OpenWRT_overlay/mountpoint.webp 2x"
+            sizes="auto"
+            alt="/images/Network/OpenWRT_overlay/mountpoint.webp">
+    </a><figcaption class="image-caption">挂载点配置</figcaption>
+    </figure>
+<h2 id="完成" class="headerLink">
+    <a href="#%e5%ae%8c%e6%88%90" class="header-mark"></a>完成</h2><p>到这一步，只需要重启 <code>OpenWRT</code> 即可成功扩容。</p>
+<p>重启后到 <code>系统 -&gt; 软件包</code> 可以看到变大后的空间容量。</p>
+<h2 id="自动挂载" class="headerLink">
+    <a href="#%e8%87%aa%e5%8a%a8%e6%8c%82%e8%bd%bd" class="header-mark"></a>自动挂载</h2><p>分区默认会在 <code>OpenWRT</code> 重启后会自动挂载，如果遇到没有挂载的情况，需要编辑 <code>/etc/rc.local</code></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">vim /etc/rc.local
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>在 <code>exit 0</code> 之前加入一行 <code>mount /dev/sda3 /overlay</code> 即可。</p>
+<h2 id="参考" class="headerLink">
+    <a href="#%e5%8f%82%e8%80%83" class="header-mark"></a>参考</h2><ul>
+<li>
+<p>[1] <a href="https://blog.msm.moe/mount-sd-card-to-overlay-on-openwrt/" target="_blank" rel="noopener noreferrer">OpenWrt 下把 SD 卡挂载到 /overlay ，扩大软件空间</a></p>
+</li>
+<li>
+<p>[2] <a href="https://www.jianshu.com/p/8179b19cfa6d" target="_blank" rel="noopener noreferrer">软路由 LEDE 折腾 overlay 分区扩容之路</a></p>
+</li>
+<li>
+<p>[3] <a href="https://www.vediotalk.com/archives/13889" target="_blank" rel="noopener noreferrer">ESXI 下 OpenWrt 扩容 Overlay,增加安装插件空间</a></p>
+</li>
+</ul>]]></description>
+</item><item>
+    <title>单独编译 OpenWRT ipk 插件</title>
+    <link>https://www.techkoala.net/openwrt_compile_single_ipk/</link>
+    <pubDate>Fri, 09 Oct 2020 15:57:29 &#43;0800</pubDate><author>
+        <name>TechKoala</name>
+    </author><guid>https://www.techkoala.net/openwrt_compile_single_ipk/</guid>
+    <description><![CDATA[<blockquote>
+<p>本文介绍如何单独编译 OpenWRT 的 ipk 插件</p>
+</blockquote>
+<div class="details admonition info open">
+        <div class="details-summary admonition-title">
+            <i class="icon fas fa-info-circle fa-fw"></i>说明<i class="details-icon fas fa-angle-right fa-fw"></i>
+        </div>
+        <div class="details-content">
+            <div class="admonition-content">必须首先完整编译一次固件才能单独编译 ipk</div>
+        </div>
+    </div>
+<p>当需要单独更新 OpenWRT 某个插件或者需要增加安装某个插件的时候，可以单独编译对应的 ipk 插件进行安装，而不必编译整个系统。</p>
+<h3 id="下载源码" class="headerLink">
+    <a href="#%e4%b8%8b%e8%bd%bd%e6%ba%90%e7%a0%81" class="header-mark"></a>下载源码</h3><p>使用 <code>git clone</code> 对应的源码插件到下面的文件夹中</p>
+<h3 id="存放路径" class="headerLink">
+    <a href="#%e5%ad%98%e6%94%be%e8%b7%af%e5%be%84" class="header-mark"></a>存放路径</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">~/lede/package
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="配置" class="headerLink">
+    <a href="#%e9%85%8d%e7%bd%ae" class="header-mark"></a>配置</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">make menuconfig
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>然后进入对应的子菜单中找到对应插件按 <M> 表示选中插件，但不编译进固件。</p>
+<h3 id="编译" class="headerLink">
+    <a href="#%e7%bc%96%e8%af%91" class="header-mark"></a>编译</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">make package/xxxxx/compile <span class="nv">V</span><span class="o">=</span><span class="m">99</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>xxxxx 就是你需要单独编译的程序。</p>
+<h3 id="ipk-生成路径" class="headerLink">
+    <a href="#ipk-%e7%94%9f%e6%88%90%e8%b7%af%e5%be%84" class="header-mark"></a>ipk 生成路径</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">~/lede/bin/packages/x86_64/xxxx
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="上传-ipk-至路由器" class="headerLink">
+    <a href="#%e4%b8%8a%e4%bc%a0-ipk-%e8%87%b3%e8%b7%af%e7%94%b1%e5%99%a8" class="header-mark"></a>上传 ipk 至路由器</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">scp xxxxxxx.ipk root@192.168.1.1:/tmp
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="安装" class="headerLink">
+    <a href="#%e5%ae%89%e8%a3%85" class="header-mark"></a>安装</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">opkg install /tmp/xxxxx.ipk
+</span></span></code></pre></td></tr></table>
+</div>
+</div>]]></description>
+</item></channel>
+</rss>

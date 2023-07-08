@@ -1,0 +1,1252 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>LTE - 标签 - TechKoala - Input/Output</title>
+        <link>https://www.techkoala.net/tags/lte/</link>
+        <description>LTE - 标签 - TechKoala - Input/Output</description>
+        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>admin@techkoala.net (TechKoala)</managingEditor>
+            <webMaster>admin@techkoala.net (TechKoala)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Mon, 02 Nov 2020 21:16:56 &#43;0800</lastBuildDate><atom:link href="https://www.techkoala.net/tags/lte/" rel="self" type="application/rss+xml" /><item>
+    <title>LTE 系列：功率控制</title>
+    <link>https://www.techkoala.net/lte_power_control/</link>
+    <pubDate>Mon, 02 Nov 2020 21:16:56 &#43;0800</pubDate><author>
+        <name>TechKoala</name>
+    </author><guid>https://www.techkoala.net/lte_power_control/</guid>
+    <description><![CDATA[<blockquote>
+<p>LTE 功率控制</p>
+</blockquote>
+<h2 id="功率控制" class="headerLink">
+    <a href="#%e5%8a%9f%e7%8e%87%e6%8e%a7%e5%88%b6" class="header-mark"></a>功率控制</h2><p>针对上行和下行信号的发送特点，物理层定义了相应的功率控制的机制。</p>
+<ul>
+<li>
+<p>对于上行信号，终端的功率控制在<strong>节能</strong>和<strong>抑制用户间干扰</strong>的方面具有重要意义，所以，相应的采用<strong>闭环功率控制</strong>的方式，控制终端在上行单载波符号上的发送功率。</p>
+</li>
+<li>
+<p>对于下行信号，基站合理的功率分配和相互之间的协调能够<strong>抑制小区间的干扰</strong>，提高组网的系统性能，所以，相应的采用<strong>开环功率分配</strong>的机制，控制基站在下行各个子载波上的发送功率。</p>
+</li>
+</ul>
+<h3 id="上行功率控制" class="headerLink">
+    <a href="#%e4%b8%8a%e8%a1%8c%e5%8a%9f%e7%8e%87%e6%8e%a7%e5%88%b6" class="header-mark"></a>上行功率控制</h3><p>上行功率控制以<strong>各个终端为单位</strong>，控制终端到达基站的接收功率，使得不同距离的用户都能以适当的功率到达基站，<strong>避免远近效应</strong>。物理层上行采用<strong>部分功率控制</strong>（Fractional Power Control）结合<strong>闭环功率控制</strong>的方案，对无线链路的大尺度衰落和小尺度衰落进行补偿。</p>
+<p>在子帧 i，终端 <code>PUSCH</code> 信道的发射功率可以表示为：</p>
+<center>$P_{PUSCH}(i)=min\{P_{CMAX},10log_{10}(M_{PUSCH}(i))+P_{O_{PUSCH}} (j)+α(j)·PL+∆TF (i)+f(i)\}[dBm]$</center>
+<p>其中：</p>
+<ul>
+<li>$P_{CMAX}$ 表示终端的最大发射功率</li>
+<li>$M_{PUSCH}(i)$ 表示 <code>PUSCH</code> 的传输带宽（RB 数目）</li>
+<li>$PL$ 是终端测量得到的下行大尺度损耗</li>
+<li>$∆TF (i)$ 表示由调制编码方式和数据类型（控制信息或者数据信息）所确定的功率偏移量。</li>
+<li>$KS＝1.25$ 或者 0，表示是否针对不同的调制方式进行补偿</li>
+<li>$f(i)$ 是由终端闭环功率控制所形成的调整值。它的数值根据 <code>PDCCH Format0/3/3A</code> 上的功率控制命令进行调整</li>
+</ul>
+<p>物理层有两种闭环功率控制类型：</p>
+<ul>
+<li><strong>累计型（accumulation）</strong></li>
+<li><strong>绝对值型（absolute）</strong></li>
+</ul>
+<p>与上行数据调度相类似</p>
+<ul>
+<li>在 <code>FDD</code> 情况下，<code>PDCCH Format 0/3/3A</code> 功率控制命令和相应的 <code>PUSCH</code> 发送之间的时延是 4ms</li>
+<li>在 <code>TDD</code> 情况下，该时延的数值根据上下行时间分配比例的不同而有所不同</li>
+</ul>
+<p>与功率控制相结合，可以通过小区之间交换干扰情况的信息，进行协调的调度，抑制小区间的同频干扰，小区间 X2 接口上交互的信息有两种：</p>
+<ul>
+<li><strong>过载指示（Overload Indicator，OI）</strong>：指示本小区每个 <code>PRB</code> 上受到的上行干扰情况。相邻小区通过交换该消息了解对方目前的负载情况，并进行适当的调整</li>
+<li><strong>干扰指示（High Interference Indicator，HII）</strong>：指示本小区每个 PRB 对于上行干扰的敏感度情况。该消息反映了本小区的调度安排，相邻小区通过交换该信息了解对方将要采用的调度安排，并进行适当的调整以实现协调的调度。</li>
+</ul>
+<h3 id="下行功率分配" class="headerLink">
+    <a href="#%e4%b8%8b%e8%a1%8c%e5%8a%9f%e7%8e%87%e5%88%86%e9%85%8d" class="header-mark"></a>下行功率分配</h3><p>下行功率分配以每个 <code>RE</code> 为单位，控制基站在<strong>各个时刻各个子载波</strong>上的发射功率。</p>
+<p>下行功率分配中包括了</p>
+<ul>
+<li>提高导频信号的发射功率（即 power boosting）</li>
+<li>用户调度相结合实现小区间干扰抑制的相关机制</li>
+</ul>
+<p>小区公用导频信号（CRS）在频率上和时间上采用<strong>恒定</strong>的发射功率，基站通过高层信令指示该发射功率的数值，在接收端，终端通过测量该信号的平均接收功率并与信令指示的发射功率进行比较，获得<strong>大尺度衰落</strong>的数值。</p>
+<p>下行共享信道 <code>PDSCH</code> 的发射功率表示为 <code>PDSCH RE</code> 与 <code>CRS RE</code> 的功率比值，即 $ρA$ 和 $ρB$ 。其中</p>
+<ul>
+<li>$ρA$ 表示时隙内<strong>不带有</strong> <code>CRS</code> 导频信号的 <code>OFDM</code> 符号上（例如：2 天线、<code>Normal CP</code> 的情况下，时隙内的第 1、2、3、5、6 个 <code>OFDM</code> 符号），<code>PDSCH RE</code> 与 <code>CRS RE</code> 的功率比值</li>
+<li>$ρB$ 表示时隙内<strong>带有</strong> <code>CRS</code> 导频信号的 <code>OFDM</code> 符号上（例如：2 天线、<code>Normal CP</code> 的情况下，时隙内第 0、4 个 <code>OFDM</code> 符号），<code>PDSCH RE</code> 与 <code>CRS RE</code> 的功率比值</li>
+</ul>
+<h4 id="提高-crs-导频信号的发射功率即-power-boosting" class="headerLink">
+    <a href="#%e6%8f%90%e9%ab%98-crs-%e5%af%bc%e9%a2%91%e4%bf%a1%e5%8f%b7%e7%9a%84%e5%8f%91%e5%b0%84%e5%8a%9f%e7%8e%87%e5%8d%b3-power-boosting" class="header-mark"></a>提高 CRS 导频信号的发射功率（即 power boosting）</h4><p>小区通过高层信令指示 $\frac{ρB}{ρA}$，通过不同的比值可以设置导频信号在基站总功率中不同的开销比例，由此实现了不同程度地提高 <code>CRS</code> 导频信号发射功率的功能。</p>
+<blockquote>
+<p>例：以发射天线数目等于 2 为例，支持 4 种不同的小区配置 $\frac{ρB}{ρA}=[\frac{5}{4},1,\frac{3}{4},\frac{1}{2}]$，分别对应于导频占总功率开销为$[\frac{1}{6}，\frac{1}{3}，\frac{3}{6}，\frac{2}{3}]$的情况。</p>
+<p>下图表示了 $\frac{ρB}{ρA} =1$ 和 $\frac{ρB}{ρA} =\frac{1}{2}$ 时天线端口 #0 的信号功率情况，分别实现了导频信号以 3dB 和 9dB 高于同一 <code>OFDM</code> 符号中数据元素的发送功率。</p>
+<figure><a class="lightgallery" href="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_43.webp" title="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_43.webp" data-thumbnail="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_43.webp" data-sub-html="<h2>两种情况下天线端口 #0 的信号功率</h2>">
+        <img
+            
+            loading="lazy"
+            src="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_43.webp"
+            srcset="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_43.webp, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_43.webp 1.5x, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_43.webp 2x"
+            sizes="auto"
+            alt="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_43.webp">
+    </a><figcaption class="image-caption">两种情况下天线端口 #0 的信号功率</figcaption>
+    </figure>
+</blockquote>
+<h4 id="用户功率分配和小区间干扰协调" class="headerLink">
+    <a href="#%e7%94%a8%e6%88%b7%e5%8a%9f%e7%8e%87%e5%88%86%e9%85%8d%e5%92%8c%e5%b0%8f%e5%8c%ba%e9%97%b4%e5%b9%b2%e6%89%b0%e5%8d%8f%e8%b0%83" class="header-mark"></a>用户功率分配和小区间干扰协调</h4><p>在指示 $\frac{ρB}{ρA}$ 的基础上，通过高层参数 $P_A$ 可以确定 $ρA$ 的具体数值，得到基站下行针对用户的 <code>PDSCH</code> 发射功率，该信息将用于 <code>16QAM</code>、<code>64QAM</code> 和 <code>MU-MIMO</code> 等需要幅度信息的检测过程。$P_A$ 和 $ρA$ 的数值关系是</p>
+<center>$ρ_A =δ_{power-offset} +P_A$</center>
+<p>其中 $δ_{power-offset}$ 用于 <code>MU-MIMO</code> 的场景，例如 $δ_{power-offset} =−3dB$ 可以表示功率平均分配给两个用户的情况。</p>
+<h2 id="参考" class="headerLink">
+    <a href="#%e5%8f%82%e8%80%83" class="header-mark"></a>参考</h2><ul>
+<li>[1] LTE-Advanced 关键技术详解</li>
+</ul>]]></description>
+</item><item>
+    <title>LTE 系列：物理信号</title>
+    <link>https://www.techkoala.net/lte_physical_signals/</link>
+    <pubDate>Thu, 20 Feb 2020 21:02:32 &#43;0800</pubDate><author>
+        <name>TechKoala</name>
+    </author><guid>https://www.techkoala.net/lte_physical_signals/</guid>
+    <description><![CDATA[<blockquote>
+<p>LTE 物理信号详解</p>
+</blockquote>
+<h2 id="导频信号" class="headerLink">
+    <a href="#%e5%af%bc%e9%a2%91%e4%bf%a1%e5%8f%b7" class="header-mark"></a>导频信号</h2><h3 id="下行导频信号" class="headerLink">
+    <a href="#%e4%b8%8b%e8%a1%8c%e5%af%bc%e9%a2%91%e4%bf%a1%e5%8f%b7" class="header-mark"></a>下行导频信号</h3><p>物理层定义了 3 种下行导频信号（Reference Signal，RS），包括：</p>
+<ul>
+<li>
+<p><strong>普通子帧的小区导频信号（Cell-specific RS，CRS）</strong></p>
+<p>指的是小区在下行<strong>普通子帧</strong>中<strong>全频带广播发送</strong>的导频信号，该信号以<strong>小区为单位</strong>，可以作为小区内用户进行<strong>下行测量</strong>、<strong>同步</strong>以及<strong>数据解调</strong>的参考符号</p>
+</li>
+<li>
+<p><strong>MBSFN 导频信号</strong></p>
+<p>指的是小区在下行 <strong>MBSFN 子帧</strong>中<strong>全频带广播发送</strong>的导频符号，该信号以 <strong>MBSFN 小区</strong>或<strong>小区集合为单位</strong>，可以用作对<strong>广播／多播（Malticast/Broadcast）业务情况下的下行测量</strong>、<strong>同步</strong>以及<strong>数据解调</strong>的参考符号</p>
+</li>
+<li>
+<p><strong>用户专用导频信号（UE-specific RS，又称为 DRS，Dedicated RS）</strong></p>
+<p>指的是小区在下行<strong>普通子帧</strong>中发送的<strong>用户专用</strong>的导频信号，该信号以<strong>用户为单位</strong>，通过高层信令指示是否发送了该信号并且用作<strong>用户下行数据解调</strong>的参考符号。DRS 仅在承载该用户数据的资源块上传输。</p>
+</li>
+</ul>
+<h4 id="导频序列" class="headerLink">
+    <a href="#%e5%af%bc%e9%a2%91%e5%ba%8f%e5%88%97" class="header-mark"></a>导频序列</h4><p>使用 <code>gold 序列</code> 生成的<code>伪随机（PN）序列</code>作为物理层下行导频信号（CRS/MBSFN RS/DRS）使用的复数序列，序列的数学表达式是：</p>
+<center>$r_{l,n_s}=\frac{1}{\sqrt{2}}(1-2c(2m))+j\frac{1}{\sqrt{2}}(1-2c(2m+1))$</center>
+<p>其中，$c(n)$是寄存器长度为 31 的 <code>gold 序列</code>，生成的序列由初始值 <code>cinit</code> 所确定。</p>
+<p>3 种下行导频信号，根据各自的特性，序列的初始值有相应的设置方法。</p>
+<ul>
+<li>对于<strong>普通子帧的小区导频信号</strong>，即 <code>CRS</code>。信号的发送以小区为单位，每个小区有各自的导频序列，序列的初始值与 <code>小区 ID</code>（$N_{ID}^{cell}$ ，0 ～ 503）相关。为了保证导频序列具有充分的随机性，在每个包含 <code>CRS</code> 的 <code>OFDM</code> 符号上，根据 <code>OFDM</code> 符号的位置（时隙在无线帧中的编号 ns ：0 ～ 19、OFDM 符号在时隙内的序号：0 ～ 6/0 ～ 5）、小区使用的 <code>CP</code> 选项（NCP =1/0：Normal CP/Extended CP）结合前面提到的 <code>小区 ID</code>（$N_{ID}^{cell}$）共同确定该符号上所使用的 <code>CRS</code> 导频序列的初始值。具体的数学表达式为：</li>
+</ul>
+<center>$c_{init}=2^{10}(7(n_s+1)+l+1)(2N_{ID}^{cell}+1)+2N_{ID}^{cell}+N_{CP}$</center>
+<ul>
+<li>对于 <strong>MBSFN 导频信号</strong>，信号的发送以 <code>MBSFN</code> 小区／小区集合为单位。序列的初始值与 <code>MBSFN ID</code> 相关，在每个包含 <code>MBSFN</code> 导频的 <code>OFDM 符号</code> 上，根据 <code>OFDM 符号</code> 的位置和 <code>MBSFN ID</code> 共同确定导频序列的初始值。具体的数学表达式为：</li>
+</ul>
+<center>$c_{init}=2^9(7(n_s+1)+l+1)(2N_{ID}^{MBSFN}+1)+N_{ID}^{MBSFN}$</center>
+<ul>
+<li><strong>用户专用导频信号</strong>，即 <code>DRS</code>。信号的发送以用户为单位，每个用户有各自的导频。序列以子帧为单位进行初始化，在每个子帧的开始，根据 <code>子帧的位置</code>、<code>小区 ID</code>（alt ）以及 <code>用户的 RNTI</code> 共同确定导频序列的初始值。具体的数学表达式为：</li>
+</ul>
+<center>$c_{init}=(\left\lfloor\frac{n_s}{2}\right\rfloor)(2N_{ID}^{cell}+1)2^{16}+n_{RNTI}$</center>
+<h4 id="导频图案" class="headerLink">
+    <a href="#%e5%af%bc%e9%a2%91%e5%9b%be%e6%a1%88" class="header-mark"></a>导频图案</h4><p>导频信号在<strong>时频域</strong>的图案规定了放置导频符号的<strong>时频域资源位置</strong>，LTE 物理层导频图案采用了<strong>二维</strong>的设计方法，规定了下行各个天线端口（Antenna port）导频信号的时频域位置，包括：</p>
+<ul>
+<li><strong>普通子帧的小区公用导频信号</strong>（CRS）支持 1 ～ 4 个发送天线使用的 Antenna port 0 ～ 3</li>
+<li>用于 <strong>MBSFN</strong> 发送的 Antenna port 4</li>
+<li>用于<strong>用户专用导频</strong>（DRS）的 Antenna port 5</li>
+</ul>
+<h5 id="小区公用导频信号" class="headerLink">
+    <a href="#%e5%b0%8f%e5%8c%ba%e5%85%ac%e7%94%a8%e5%af%bc%e9%a2%91%e4%bf%a1%e5%8f%b7" class="header-mark"></a>小区公用导频信号</h5><p>小区公用导频信号支持<strong>最多 4 个</strong>天线端口的发送（port 0 ～ 3）</p>
+<ul>
+<li>对于前 2 个天线端口（port 0 ～ 1），每个时隙有 2 个 <code>OFDM</code> 符号携带导频符号</li>
+<li>对于后 2 个天线端口（port 2 ～ 3），每个时隙有 1 个 <code>OFDM</code> 符号携带导频符号</li>
+</ul>
+<p>在每个 <code>OFDM</code> 符号内导频符号的频域间隔为 6 个子载波，采用交错放置的方式。</p>
+<figure><a class="lightgallery" href="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_14.webp" title="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_14.webp" data-thumbnail="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_14.webp" data-sub-html="<h2>下行正常子帧小区导频信号图案（CRS）</h2>">
+        <img
+            
+            loading="lazy"
+            src="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_14.webp"
+            srcset="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_14.webp, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_14.webp 1.5x, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_14.webp 2x"
+            sizes="auto"
+            alt="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_14.webp">
+    </a><figcaption class="image-caption">下行正常子帧小区导频信号图案（CRS）</figcaption>
+    </figure>
+<p>为了避免同基站不同发射天线端口之间导频与数据的干扰，在某一天线端口的导频位置上，同一基站的其他天线端口空出相应的时频资源。小区 CRS 导频子载波在频域的<strong>绝对位置</strong>与小区 ID <strong>相关</strong>，因此不同小区之间形成频域的<strong>相对偏移</strong>，避免<strong>不同小区</strong>的导频之间的<strong>同频干扰</strong>。</p>
+<h5 id="mbsfn-导频" class="headerLink">
+    <a href="#mbsfn-%e5%af%bc%e9%a2%91" class="header-mark"></a>MBSFN 导频</h5><p><code>MBSFN</code> 导频采用单天线端口的发送，即 port 4。由于 MBSFN 广播／多播的业务特性，较大的小区半径和多小区信号的合并带来的时延扩展增加了无线信道的频率选择性。为了适应这样的特点，导频采用<strong>较小的频域间隔</strong>，即每 2 个子载波放置 1 个导频符号（在 MBSFN 专用载波采用 7.5kHz 子载波间隔时，每 4 个子载波放置 1 个导频符号）。另外，根据广播业务的移动性特点，适当地降低了导频信号在时间上的密度。</p>
+<figure><a class="lightgallery" href="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_15.webp" title="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_15.webp" data-thumbnail="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_15.webp" data-sub-html="<h2>下行 MBSFN 导频图案</h2>">
+        <img
+            
+            loading="lazy"
+            src="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_15.webp"
+            srcset="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_15.webp, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_15.webp 1.5x, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_15.webp 2x"
+            sizes="auto"
+            alt="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_15.webp">
+    </a><figcaption class="image-caption">下行 MBSFN 导频图案</figcaption>
+    </figure>
+<p><code>MBSFN</code> 导频<strong>只</strong>支持在 <code>Extended CP</code> 情况下发送。MBSFN 导频子载波在频域的<strong>绝对位置</strong>与小区 ID <strong>无关</strong>，<strong>各小区</strong>导频在<strong>相同的频域位置</strong>，实现 MBSFN 集合内的<strong>不同小区</strong>导频信号的<strong>宏分集接收</strong>。</p>
+<h5 id="用户专用导频" class="headerLink">
+    <a href="#%e7%94%a8%e6%88%b7%e4%b8%93%e7%94%a8%e5%af%bc%e9%a2%91" class="header-mark"></a>用户专用导频</h5><p>LTE Release 8 中用户专用导频信号采用<strong>单天线端口</strong>的发送，即天线端口 5。通过高层信令的指示，通知终端在数据传输中是否使用了用户专用导频，以及终端是否应该使用用户专用导频进行下行数据的解调。（DRS 主要用于支持下行波束赋形，即 BeamForming 操作）</p>
+<p>在发送 <code>UE specific</code> 的专用导频时，保持<strong>小区公用导频信号</strong>（CRS）不变，插入用户专用导频符号，每个 <code>PRB pair</code> 中发送 12 个用户专用导频符号。</p>
+<figure><a class="lightgallery" href="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_16.webp" title="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_16.webp" data-thumbnail="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_16.webp" data-sub-html="<h2>下行用户专用导频图案</h2>">
+        <img
+            
+            loading="lazy"
+            src="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_16.webp"
+            srcset="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_16.webp, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_16.webp 1.5x, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_16.webp 2x"
+            sizes="auto"
+            alt="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_16.webp">
+    </a><figcaption class="image-caption">下行用户专用导频图案</figcaption>
+    </figure>
+<p>用户专用导频子载波在频域的<strong>绝对位置</strong>与小区 ID <strong>相关</strong>，因此不同小区之间形成频域的相对偏移，避免导频之间的<strong>同频干扰</strong>。</p>
+<p>在专用导频与物理信道／信号（PBCH/PSS/SSS）<strong>发生位置冲突</strong>的时候，将<strong>丢弃</strong>冲突位置的专用导频的传输，即对专用导频进行<strong>打孔</strong>。因为仅在有数据发送时才进行 <code>DRS</code> 的传输，而小区导频 <code>CRS</code> 是<strong>始终</strong>在传输的，因此，即使用户数据的发送使用了 <code>DRS</code>，用户对于下行信道质量，即 <code>CQI</code> 的测量将<strong>始终</strong>基于小区 <code>CRS</code> 导频。</p>
+<h3 id="上行导频信号" class="headerLink">
+    <a href="#%e4%b8%8a%e8%a1%8c%e5%af%bc%e9%a2%91%e4%bf%a1%e5%8f%b7" class="header-mark"></a>上行导频信号</h3><p>物理层定义了两种上行导频信号，包括：</p>
+<ul>
+<li>
+<p><strong>数据解调导频（DeModulation RS，DMRS）</strong></p>
+<p>指的是终端在<strong>上行共享信道</strong>或者<strong>上行控制信道</strong>（PUSCH/PUCCH）中发送的导频信号，用于基站接收上行数据／控制信息时进行解调的参考符号</p>
+</li>
+<li>
+<p><strong>Sounding 导频（Sounding RS，SRS）</strong></p>
+<p>指的是终端在上行发送的用于<strong>信道状态测量</strong>的导频信号，基站通过接收该信号测量上行信道的状态，相关的信息用于对上行数据传输的自适应调度。在 <code>TDD</code> 的情况下，由于同频段上下行信道的对称性，通过对上行 <code>SRS</code> 的测量还可以获得下行信道状态的信息，可用于辅助下行传输</p>
+</li>
+</ul>
+<h4 id="导频序列-1" class="headerLink">
+    <a href="#%e5%af%bc%e9%a2%91%e5%ba%8f%e5%88%97-1" class="header-mark"></a>导频序列</h4><p>使用具有<strong>衡包络零自相关</strong>（ConstantAmplitude ZeroAutoCorrelation，CAZAC）特性的序列作为上行导频序列（DMRS/SRS），长度为 $M_{SC}^{RS}$ 的导频序列的数学表达式为：</p>
+<center>$r_{u,v}^{(α)}=e^{jan}\bar{r}_{u,v}(n) , 0\leqslant n \leqslant M_{SC}^{RS}-1$</center>
+<p>其中 $\bar{r}_{u,v}(n)$ 表示基序列，由<code>基序列组的编号 u</code>和<code>组内的基序列编号 v</code>共同确定。$α$ 是对基序列的<strong>循环移位</strong>（Cyclic Shift），相同基序列的不同移位将形成不同的导频序列。</p>
+<ul>
+<li>
+<p>对于长度大于或者等于 36 的导频序列，使用长度为质数的 <code>Zadoff-Chu</code> 序列生成基序列，以保证良好的自相关和互相关特性，序列的数学表达式是：</p>
+<center>$\bar{r}_{u,v}(n)=x_q(n mod N_{ZC}^{RS} , 0\leqslant n \leqslant M_{SC}^{RS}-1$</center>
+<p>其中 $x_q$ 是序号为 q、长度是 $N_{ZC}^{RS}$ 的 <code>Zadoff-Chu</code> 根序列，即 $x_q(m)=e^-j\frac{\pi qm(m+1)}{N_{ZC}^{RS}}$ 。序号 q 由基序列的编号 $\frac{u}{v}$ 确定，长度 $N_{ZC}^{RS}$ 是小于导频序列长度 $M_{SC}^{RS}$ 的最大质数。</p>
+</li>
+<li>
+<p>对于长度小于 36，即长度为 12 或者 24 的导频序列，使用计算机搜索的方法以获得自相关／互相关特性最优的序列。序列的数学表达式为：</p>
+<center>$\bar{r}_{u,v}(n)=e^{jϕ（n）\pi/4} , 0\leqslant n \leqslant M_{SC}^{RS}-1$</center>
+<p>其中 $ϕ(n)$采用计算机搜索的方式进行查找，在标准中以列表的形式给出了确定的数值。</p>
+</li>
+</ul>
+<h4 id="导频图案-1" class="headerLink">
+    <a href="#%e5%af%bc%e9%a2%91%e5%9b%be%e6%a1%88-1" class="header-mark"></a>导频图案</h4><ul>
+<li><strong>上行解调导频</strong>（DMRS）在用户发送数据或者控制信息的资源上发送
+<ul>
+<li>在共享信道 <code>PUSCH</code> 上，每个时隙内 <code>DMRS</code> 占用 1 个 <code>OFDM</code> 符号</li>
+<li>在控制信道 PUCCH 上，根据控制信息格式的不同，每个时隙内 DMRS 占用 2 ～ 3 个 OFDM 符号。</li>
+</ul>
+</li>
+<li><strong>上行 Sounding 导频</strong>（SRS）与用户发送数据的资源位置<strong>无关</strong>，由系统调度，终端在预定义的、需要进行测量的频率位置上进行发送，发送时将占用子帧的最后一个 <code>OFDM</code> 符号，小区内不同用户在相同时刻发送的 <code>SRS</code> 采用频分和码分（基序列不同的循环移位）的方式进行区分。</li>
+</ul>
+<h5 id="上行共享信道-pusch-的解调导频" class="headerLink">
+    <a href="#%e4%b8%8a%e8%a1%8c%e5%85%b1%e4%ba%ab%e4%bf%a1%e9%81%93-pusch-%e7%9a%84%e8%a7%a3%e8%b0%83%e5%af%bc%e9%a2%91" class="header-mark"></a>上行共享信道 PUSCH 的解调导频</h5><p>上行共享信道 <code>PUSCH</code> 的解调导频在每个时隙内占用 1 个 <code>OFDM</code> 符号，在用户发送上行数据的资源上发送，用于共享信道（PUSCH）数据的解调。</p>
+<figure><a class="lightgallery" href="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_17.webp" title="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_17.webp" data-thumbnail="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_17.webp" data-sub-html="<h2>上行 PUSCH 数据解调导频</h2>">
+        <img
+            
+            loading="lazy"
+            src="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_17.webp"
+            srcset="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_17.webp, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_17.webp 1.5x, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_17.webp 2x"
+            sizes="auto"
+            alt="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_17.webp">
+    </a><figcaption class="image-caption">上行 PUSCH 数据解调导频</figcaption>
+    </figure>
+<p>每个时隙的导频符号采用 12 或者 24 的导频序列。其中 $M_{SC}^{RS}$ 是导频序列的长度，等于频域子载波的个数。导频序列由小区在该时隙的上行导频基序列 $\bar{r}_{u,v}(n)$ 和本次发送采用的循环移位 $α$共同确定。</p>
+<h5 id="上行控制信道-pucch-的解调导频" class="headerLink">
+    <a href="#%e4%b8%8a%e8%a1%8c%e6%8e%a7%e5%88%b6%e4%bf%a1%e9%81%93-pucch-%e7%9a%84%e8%a7%a3%e8%b0%83%e5%af%bc%e9%a2%91" class="header-mark"></a>上行控制信道 PUCCH 的解调导频</h5><p>上行控制信道 <code>PUCCH</code> 的解调导频根据上行控制信道格式的不同在每个时隙内占用 2 或者 3 个 <code>OFDM</code> 符号，用于控制信道（PUCCH）数据的解调。</p>
+<ul>
+<li>
+<p><code>PUCCH </code>格式 1/1a/1b 的导频发送格式。</p>
+<figure><a class="lightgallery" href="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_18.webp" title="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_18.webp" data-thumbnail="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_18.webp" data-sub-html="<h2>PUCCH Format1/1a/1b 的解调导频（Normal CP）</h2>">
+          <img
+              
+              loading="lazy"
+              src="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_18.webp"
+              srcset="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_18.webp, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_18.webp 1.5x, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_18.webp 2x"
+              sizes="auto"
+              alt="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_18.webp">
+      </a><figcaption class="image-caption">PUCCH Format1/1a/1b 的解调导频（Normal CP）</figcaption>
+      </figure>
+<p>其中 $\bar{w}(m)$ 是长度为 3 的正交扩频序列。$r_{u,v}^{\alpha}$ 表示基序列序号为 $u,v$，循环移位为 $α$ 的导频序列，长度是 12，映射在 1 个 PRB 内的子载波上。</p>
+<p><code>PUCCH</code> Format1/1a/1b 中导频映射的过程包括：时隙内采用正交序列的块扩频，然后与长度为 12 的导频 <code>CACAZ</code> 序列相乘，最后映射在上行控制信息 <code>PUCCH</code> 所对应的 <code>PRB</code> 资源的 12 个子载波上。</p>
+</li>
+<li>
+<p>PUCCH 格式 2/2a/2b 的导频发送格式。</p>
+<figure><a class="lightgallery" href="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_19.webp" title="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_19.webp" data-thumbnail="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_19.webp" data-sub-html="<h2>PUCCH Format2/2a/2b 的解调导频（Normal CP）</h2>">
+          <img
+              
+              loading="lazy"
+              src="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_19.webp"
+              srcset="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_19.webp, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_19.webp 1.5x, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_19.webp 2x"
+              sizes="auto"
+              alt="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_19.webp">
+      </a><figcaption class="image-caption">PUCCH Format2/2a/2b 的解调导频（Normal CP）</figcaption>
+      </figure>
+</li>
+</ul>
+<h5 id="上行-sounding-导频信号" class="headerLink">
+    <a href="#%e4%b8%8a%e8%a1%8c-sounding-%e5%af%bc%e9%a2%91%e4%bf%a1%e5%8f%b7" class="header-mark"></a>上行 Sounding 导频信号</h5><p>上行 Sounding 导频信号的发送与上行物理信道<strong>无关</strong>，是独立的的上行信号，根据<strong>预定义</strong>的周期、终端在需要进行信道测量的频域位置上进行发送。</p>
+<p>上行 Sounding 导频（SRS）在子帧的最后一个 <code>OFDM</code> 符号上发送。在每个小区，采用配置小区 <code>SRS</code> 子帧周期 <code>TSFC</code> 和偏移量 <code>∆SFC</code> 的方式，定义了小区内可用于发送上行 Sounding 导频符号的子帧时间位置，标准中列表给出了各种可能的配置选项，在系统广播消息 SIB 中使用 4 个比特进行指示。</p>
+<blockquote>
+<p>例如，假设配置 $T_{SFC} =5，∆SFC ={0,1}$，那么小区 <code>SRS</code> 子帧的时间位置如图所示。</p>
+<figure><a class="lightgallery" href="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_20.webp" title="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_20.webp" data-thumbnail="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_20.webp" data-sub-html="<h2>小区的 SRS 子帧时间位置</h2>">
+        <img
+            
+            loading="lazy"
+            src="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_20.webp"
+            srcset="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_20.webp, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_20.webp 1.5x, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_20.webp 2x"
+            sizes="auto"
+            alt="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_20.webp">
+    </a><figcaption class="image-caption">小区的 SRS 子帧时间位置</figcaption>
+    </figure>
+</blockquote>
+<p>在定义小区 <code>SRS </code>子帧位置的基础上，采用类似的方法进一步定义了小区内某个用户发送上行 SRS 导频的子帧位置，即通过配置用户发送 <code>SRS</code> 导频的子帧周期 <code>TSRS</code> 和偏移量 <code>Toffset</code> ，可以确定该用户发送上行 <code>SRS</code> 导频的子帧位置。</p>
+<blockquote>
+<p>假设，在以上举例的小区 SRS 子帧配置的基础上，配置用户 x 的 $T_{SRS} =10，Toffset =1$，可以得到该用户 SRS 导频的发送时间位置如图所示。</p>
+<figure><a class="lightgallery" href="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_21.webp" title="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_21.webp" data-thumbnail="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_21.webp" data-sub-html="<h2>用户的 SRS 子帧时间位置</h2>">
+        <img
+            
+            loading="lazy"
+            src="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_21.webp"
+            srcset="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_21.webp, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_21.webp 1.5x, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_21.webp 2x"
+            sizes="auto"
+            alt="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_21.webp">
+    </a><figcaption class="image-caption">用户的 SRS 子帧时间位置</figcaption>
+    </figure>
+</blockquote>
+<p>Sounding 导频（SRS）使用与解调导频相似的基序列生成方法，只是它的循环移位的数值改由高层信令<strong>直接进行配置</strong>。</p>
+<p>在导频序列向物理资源的映射上，<code>SRS</code> 导频采用 2 个子载波的频域间隔，形成<strong>梳状</strong>的<strong>频域结构</strong>，根据起始位置的不同（奇数或者偶数，kTC =0/1），可以频分复用 2 个<strong>梳状</strong>。相同的<strong>梳状</strong>内可以通过基序列不同的循环移位（8 种），以码分的方式进行更多的复用。</p>
+<figure><a class="lightgallery" href="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_22.webp" title="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_22.webp" data-thumbnail="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_22.webp" data-sub-html="<h2>Sounding 导频图案</h2>">
+        <img
+            
+            loading="lazy"
+            src="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_22.webp"
+            srcset="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_22.webp, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_22.webp 1.5x, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_22.webp 2x"
+            sizes="auto"
+            alt="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_22.webp">
+    </a><figcaption class="image-caption">Sounding 导频图案</figcaption>
+    </figure>
+<p>其中 <code>SRS</code> 导频带宽 $m_{SRS,b}$ 以资源块（RB）为单位，并且是 4 的整数倍。同时，可以容易地看出，导频序列的长度是 SRS 导频所占用子载波宽度的一半。</p>
+<h2 id="同步信号psssss" class="headerLink">
+    <a href="#%e5%90%8c%e6%ad%a5%e4%bf%a1%e5%8f%b7psssss" class="header-mark"></a>同步信号（PSS/SSS）</h2><p>下行同步信号用于支持物理层的小区搜索，实现用户终端对小区的识别以及对系统下行信号的频率和时间同步。</p>
+<p>同步信号包括：</p>
+<ul>
+<li><strong>主同步信号（Primary Synchronization Signal，PSS）</strong></li>
+<li><strong>辅同步信号（Secondary Synchronization Signal，SSS）</strong></li>
+</ul>
+<p><code>PSS</code> 和 <code>SSS</code> 的传输周期都是 <code>5ms</code>，每个同步信号的时间长度为 1 个 <code>OFDM</code> 符号，在频域上占用下行频带中心 <code>1.08MHz</code> 的带宽。</p>
+<p><code>PSS</code>/<code>SSS</code> 信号使用的序列与物理层小区 <code>ID</code> 相关，因此可用于终端对<strong>小区的识别</strong>。</p>
+<p>物理层支持 504 个小区 ID：分为 168 个组（0 ～ 167），每个组包含 3 个小区 ID（0 ～ 2）。</p>
+<ul>
+<li>主同步信号 PSS 序列包含 3 种可能性，指示小区的组内 ID</li>
+<li>辅同步信号 SSS 序列包含 168 种可能性，指示小区的组 ID</li>
+</ul>
+<p><code>FDD Type 1</code> 和 <code>TDD Type 2</code> 帧结构中，同步信号具有不同的时间位置。</p>
+<ul>
+<li>在 <code>FDD Type 1</code> 帧结构中，PSS/SSS 信号位于第 0 和第 5 子帧</li>
+<li>在 <code>TDD Type 2</code> 中，<code>PSS</code> 信号位于第 1 和第 6 子帧（即特殊子帧），<code>SSS</code> 信号位于第 0 和第 5 子帧。</li>
+</ul>
+<p>因此，两种帧结构下 <code>PSS</code> 与 <code>SSS</code> 的<strong>相对位置有所不同</strong>：</p>
+<ul>
+<li><code>FDD Type 1</code> 帧结构中，<code>PSS</code>/<code>SSS</code> 位于两个<strong>连续</strong>的 <code>OFDM</code> 符号</li>
+<li><code>TDD Type 2</code> 帧结构中，<code>PSS</code>/<code>SSS</code> 之间有两个 <code>OFDM</code> 符号的<strong>间隔</strong></li>
+</ul>
+<p>这种同步信号相对位置的区别，可用于终端在小区搜索的最初阶段<strong>检测</strong> LTE 系统的<strong>双工方式</strong>。</p>
+<figure><a class="lightgallery" href="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_23.webp" title="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_23.webp" data-thumbnail="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_23.webp" data-sub-html="<h2>LTE 下行同步信号（FDD Type 1 帧结构）</h2>">
+        <img
+            
+            loading="lazy"
+            src="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_23.webp"
+            srcset="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_23.webp, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_23.webp 1.5x, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_23.webp 2x"
+            sizes="auto"
+            alt="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_23.webp">
+    </a><figcaption class="image-caption">LTE 下行同步信号（FDD Type 1 帧结构）</figcaption>
+    </figure>
+<figure><a class="lightgallery" href="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_24.webp" title="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_24.webp" data-thumbnail="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_24.webp" data-sub-html="<h2>LTE 下行同步信号（TDD Type 2 帧结构）</h2>">
+        <img
+            
+            loading="lazy"
+            src="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_24.webp"
+            srcset="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_24.webp, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_24.webp 1.5x, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_24.webp 2x"
+            sizes="auto"
+            alt="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_24.webp">
+    </a><figcaption class="image-caption">LTE 下行同步信号（TDD Type 2 帧结构）</figcaption>
+    </figure>
+<p><code>PSS</code> 和 <code>SSS</code> 在<strong>相同</strong>的某一根<strong>天线</strong>上发送，对于各种<strong>不同的系统带宽</strong>（1.4MHz、3MHz、5MHz、10MHz、15MHz、20MHz），同步信号的传输带宽<strong>相同</strong>：</p>
+<ul>
+<li>占用频带中心的 <code>1.08MHz</code> 带宽，其中同步序列占用 62 个子载波，两边各预留 5 个子载波作为保护带。</li>
+</ul>
+<figure><a class="lightgallery" href="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_25.webp" title="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_25.webp" data-thumbnail="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_25.webp" data-sub-html="<h2>同步信号 PSS/SSS 频域结构</h2>">
+        <img
+            
+            loading="lazy"
+            src="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_25.webp"
+            srcset="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_25.webp, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_25.webp 1.5x, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_25.webp 2x"
+            sizes="auto"
+            alt="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_25.webp">
+    </a><figcaption class="image-caption">同步信号 PSS/SSS 频域结构</figcaption>
+    </figure>
+<h2 id="参考" class="headerLink">
+    <a href="#%e5%8f%82%e8%80%83" class="header-mark"></a>参考</h2><ul>
+<li>[1] LTE-Advanced 关键技术详解</li>
+</ul>]]></description>
+</item><item>
+    <title>LTE 系列：多天线技术（MIMO）</title>
+    <link>https://www.techkoala.net/lte_mimo/</link>
+    <pubDate>Sat, 01 Feb 2020 20:33:29 &#43;0800</pubDate><author>
+        <name>TechKoala</name>
+    </author><guid>https://www.techkoala.net/lte_mimo/</guid>
+    <description><![CDATA[<blockquote>
+<p>LTE 多天线技术（MIMO）详解</p>
+</blockquote>
+<h2 id="多天线技术mimo" class="headerLink">
+    <a href="#%e5%a4%9a%e5%a4%a9%e7%ba%bf%e6%8a%80%e6%9c%afmimo" class="header-mark"></a>多天线技术（MIMO）</h2><p>在收到信道编码后的数据（codeword）之后，物理层进一步的处理过程包括<code>加扰</code>、<code>调制</code>、<code>层映射</code>、<code>预编码</code>（precoding）以及针对各个物理天线端口的<code>资源映射</code>和 <code>OFDM</code> 信号生成的过程。</p>
+<figure><a class="lightgallery" href="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_9.webp" title="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_9.webp" data-thumbnail="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_9.webp" data-sub-html="<h2>物理层数据处理过程</h2>">
+        <img
+            
+            loading="lazy"
+            src="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_9.webp"
+            srcset="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_9.webp, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_9.webp 1.5x, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_9.webp 2x"
+            sizes="auto"
+            alt="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_9.webp">
+    </a><figcaption class="image-caption">物理层数据处理过程</figcaption>
+    </figure>
+<ul>
+<li>加扰操作是指使用扰码对经过信道编码后的数据进行<strong>逐比特的加扰</strong>，实现数据间<strong>干扰的随机化</strong>。采用<strong>伪随机码</strong>作为<strong>扰码</strong>，在每个子帧的起始位置，根据 <code>RNTI</code>（Radio Network Temporary Identifier）、<code>Cell ID</code>、<code>Codeword</code> 的编号以及无线帧内的时隙编号等信息，对扰码的 <code>PN 序列</code> 进行初始化。</li>
+<li>调制指的是对比特数据进行复数调制，包括 <code>QPSK</code>、<code>16QAM</code> 或者 <code>64QAM</code>。</li>
+</ul>
+<p>在完成调制后，物理层的基带处理过程将进行 MIMO 相关的处理，包括 <code>层映射</code> 和 <code>预编码</code> 。LTE Release 8 版本支持不同的发射天线数目（1 / 2 / 4），以及多种不同的 MIMO 方案，包括<code>单天线发送</code>、<code>空间复用</code>和<code>发送分集</code>。</p>
+<h3 id="层映射" class="headerLink">
+    <a href="#%e5%b1%82%e6%98%a0%e5%b0%84" class="header-mark"></a>层映射</h3><p>层映射实现信道编码之后的<strong>码字</strong>（Codeword）向空间多天线形成的多个<strong>层</strong>（layer）之间的映射。</p>
+<ul>
+<li>对于单天线的情况，直观地可以得到：物理层使用 1 个码字，并且这个码字直接映射到单天线的 1 个层上</li>
+<li>对于多天线实现空间复用的情况，当空间复用的层数目大于 1 的时候，可以同时发送 2 个码字</li>
+</ul>
+<blockquote>
+<p>以 4×4 天线配置的情况为例，根据无线信道的情况可以支持 1、2、3 或者 4 个层的空间复用，当空间复用的层数目大于 1 的时候，可以将 2 个码字映射在这些层上采用空间复用的方式同时进行发送。对于发送分集的情况，使用 1 个码字，按照发送天线数目的不同（2 或者 4），对应于 2 或者 4 个层，此时这 1 个码字将以逐比特转换的方式映射到这些层上。</p>
+</blockquote>
+<h3 id="预编码" class="headerLink">
+    <a href="#%e9%a2%84%e7%bc%96%e7%a0%81" class="header-mark"></a>预编码</h3><p>预编码（precoding）实现<strong>层</strong>到<strong>物理天线端口</strong>的<strong>映射</strong>。物理层使用不同的预编码方案，实现不同的 <code>MIMO</code> 模式：<code>单天线发送</code>、<code>空间复用</code>或者<code>发送分集</code>。</p>
+<h4 id="单天线发送" class="headerLink">
+    <a href="#%e5%8d%95%e5%a4%a9%e7%ba%bf%e5%8f%91%e9%80%81" class="header-mark"></a>单天线发送</h4><p>对于单天线发送的情况，直观的可以得出，1 个<strong>层</strong>将直接映射到 1 个<strong>物理天线端口</strong>上。</p>
+<h4 id="空间复用" class="headerLink">
+    <a href="#%e7%a9%ba%e9%97%b4%e5%a4%8d%e7%94%a8" class="header-mark"></a>空间复用</h4><p>对于多天线实现空间复用的情况，LTE 中采用基于<code>码本</code>（codebook）进行预编码向量选择的机制，分为<code>开环</code>和<code>闭环</code>两种复用传输模式，分别采用<code>无循环延迟的预编码</code>和<code>大循环延迟的预编码</code>。</p>
+<p>在 2 个发送天线的情况时，基站一般使用<strong>线性阵列</strong>（Uniform LinearArray，ULA）的天线配置，因此，相对应地采用基于 DFT 正交距阵的码本设计方法。</p>
+<ul>
+<li>对应于 1 个<strong>层</strong>的传输，设计了 4 个可供选择的预编码向量</li>
+<li>对应于 2 个<strong>层</strong>的传输，设计了 3 个可供选择的预编码向量。</li>
+<li>对于 4 个发送天线的情况，天线的部署要更为复杂，实际情况下可能不使用线性阵列的天线配置，而采用例如双极化天线
+所以，基于对各种场景下的性能和复杂度等因素的综合考虑，选择了采用基于 <code>householder 变换</code> 的码本设计方法。对应于 1/2/3/4 个<strong>层</strong>的传输，均有 16 个可供选择的预编码向量。</li>
+</ul>
+<p>预编码向量选取常用的两个准则：</p>
+<ul>
+<li><strong>信噪比最大化</strong>，对应于容量最大化。将每个可选择的项代入，得到一个等效信道矩阵，计算等效信噪比，选择对应 SNR 最大的向量元素。</li>
+<li><strong>最小码距</strong>，对应于最小误码率。计算信道信息给出的加权矩阵与码本中元素的距离，选择距离最小的作为预编码向量。</li>
+</ul>
+<p><code>无循环延迟的预编码</code>用于<code>闭环</code>的 MIMO 空间复用。闭环模式下，终端通过对下行信道状态的测量选择适当的空间复用的层数目，并且从码本集合中选择预编码向量，分别表示为 <code>RI</code>（Rank Indicator）和 <code>PMI</code>（Precoding Matrix Indicator）的形式<strong>通过上行链路反馈给基站</strong>。基站根据这些信息进行预测，确定随后的下行发送中将采用的空间复用方案（包括采用的层数目和预编码向量）。</p>
+<p><code>大循环延迟的预编码</code>用于<code>开环</code>的 MIMO 空间复用。开环模式下，终端<strong>不再向基站反馈</strong>预编码向量 <code>PMI</code> 的信息，但仍可以根据基站的配置测量并且<strong>反馈</strong>下行信道的 <code>RI</code> 信息，即空间复用的层数目。基站根据终端上报的 <code>RI</code> 信息或者自行确定的层数目，选择在下行发送中所采用的预编码方案，包括采用发送分集，或者空间复用以及相应的层数目。</p>
+<p>在开环空间复用中，采用的预编码向量是<strong>固定</strong>的。</p>
+<ul>
+<li>在使用 2 个发送天线的情况下
+<ul>
+<li>当选择层数目 RI=1 时，采用发送分集的预编码方案。</li>
+<li>当选择 RI=2 时，采用对应码本的第一个元素，即 $W(i)=\frac{1}{\sqrt{2}}\begin{bmatrix}1&amp;0 \\ 0&amp;1\end{bmatrix}$ 作为预编码向量。</li>
+</ul>
+</li>
+<li>在使用 4 个发送天线的情况下
+<ul>
+<li>当选择层数目 RI=1 时，采用发送分集的预编码方案</li>
+<li>当选择 RI=2/3/4 时，采用对应的码本，以发送时刻为单位，固定的循环使用码本中序号为 12/13/14/15 的元素作为预编码向量。</li>
+</ul>
+</li>
+</ul>
+<p>对于<code>大循环延迟的预编码</code>，除了预编码向量 $W (i)$ 之外，有两个用于完成循环延迟（Cyclic Delay Diversity，CDD）功能的矩阵，即 $U$ 和 $D (i)$。</p>
+<p>假设层数目为 v，那么这两个矩阵的大小都是 $v×v$ 的，其中</p>
+<ul>
+<li>$U$ 是 <code>DFT 矩阵</code>，通过对输入信号进行 <code>DFT</code> 变换实现<code>层</code>到<code>虚拟天线</code>的映射，将每个层的信号能量均匀地分布在虚拟天线上</li>
+<li>$D (i)$是 <code>CDD 矩阵</code>，实现虚拟天线间增量为 $\frac{1}{v}$ 的时延。</li>
+</ul>
+<h4 id="发送分集" class="headerLink">
+    <a href="#%e5%8f%91%e9%80%81%e5%88%86%e9%9b%86" class="header-mark"></a>发送分集</h4><p>对于多天线实现发送分集的情况，分别采用 <code>SFBC</code>（Space Frequency Block Codiing）和 <code>SFBC+FSTD</code>（Frequency Switched Transmit Diversity）的方案支持 2 和 4 个发送天线的场景。</p>
+<ul>
+<li>在 2 个发送天线时，使用 SFBC 的发送分集方案，实现“层”到物理天线映射的预编码操作。</li>
+</ul>
+<figure><a class="lightgallery" href="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_10.webp" title="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_10.webp" data-thumbnail="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_10.webp" data-sub-html="<h2>SFBC 发送分集</h2>">
+        <img
+            
+            loading="lazy"
+            src="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_10.webp"
+            srcset="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_10.webp, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_10.webp 1.5x, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_10.webp 2x"
+            sizes="auto"
+            alt="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_10.webp">
+    </a><figcaption class="image-caption">SFBC 发送分集</figcaption>
+    </figure>
+<ul>
+<li>在 4 个发送天线时，使用 SFBC+FSTD 的发送分集方案。相应地，实现层到物理天线映射的预编码操作可以表示为下图所示的形式，即 SFBC 结合 FSTD 在天线间频域的位置转换。</li>
+</ul>
+<figure><a class="lightgallery" href="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_11.webp" title="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_11.webp" data-thumbnail="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_11.webp" data-sub-html="<h2>SFBC&#43;FSTD 发送分集</h2>">
+        <img
+            
+            loading="lazy"
+            src="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_11.webp"
+            srcset="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_11.webp, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_11.webp 1.5x, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_11.webp 2x"
+            sizes="auto"
+            alt="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_11.webp">
+    </a><figcaption class="image-caption">SFBC+FSTD 发送分集</figcaption>
+    </figure>
+<h2 id="参考" class="headerLink">
+    <a href="#%e5%8f%82%e8%80%83" class="header-mark"></a>参考</h2><ul>
+<li>[1] LTE-Advanced 关键技术详解</li>
+</ul>]]></description>
+</item><item>
+    <title>LTE 系列：编码、复用和交织</title>
+    <link>https://www.techkoala.net/lte_encoding_multiplexing_and_interleaving/</link>
+    <pubDate>Fri, 10 Jan 2020 20:54:23 &#43;0800</pubDate><author>
+        <name>TechKoala</name>
+    </author><guid>https://www.techkoala.net/lte_encoding_multiplexing_and_interleaving/</guid>
+    <description><![CDATA[<blockquote>
+<p>LTE 数据的编码、复用和交织</p>
+</blockquote>
+<h2 id="数据的编码复用和交织" class="headerLink">
+    <a href="#%e6%95%b0%e6%8d%ae%e7%9a%84%e7%bc%96%e7%a0%81%e5%a4%8d%e7%94%a8%e5%92%8c%e4%ba%a4%e7%bb%87" class="header-mark"></a>数据的编码、复用和交织</h2><p>为了进行传输信道向物理信道的映射，提高数据传输的性能，并且将数据是否正确传输的情况向高层报告，物理层需要对传输信道的数据进行一系列信道编码相关的处理，通常的过程包括：</p>
+<ul>
+<li>码字 <code>CRC</code> 计算</li>
+<li>码块分割和码块 <code>CRC</code> 计算</li>
+<li>码块信道编码</li>
+<li>码块交织和速率匹配</li>
+<li>码块连接的过程</li>
+</ul>
+<figure><a class="lightgallery" href="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_4.webp" title="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_4.webp" data-thumbnail="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_4.webp" data-sub-html="<h2>传输块物理层信道编码的过程</h2>">
+        <img
+            
+            loading="lazy"
+            src="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_4.webp"
+            srcset="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_4.webp, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_4.webp 1.5x, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_4.webp 2x"
+            sizes="auto"
+            alt="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_4.webp">
+    </a><figcaption class="image-caption">传输块物理层信道编码的过程</figcaption>
+    </figure>
+<h3 id="crc-计算" class="headerLink">
+    <a href="#crc-%e8%ae%a1%e7%ae%97" class="header-mark"></a>CRC 计算</h3><p>循环冗余校验码（Cyclic Redundancy Check，CRC）是数据通信领域中最常用的一种差错校验码，接收端通过对所接收到的数据信息和相应的 CRC 信息进行校验，可以判断接收到的数据是否正确。</p>
+<p>物理层提供了 4 种 CRC 计算方法，分别用于不同信息的处理过程，其中包括 2 种长度为 24 比特的 <code>CRC</code> 计算方法，1 种长度为 16 比特的 <code>CRC</code> 计算方法，和 1 种长度为 8 比特的 <code>CRC</code> 计算方法。</p>
+<ul>
+<li>长度为 24 比特的 <code>CRC</code> 用于<code>下行共享信道（DL-SCH）</code>、<code>寻呼信道（PCH</code>）、<code>多播信道（MCH）</code>和<code>上行共享信道（UL-SCH）</code>等传输信道信息的处理过程</li>
+<li>长度为 16 比特的 <code>CRC</code> 用于<code>广播信道（BCH）</code>和<code>下行控制信息（DCI）</code>的处理过程</li>
+<li>长度为 8 比特的 <code>CRC</code> 用于<code>上行控制信息（UCI）</code>在<code>上行物理共享信道（PUSCH）</code>中传输时可能需要的 <code>CRC</code> 操作，对应的计算多项式为：</li>
+</ul>
+<center>$gCRC8 (D)=[D8 +D7 +D4 +D3 +D+1]$</center>
+<figure><a class="lightgallery" href="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_5.webp" title="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_5.webp" data-thumbnail="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_5.webp" data-sub-html="<h2>CRC 计算（gCRC8）</h2>">
+        <img
+            
+            loading="lazy"
+            src="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_5.webp"
+            srcset="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_5.webp, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_5.webp 1.5x, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_5.webp 2x"
+            sizes="auto"
+            alt="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_5.webp">
+    </a><figcaption class="image-caption">CRC 计算（gCRC8）</figcaption>
+    </figure>
+<h3 id="码块分割" class="headerLink">
+    <a href="#%e7%a0%81%e5%9d%97%e5%88%86%e5%89%b2" class="header-mark"></a>码块分割</h3><p>传输信道中的 1 个<code>传输块</code>（transport block）对应于物理层的 1 个<code>码字</code>（codeword），码字是物理层进行信道编码等相关操作的单位。</p>
+<p>当收到来自 <code>MAC</code> 层的 1 个传输块后，物理层将其对应为 1 个码字，首先对<strong>整个码字</strong>进行 <code>CRC</code> 的计算，得到<strong>添加</strong>了 <code>CRC</code> 比特后的码字数据流。</p>
+<p>考虑到信道纠错编码的性能与处理时延的因素，标准中定义了最大的编码长度为 6144。也就是说，如果添加 CRC 比特后 1 个码字数据流的长度<strong>大于</strong> 6144 个比特，那么需要对码字进行<strong>分割</strong>，将 1 个码字分割为<strong>若干个</strong><code>码块</code>（code block），这时候需要对每个码块<strong>再添加</strong>相应的 CRC 比特，然后以<strong>码块为单位</strong>进行后续的信道纠错编码，以满足信道纠错编码最大长度的限制。</p>
+<figure><a class="lightgallery" href="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_6.webp" title="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_6.webp" data-thumbnail="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_6.webp" data-sub-html="<h2>码块分割</h2>">
+        <img
+            
+            loading="lazy"
+            src="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_6.webp"
+            srcset="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_6.webp, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_6.webp 1.5x, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_6.webp 2x"
+            sizes="auto"
+            alt="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_6.webp">
+    </a><figcaption class="image-caption">码块分割</figcaption>
+    </figure>
+<p>物理层采用的 <code>Turbo 编码</code>的内交织器对数据的长度有一定的要求，标准中以列表的方式给出了所支持的数值，因此，在分块过程中，可能需要进行<strong>一定的填充</strong>，保证每一个码块的长度符合内交织器的要求。</p>
+<h3 id="信道编码" class="headerLink">
+    <a href="#%e4%bf%a1%e9%81%93%e7%bc%96%e7%a0%81" class="header-mark"></a>信道编码</h3><p>物理层支持包括<code>块编码</code>、<code>截尾的卷积编码</code>和 <code>Turbo 码</code> 3 种不同的信道纠错编码方法。</p>
+<ul>
+<li><code>Turbo 码</code>由于其良好的性能，用于大部分传输信道数据信息的信道编码方法</li>
+<li><code>卷积码</code>的译码<strong>复杂度比较低</strong>，另外在码长<strong>比较短</strong>的时候，卷积码的性能与 Turbo 码相近，因此采用<code>截尾的卷积码</code>作为<code>广播信道</code>和<code>物理层下行控制信息</code>主要的信道编码方法</li>
+<li>使用<code>块编码</code>作为一些<strong>长度更短</strong>的信息的信道编码方法，包括<code>控制格式指示信息（PCFICH）</code>、<code>下行 HARQ 指示信息（PHICH）</code>和<code>物理层上行控制信息</code>（上行 ACK 信息、CQI 信息等）。</li>
+</ul>
+<h3 id="速率匹配" class="headerLink">
+    <a href="#%e9%80%9f%e7%8e%87%e5%8c%b9%e9%85%8d" class="header-mark"></a>速率匹配</h3><p>在速率匹配的过程中，对信道编码后形成的比特流进行选取，以匹配于最终实际使用的物理资源。根据所选取的数据数量的不同，形成不同的编码速率。在这个过程中，以信道编码的每个<strong>码块为单位</strong>。</p>
+<figure><a class="lightgallery" href="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_7.webp" title="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_7.webp" data-thumbnail="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_7.webp" data-sub-html="<h2>Turbo 码速率匹配的数据选择</h2>">
+        <img
+            
+            loading="lazy"
+            src="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_7.webp"
+            srcset="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_7.webp, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_7.webp 1.5x, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_7.webp 2x"
+            sizes="auto"
+            alt="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_7.webp">
+    </a><figcaption class="image-caption">Turbo 码速率匹配的数据选择</figcaption>
+    </figure>
+<h3 id="码块连接" class="headerLink">
+    <a href="#%e7%a0%81%e5%9d%97%e8%bf%9e%e6%8e%a5" class="header-mark"></a>码块连接</h3><p>在完成以码块为单位的信道编码和速率匹配的过程之后，将对 1 个码字内所有的码块进行<strong>串行连接</strong>，形成<strong>码字</strong>（即传输块）所对应的传输序列，然后就可以进一步地进行信号调制相关的处理与发送了。</p>
+<figure><a class="lightgallery" href="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_8.webp" title="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_8.webp" data-thumbnail="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_8.webp" data-sub-html="<h2>码块连接</h2>">
+        <img
+            
+            loading="lazy"
+            src="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_8.webp"
+            srcset="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_8.webp, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_8.webp 1.5x, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_8.webp 2x"
+            sizes="auto"
+            alt="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_8.webp">
+    </a><figcaption class="image-caption">码块连接</figcaption>
+    </figure>
+<h2 id="参考" class="headerLink">
+    <a href="#%e5%8f%82%e8%80%83" class="header-mark"></a>参考</h2><ul>
+<li>[1] LTE-Advanced 关键技术详解</li>
+</ul>]]></description>
+</item><item>
+    <title>LTE 系列：共享信道传输与接收</title>
+    <link>https://www.techkoala.net/lte_transmission_and_reception/</link>
+    <pubDate>Fri, 22 Nov 2019 21:14:52 &#43;0800</pubDate><author>
+        <name>TechKoala</name>
+    </author><guid>https://www.techkoala.net/lte_transmission_and_reception/</guid>
+    <description><![CDATA[<blockquote>
+<p>LTE 物理层概要</p>
+</blockquote>
+<h2 id="下行共享信道的传输与接收" class="headerLink">
+    <a href="#%e4%b8%8b%e8%a1%8c%e5%85%b1%e4%ba%ab%e4%bf%a1%e9%81%93%e7%9a%84%e4%bc%a0%e8%be%93%e4%b8%8e%e6%8e%a5%e6%94%b6" class="header-mark"></a>下行共享信道的传输与接收</h2><p>物理层下行数据传输包含了链路自适应的过程，基站根据终端所上报的<strong>链路质量信息</strong>（CQI/PMI/RI）选择适当的物理资源和相应的编码调制方式进行下行数据的发送，实现对系统下行无线资源的优化利用，达到最佳的性能。</p>
+<figure><a class="lightgallery" href="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_44.webp" title="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_44.webp" data-thumbnail="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_44.webp" data-sub-html="<h2>信道状态信息反馈和下行链路自适应传输</h2>">
+        <img
+            
+            loading="lazy"
+            src="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_44.webp"
+            srcset="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_44.webp, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_44.webp 1.5x, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_44.webp 2x"
+            sizes="auto"
+            alt="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_44.webp">
+    </a><figcaption class="image-caption">信道状态信息反馈和下行链路自适应传输</figcaption>
+    </figure>
+<p>物理层下行共享信道的传输包括了</p>
+<ul>
+<li>调度信息（PDCCH）</li>
+<li>数据信息（PDSCH）</li>
+</ul>
+<p>在长度为 <code>1ms</code> 的子帧结构中，前面的 1 ～ 3 个 <code>OFDM</code> 符号用于传输下行控制信息，其中包括了传输数据调度信息的 <code>PDCCH</code>；而子帧中剩余的符号用于传输数据信息（PDSCH）。</p>
+<figure><a class="lightgallery" href="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_45.webp" title="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_45.webp" data-thumbnail="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_45.webp" data-sub-html="<h2>下行数据传输的子帧结构</h2>">
+        <img
+            
+            loading="lazy"
+            src="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_45.webp"
+            srcset="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_45.webp, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_45.webp 1.5x, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_45.webp 2x"
+            sizes="auto"
+            alt="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_45.webp">
+    </a><figcaption class="image-caption">下行数据传输的子帧结构</figcaption>
+    </figure>
+<p>在下行数据接收的过程中，终端对当前子帧中所有 <code>PDCCH</code> 信道进行<strong>盲检测</strong>，如果发现属于自己的调度信息，那么终端将根据该调度信息的指示（包括资源位置、编码调制方法等）解调接收当前子帧中属于自己的 <code>PDSCH</code> 数据信息。</p>
+<figure><a class="lightgallery" href="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_46.webp" title="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_46.webp" data-thumbnail="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_46.webp" data-sub-html="<h2>下行数据的调度与传输</h2>">
+        <img
+            
+            loading="lazy"
+            src="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_46.webp"
+            srcset="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_46.webp, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_46.webp 1.5x, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_46.webp 2x"
+            sizes="auto"
+            alt="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_46.webp">
+    </a><figcaption class="image-caption">下行数据的调度与传输</figcaption>
+    </figure>
+<p>物理层下行支持 29 种调制编码格式，其中包括了 <code>QPSK</code>、<code>16QAM</code> 和 <code>64QAM</code> 3 种不同的调制方式和不同的信道编码速率（范围是 0.16 ～ 0.92）。根据这样的原则，针对每一种物理资源 <code>PRB</code> 的占用数目，规范中定义了 29 种<strong>传输块大小</strong>（Tranport block size）。</p>
+<p>在进行下行数据传输时，下行调度信息中使用 5 个比特对所调度数据使用的<strong>编码调制格式</strong>（MCS）进行指示。接收端根据该信息可以确定数据所使用的调制方式；</p>
+<p>同时，将这 5 比特 <code>MCS</code> 信息和调度信息中所分配的 <code>PRB</code> 数目相结合，可以查表确定传输块大小，即信道编码数据源大小的信息，由此实现下行数据的正确传输与接收。</p>
+<h2 id="上行共享信道的调度与传输" class="headerLink">
+    <a href="#%e4%b8%8a%e8%a1%8c%e5%85%b1%e4%ba%ab%e4%bf%a1%e9%81%93%e7%9a%84%e8%b0%83%e5%ba%a6%e4%b8%8e%e4%bc%a0%e8%be%93" class="header-mark"></a>上行共享信道的调度与传输</h2><p>物理层上行数据的传输包含了链路自适应的调度过程。</p>
+<p>首先，终端在上行发送 <code>Sounding 导频</code> 信号，基站利用该信号对用户上行信道的质量进行测量，根据测量的结果选择适当的物理资源和相应的编码调制方式，在上行资源调度信息中进行指示，终端根据基站的指示进行上行数据的发送，实现对系统上行无线资源的优化利用。</p>
+<figure><a class="lightgallery" href="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_47.webp" title="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_47.webp" data-thumbnail="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_47.webp" data-sub-html="<h2>Sounding 导频和上行链路自适应</h2>">
+        <img
+            
+            loading="lazy"
+            src="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_47.webp"
+            srcset="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_47.webp, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_47.webp 1.5x, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_47.webp 2x"
+            sizes="auto"
+            alt="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_47.webp">
+    </a><figcaption class="image-caption">Sounding 导频和上行链路自适应</figcaption>
+    </figure>
+<p>上行共享信道的传输包括</p>
+<ul>
+<li>上行调度信息（PDCCH）</li>
+<li>数据信息（PUSCH）</li>
+</ul>
+<p>根据 <code>PDCCH</code> 上行调度信息的指示，终端使用相应的资源进行上行数据的发送。与下行情况不同的是，在下行共享信道的传输过程中，<strong>调度信息</strong>与对应的<strong>数据信息</strong>处于<strong>同一个子帧内</strong>。而在上行的情况中，终端需要根据 <code>PDCCH</code> 调度信息的指示，进行上行数据的发送，因此二者之间<strong>存在一定的时延</strong>，考虑无线传播和设备处理时间的因素</p>
+<ul>
+<li><code>FDD</code> 中定义该时延的数值为 <code>4ms</code>，即对于在子帧 <code>n</code> 中接收到的 <code>PDCCH</code> 上行调度信息，终端将在子帧 <code>n+4</code> 进行对应的上行数据传输。</li>
+<li><code>TDD</code> 的情况中，在时延最小值等于 <code>4ms</code> 的前提下，还需要区分是上行或者下行子帧，因为只有在属于上行子帧的时间才能进行上行数据的发送。</li>
+</ul>
+<figure><a class="lightgallery" href="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_48.webp" title="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_48.webp" data-thumbnail="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_48.webp" data-sub-html="<h2>上行数据的调度与传输</h2>">
+        <img
+            
+            loading="lazy"
+            src="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_48.webp"
+            srcset="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_48.webp, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_48.webp 1.5x, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_48.webp 2x"
+            sizes="auto"
+            alt="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_48.webp">
+    </a><figcaption class="image-caption">上行数据的调度与传输</figcaption>
+    </figure>
+<p>与下行类似，物理层上行支持 29 种调制编码格式，其中包括了 <code>QPSK</code>、<code>16QAM</code> 和 <code>64QAM</code> 3 种不同的调制方式和不同的信道编码速率（范围是 0.16 ～ 0.92），使用与下行相同的传输块大小的表格定义，规定了在各种 <code>PRB</code> 数目的情况下，所对应的 29 种<strong>传输块大小</strong>（Transport block size）。</p>
+<p>在进行上行数据传输时，上行调度信息中使用 5 个比特指示数据的调制编码格式（MCS），终端根据该信息可以确定所使用的调制方法（QPSK/16QAM/64QAM）；同时，将这 5 比特 <code>MCS</code> 信息和调度信息中所分配的 <code>PRB</code> 数目相结合，可以查表确定传输块大小，即信道编码数据源的大小。最后，终端进行信道编码、速率匹配的信号处理过程，实现上行数据的发送。</p>
+<h2 id="参考" class="headerLink">
+    <a href="#%e5%8f%82%e8%80%83" class="header-mark"></a>参考</h2><ul>
+<li>[1] LTE-Advanced 关键技术详解</li>
+</ul>]]></description>
+</item><item>
+    <title>LTE 系列：多址方式</title>
+    <link>https://www.techkoala.net/lte_multiple_access/</link>
+    <pubDate>Sun, 20 Oct 2019 20:45:06 &#43;0800</pubDate><author>
+        <name>TechKoala</name>
+    </author><guid>https://www.techkoala.net/lte_multiple_access/</guid>
+    <description><![CDATA[<blockquote>
+<p>LTE 多址方式详解</p>
+</blockquote>
+<h2 id="多址方式" class="headerLink">
+    <a href="#%e5%a4%9a%e5%9d%80%e6%96%b9%e5%bc%8f" class="header-mark"></a>多址方式</h2><p>LTE 的空中接口采用以 <code>OFDM</code> 技术为基础的多址方式，使用 <code>15kHz</code> 的子载波宽度，通过不同的子载波数目（72 ～ 1200 ）实现了从 1.4 ～ 20MHz 之间多种可变的系统带宽。另外，考虑到在不同应用场景的情况下，无线信道的多径传输具有不同的时延扩展特性，所以 LTE 支持两种不同循环前缀（Cyclic Prefix，CP）长度的配置：<code>Normal CP</code> 和 <code>Extend CP</code>，它们的长度分别约为 <code>4.7μs</code> 和 <code>16.7μs</code>。</p>
+<p>在 <code>OFDM</code> 技术的基础上，根据下行和上行两个方向通信的不同特点，LTE 分别选择了<code>多载波 OFDM</code> 和<code>单载波 SC-FDMA</code>（即 DFT-SOFDM）作为多址方式的具体实现方法。</p>
+<h3 id="下行多址方式" class="headerLink">
+    <a href="#%e4%b8%8b%e8%a1%8c%e5%a4%9a%e5%9d%80%e6%96%b9%e5%bc%8f" class="header-mark"></a>下行多址方式</h3><p>LTE 采用 <code>OFDM</code>（Orthogonal Frequency Division Multiplexing）作为下行无线信号传输的多址方式。<code>OFDM</code> 是一种<strong>多载波调制</strong>的传输技术，将数据流经过<strong>串并变换</strong>，形成多路<strong>子数据流</strong>（N 路），使用它们分别去调制 N 路子载波后<strong>并行传输</strong>。通过这样的处理，子数据流的速率是原来的 1/N，即符号周期是原来的 N 倍，使得该符号周期远<strong>大于</strong>信道的时延扩展，从而实现了将一个宽带频率选择性信道划分成 N 个<strong>窄带平坦衰落信道</strong>，因此 OFDM 信号具有很强的<strong>抗无线信道多径衰落</strong>和<strong>抗脉冲干扰</strong>的能力，并且由于实现方式简单，所以特别适用于高速无线数据传输。</p>
+<figure><a class="lightgallery" href="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_49.webp" title="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_49.webp" data-thumbnail="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_49.webp" data-sub-html="<h2>OFDM 调制的信号处理流程</h2>">
+        <img
+            
+            loading="lazy"
+            src="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_49.webp"
+            srcset="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_49.webp, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_49.webp 1.5x, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_49.webp 2x"
+            sizes="auto"
+            alt="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_49.webp">
+    </a><figcaption class="image-caption">OFDM 调制的信号处理流程</figcaption>
+    </figure>
+<h3 id="上行多址方式" class="headerLink">
+    <a href="#%e4%b8%8a%e8%a1%8c%e5%a4%9a%e5%9d%80%e6%96%b9%e5%bc%8f" class="header-mark"></a>上行多址方式</h3><p>上行方向上，LTE 采用<code>单载波 SC-FDMA</code>（即 DFT-SOFDM） 作为多址方式。其中，同样采用了 <code>15kHz</code> 的子载波带宽，不同子载波数目实现不同的系统带宽。</p>
+<figure><a class="lightgallery" href="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_50.webp" title="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_50.webp" data-thumbnail="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_50.webp" data-sub-html="<h2>DFT-SOFDM 调制的信号处理流程</h2>">
+        <img
+            
+            loading="lazy"
+            src="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_50.webp"
+            srcset="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_50.webp, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_50.webp 1.5x, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_50.webp 2x"
+            sizes="auto"
+            alt="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_50.webp">
+    </a><figcaption class="image-caption">DFT-SOFDM 调制的信号处理流程</figcaption>
+    </figure>
+<p>与 <code>ODFM</code> 中信号直接映射到频域的子载波上形成多载波信号不同，<code>DFT-SOFDM</code> 中信号由<strong>时域</strong>输入，通过 <code>DFT</code> 的操作转换到频域后再进行子载波的调制，因此 <code>DFT-SOFDM</code> 属于单载波的调制方式，其发射信号也具有单载波的特性。</p>
+<p>在 <code>OFDM</code> 多载波调制中，由于多路信号在频域的并行传输，叠加后形成的时域输出信号具有<strong>较大峰均比</strong>。由于基站功率放大器的能力较强，因此在下行峰均比不会成为影响系统性能的主要问题。在上行方向上，考虑到终端的成本和功率效率，使用具有单载波特性的发送信号，这是<strong>因为较低的信号峰均比具有重要的意义</strong>。根据调制方式的不同（<code>QPSK</code>、<code>16QAM</code>），与 <code>OFDM</code> 相比较，单载波信号具有 1.5 ～ 2.5dB 的峰均比增益，这也是 LTE 选择<code>单载波 SC-FDMA</code> 作为上行多址方式的<strong>主要原因</strong>。</p>
+<p>另一方面，为了使信号真正具有单载波的特性，<code>DFT-SOFDM</code> 调制过程中对于子载波的映射需要满足一定的限制。除了集中式的映射之外（此时，<code>DFT-SOFDM</code> 的信号处理过程相当于对输入信号进行时域的过采样），在分布式的映射中，为了保持单载波特性，<code>DFT-SOFDM</code> 调制必须采用等间隔的子载波映射，即 <strong>L1 =L2 =…=LN</strong> （此时，<code>DFT-SOFDM</code> 的处理过程相当于对输入信号进行时域的块重复），而不能够使用间隔不相等的分布式映射，因为那将破坏输出信号的单载波特性。</p>
+<figure><a class="lightgallery" href="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_51.webp" title="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_51.webp" data-thumbnail="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_51.webp" data-sub-html="<h2>OFDM/DFT-SOFDM 的子载波映射</h2>">
+        <img
+            
+            loading="lazy"
+            src="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_51.webp"
+            srcset="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_51.webp, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_51.webp 1.5x, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_51.webp 2x"
+            sizes="auto"
+            alt="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_51.webp">
+    </a><figcaption class="image-caption">OFDM/DFT-SOFDM 的子载波映射</figcaption>
+    </figure>
+<h2 id="参考" class="headerLink">
+    <a href="#%e5%8f%82%e8%80%83" class="header-mark"></a>参考</h2><ul>
+<li>[1] LTE-Advanced 关键技术详解</li>
+</ul>]]></description>
+</item><item>
+    <title>LTE 系列：小区搜索和下行同步</title>
+    <link>https://www.techkoala.net/lte_cell_synchronize/</link>
+    <pubDate>Sun, 15 Sep 2019 21:46:08 &#43;0800</pubDate><author>
+        <name>TechKoala</name>
+    </author><guid>https://www.techkoala.net/lte_cell_synchronize/</guid>
+    <description><![CDATA[<blockquote>
+<p>LTE 物理层概要综列</p>
+</blockquote>
+<h2 id="终端的小区搜索和下行同步" class="headerLink">
+    <a href="#%e7%bb%88%e7%ab%af%e7%9a%84%e5%b0%8f%e5%8c%ba%e6%90%9c%e7%b4%a2%e5%92%8c%e4%b8%8b%e8%a1%8c%e5%90%8c%e6%ad%a5" class="header-mark"></a>终端的小区搜索和下行同步</h2><p>通过小区搜索的过程，终端实现对服务小区下行信号时间和频率的同步，并且确定小区的物理层 ID。</p>
+<figure><a class="lightgallery" href="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master//images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_42.webp" title="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master//images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_42.webp" data-thumbnail="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master//images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_42.webp" data-sub-html="<h2>小区搜索过程</h2>">
+        <img
+            
+            loading="lazy"
+            src="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master//images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_42.webp"
+            srcset="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master//images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_42.webp, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master//images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_42.webp 1.5x, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master//images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_42.webp 2x"
+            sizes="auto"
+            alt="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master//images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_42.webp">
+    </a><figcaption class="image-caption">小区搜索过程</figcaption>
+    </figure>
+<p>物理层小区搜索的过程主要涉及两个同步信号：</p>
+<ul>
+<li><a href="/lte_physical_signals/" rel="">主同步信号（PSS）</a></li>
+<li><a href="/lte_physical_signals/" rel="">辅同步信号（SSS）</a></li>
+</ul>
+<p>过程中包括了</p>
+<ul>
+<li>下行时间和频率的同步</li>
+<li>小区物理 ID 的检测</li>
+<li><code>OFDM</code> 信号 <code>CP</code> 长度的检测（Normal 或者 Extended CP）</li>
+</ul>
+<p>完成这些操作后，终端就可以开始读取服务小区的<strong>广播信道</strong>（PBCH）中的系统信息了。</p>
+<p>通过同步信号的检测与服务小区获得同步以后，终端还可以利用<strong>下行导频信号</strong>（CRS），进行更精确的时间与频率的同步，以及同步的维持。</p>
+<h2 id="参考" class="headerLink">
+    <a href="#%e5%8f%82%e8%80%83" class="header-mark"></a>参考</h2><ul>
+<li>[1] LTE-Advanced 关键技术详解</li>
+</ul>]]></description>
+</item><item>
+    <title>LTE 系列：基本物理资源</title>
+    <link>https://www.techkoala.net/lte_basic_physical_resource/</link>
+    <pubDate>Sun, 01 Sep 2019 20:49:05 &#43;0800</pubDate><author>
+        <name>TechKoala</name>
+    </author><guid>https://www.techkoala.net/lte_basic_physical_resource/</guid>
+    <description><![CDATA[<blockquote>
+<p>LTE 基本物理资源及分配方法</p>
+</blockquote>
+<h2 id="基本物理资源" class="headerLink">
+    <a href="#%e5%9f%ba%e6%9c%ac%e7%89%a9%e7%90%86%e8%b5%84%e6%ba%90" class="header-mark"></a>基本物理资源</h2><h3 id="物理资源块prb" class="headerLink">
+    <a href="#%e7%89%a9%e7%90%86%e8%b5%84%e6%ba%90%e5%9d%97prb" class="header-mark"></a>物理资源块（PRB）</h3><p>物理层定义了物理资源块（Physical Resource Block，PRB）作为空中接口物理资源分配的单位。1 个 <code>PRB</code> 在<strong>频域</strong>上包含 <strong>12 个连续的子载波</strong>，在<strong>时域</strong>上包含 <strong>7 个连续的 OFDM 符号</strong>（在 Extended CP 的情况下为 6 个），即 1 个 <code>PRB</code> 包括了<strong>频域宽度</strong>等于 <code>180kHz</code>、<strong>时间长度</strong>等于 <code>0.5ms</code>（1 个时隙）的物理资源。</p>
+<figure><a class="lightgallery" href="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_56.webp" title="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_56.webp" data-thumbnail="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_56.webp" data-sub-html="<h2>物理资源块（PRB）的结构</h2>">
+        <img
+            
+            loading="lazy"
+            src="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_56.webp"
+            srcset="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_56.webp, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_56.webp 1.5x, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_56.webp 2x"
+            sizes="auto"
+            alt="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_56.webp">
+    </a><figcaption class="image-caption">物理资源块（PRB）的结构</figcaption>
+    </figure>
+<p>通过设置不同的子载波数目可以映射到不同的资源块（PRB）数目。LTE Release 8 版本定义的 6 种不同的系统带宽与子载波数目以及 PRB 数目之间的对应关系如下表所示：</p>
+<figure><a class="lightgallery" href="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_1.webp" title="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_1.webp" data-thumbnail="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_1.webp" data-sub-html="<h2>系统带宽与资源块数目</h2>">
+        <img
+            
+            loading="lazy"
+            src="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_1.webp"
+            srcset="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_1.webp, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_1.webp 1.5x, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_1.webp 2x"
+            sizes="auto"
+            alt="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_1.webp">
+    </a><figcaption class="image-caption">系统带宽与资源块数目</figcaption>
+    </figure>
+<h3 id="逻辑资源块vrb" class="headerLink">
+    <a href="#%e9%80%bb%e8%be%91%e8%b5%84%e6%ba%90%e5%9d%97vrb" class="header-mark"></a>逻辑资源块（VRB）</h3><p>为了方便物理信道向空中接口物理资源的映射，在物理资源块（PRB）的基础上还定义了逻辑资源块（Virtual Resource Block，VRB）。</p>
+<p>逻辑资源块的大小与物理资源块相同，即 <strong>1 个时隙</strong>（0.5ms）、<strong>12 个子载波</strong>。逻辑资源块主要定义了资源的分配方式，位于 1 个子帧内 2 个时隙的 2 个 <code>VRB</code>（即 VRB pair）是物理资源分配信令的指示单位。</p>
+<p>逻辑资源块和物理资源块分别对应有各自的资源块序号 <code>nVRB</code> 和 <code>nPRB</code> 。</p>
+<ul>
+<li>物理资源块 <code>PRB</code> 的序号 <code>nPRB</code> 按照频域的物理位置进行顺序编号</li>
+<li>逻辑资源块 <code>VRB</code> 的序号 <code>nVRB</code> 是系统进行资源分配时所指示的逻辑序号，通过它与 <code>PRB</code> 序号之间的映射关系来进一步地确定实际物理资源的位置</li>
+</ul>
+<p>物理层定义了两种类型的逻辑资源块：</p>
+<ul>
+<li>
+<p><code>集中式 VRB</code>（Localized VRB，LVRB）</p>
+<p><code>LVRB</code> 直接映射到 <code>PRB</code> 上，即 <strong>nPRB =nVRB</strong></p>
+</li>
+<li>
+<p><code>分布式 VRB</code>（Distributed VRB，DVRB）</p>
+<p><code>DVRB</code> 逻辑资源序号与物理资源序号具有一定的<strong>映射关系</strong>，可以表示为 <strong>nPRB =f(nVRB ，ns )</strong>，其中 <strong>0≤ns ≤19</strong> 是 1 个无线帧内的时隙序号。通常情况下，<strong>连续</strong>的 <code>DVBR</code> 序号将映射到<strong>不连续</strong>的 <code>PRB</code> 序号上，并且 1 个子帧内的 2 个时隙也有着不同的映射关系，即属于 1 个 <code>DVRB pair</code> 的两个具有相同逻辑序号的 DVRB 将映射到两个时隙不同频率位置的 PRB 上。通过这样的机制实现了<strong>分布式</strong>的资源分配</p>
+</li>
+</ul>
+<figure><a class="lightgallery" href="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_2.webp" title="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_2.webp" data-thumbnail="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_2.webp" data-sub-html="<h2>基于 VRB 的资源分配</h2>">
+        <img
+            
+            loading="lazy"
+            src="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_2.webp"
+            srcset="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_2.webp, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_2.webp 1.5x, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_2.webp 2x"
+            sizes="auto"
+            alt="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_2.webp">
+    </a><figcaption class="image-caption">基于 VRB 的资源分配</figcaption>
+    </figure>
+<ul>
+<li><strong>下行方向</strong>的信号传输，支持 LVRB 和 DVRB 的分配，具体采用的方式在下行资源的调度信令中进行指示</li>
+<li><strong>上行方向</strong>的信号传输，<strong>仅支持</strong> LVRB 方式的资源分配</li>
+</ul>
+<h3 id="资源单元组reg" class="headerLink">
+    <a href="#%e8%b5%84%e6%ba%90%e5%8d%95%e5%85%83%e7%bb%84reg" class="header-mark"></a>资源单元组（REG）</h3><p><code>PRB</code> 和 <code>VRB</code> 用于数据信道的资源分配和映射，物理层还定义了 <code>REG</code>（Resource Element Group）的概念，用于物理层下行控制信道的资源映射。</p>
+<p><strong>1 个</strong> <code>REG</code> 对应除掉导频符号之外在频域上连续的 <strong>4 个</strong>物理资源。</p>
+<figure><a class="lightgallery" href="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_3.webp" title="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_3.webp" data-thumbnail="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_3.webp" data-sub-html="<h2>资源单元组（Resource Element Group，REG）</h2>">
+        <img
+            
+            loading="lazy"
+            src="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_3.webp"
+            srcset="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_3.webp, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_3.webp 1.5x, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_3.webp 2x"
+            sizes="auto"
+            alt="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_3.webp">
+    </a><figcaption class="image-caption">资源单元组（Resource Element Group，REG）</figcaption>
+    </figure>
+<h2 id="参考" class="headerLink">
+    <a href="#%e5%8f%82%e8%80%83" class="header-mark"></a>参考</h2><ul>
+<li>[1] LTE-Advanced 关键技术详解</li>
+</ul>]]></description>
+</item><item>
+    <title>LTE 系列：上行链路帧结构</title>
+    <link>https://www.techkoala.net/lte_uplink_frame_structure/</link>
+    <pubDate>Sat, 10 Aug 2019 19:46:00 &#43;0800</pubDate><author>
+        <name>TechKoala</name>
+    </author><guid>https://www.techkoala.net/lte_uplink_frame_structure/</guid>
+    <description><![CDATA[<blockquote>
+<p>LTE 上行链路帧结构详细讲解</p>
+</blockquote>
+<p>LTE 使用 SC (单载波)-FDMA 作为上行链路信号。</p>
+<h2 id="时隙结构" class="headerLink">
+    <a href="#%e6%97%b6%e9%9a%99%e7%bb%93%e6%9e%84" class="header-mark"></a>时隙结构</h2><p>从下面的时隙结构可以看出，LTE 上下行链路的时隙结构是相似的：</p>
+<figure><a class="lightgallery" href="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE-UL-FS/FDD_UL_FrameStructure_Symbols.png" title="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE-UL-FS/FDD_UL_FrameStructure_Symbols.png" data-thumbnail="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE-UL-FS/FDD_UL_FrameStructure_Symbols.png" data-sub-html="<h2>上行时隙结构</h2>">
+        <img
+            
+            loading="lazy"
+            src="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE-UL-FS/FDD_UL_FrameStructure_Symbols.png"
+            srcset="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE-UL-FS/FDD_UL_FrameStructure_Symbols.png, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE-UL-FS/FDD_UL_FrameStructure_Symbols.png 1.5x, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE-UL-FS/FDD_UL_FrameStructure_Symbols.png 2x"
+            sizes="auto"
+            alt="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE-UL-FS/FDD_UL_FrameStructure_Symbols.png">
+    </a><figcaption class="image-caption">上行时隙结构</figcaption>
+    </figure>
+<p>与下行链路相同，上行链路中的帧时间和时隙时间与下行链路中相同。并且资源块结构和下行链路上也相同。如上所述，在一个时隙中的 7 个符号在上行链路和下行链路上也是相同的。</p>
+<p>你可能会注意到的一点区别是每个物理信道的位置。在下行链路情况下，信道通常占用整个带宽，但是上行链路时隙中的信道更局限。例如，PUCCH 仅位于整个带宽中的的最低端和最高端。</p>
+<h3 id="pucch-rs" class="headerLink">
+    <a href="#pucch-rs" class="header-mark"></a>PUCCH RS</h3><p>携带解调 PUCCH 所需的参考信号。这意味着如果此部分配置不正确或 eNodeB 检测不到此部件，则 eNodeB 无法解码 PUCCH。</p>
+<h3 id="pucch" class="headerLink">
+    <a href="#pucch" class="header-mark"></a>PUCCH</h3><p>此信道可以承载大量信息(UCI)，但根据配置的不同，它只能承载以下信息中的一部分：</p>
+<ul>
+<li>ACK/NACK for the recieved PDSCH data</li>
+<li>CQI</li>
+<li>RI</li>
+<li>PMI</li>
+</ul>
+<p>正如你在时隙结构中看到的，PUCCH 以子帧内两个时隙之间交替的方式位于上行链路频域的两端，这意味着如果 PUCCH 是时隙 0 (第一个时隙) 中的频域的最低部分，并且它将位于时隙 1 (第二个时隙) 中的频域的最高部分。分配给 PUCCH 的资源元素的确切数量由网络确定，并且配置通过 SIB2 广播到 UE。</p>
+<p>详细的 PUCHH 结构参考：</p>
+<ul>
+<li>
+<p><a href="http://www.sharetechnote.com/html/Handbook_LTE_PUCCH_Format.html" target="_blank" rel="noopener noreferrer">PUCCH Format</a></p>
+</li>
+<li>
+<p><a href="http://www.sharetechnote.com/html/Handbook_LTE_PUCCH_Format1_Location.html" target="_blank" rel="noopener noreferrer">PUCCH Format 1,1a,1b Location</a></p>
+</li>
+<li>
+<p><a href="http://www.sharetechnote.com/html/Handbook_LTE_PUCCH_Format2_Location.html" target="_blank" rel="noopener noreferrer">PUCCH Format 2,2a,2b Location</a></p>
+</li>
+</ul>
+<h3 id="pusch-rs" class="headerLink">
+    <a href="#pusch-rs" class="header-mark"></a>PUSCH RS</h3><p>携带解调 PUSCH 所需的参考信号。</p>
+<h3 id="pusch" class="headerLink">
+    <a href="#pusch" class="header-mark"></a>PUSCH</h3><p>承载 UE 尝试发送的上行链路数据。并且除了上行链路数据之外，还可以携带 UE 接收的 PDSCH 的 ACK/NACK。</p>
+<h3 id="srs" class="headerLink">
+    <a href="#srs" class="header-mark"></a>SRS</h3><p>参考 <a href="http://www.sharetechnote.com/html/Handbook_LTE_SRS.html" target="_blank" rel="noopener noreferrer">SRS in Quick Reference</a></p>
+<h2 id="上行资源网格" class="headerLink">
+    <a href="#%e4%b8%8a%e8%a1%8c%e8%b5%84%e6%ba%90%e7%bd%91%e6%a0%bc" class="header-mark"></a>上行资源网格</h2><p>具体来说，上行资源还有一种网格格式，如下所示:</p>
+<figure><a class="lightgallery" href="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE-UL-FS/36_211_Fig5_2_1-1_UL_ResourceGrid.png" title="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE-UL-FS/36_211_Fig5_2_1-1_UL_ResourceGrid.png" data-thumbnail="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE-UL-FS/36_211_Fig5_2_1-1_UL_ResourceGrid.png" data-sub-html="<h2>上行资源网格</h2>">
+        <img
+            
+            loading="lazy"
+            src="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE-UL-FS/36_211_Fig5_2_1-1_UL_ResourceGrid.png"
+            srcset="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE-UL-FS/36_211_Fig5_2_1-1_UL_ResourceGrid.png, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE-UL-FS/36_211_Fig5_2_1-1_UL_ResourceGrid.png 1.5x, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE-UL-FS/36_211_Fig5_2_1-1_UL_ResourceGrid.png 2x"
+            sizes="auto"
+            alt="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE-UL-FS/36_211_Fig5_2_1-1_UL_ResourceGrid.png">
+    </a><figcaption class="image-caption">上行资源网格</figcaption>
+    </figure>
+<p>最小的单元是 “资源元素 (RE)”，最小的资源分配单元是 RB (资源块)，它沿时域跨越 7 RE，沿频域跨越 12 RE。 这意味着一个 RB 有 84 个单元 (7x12)。</p>
+<h2 id="通信中的信道" class="headerLink">
+    <a href="#%e9%80%9a%e4%bf%a1%e4%b8%ad%e7%9a%84%e4%bf%a1%e9%81%93" class="header-mark"></a>通信中的信道</h2><p>下图显示了上行/下行数据传输的总体顺序。你可以将数据传输序列图与 DL/UL 帧结构中每个通道的特定位置相关联。</p>
+<figure><a class="lightgallery" href="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE-UL-FS/ChannelFlow_Small.png" title="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE-UL-FS/ChannelFlow_Small.png" data-thumbnail="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE-UL-FS/ChannelFlow_Small.png" data-sub-html="<h2>LTE 上下行传输顺序图</h2>">
+        <img
+            
+            loading="lazy"
+            src="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE-UL-FS/ChannelFlow_Small.png"
+            srcset="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE-UL-FS/ChannelFlow_Small.png, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE-UL-FS/ChannelFlow_Small.png 1.5x, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE-UL-FS/ChannelFlow_Small.png 2x"
+            sizes="auto"
+            alt="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE-UL-FS/ChannelFlow_Small.png">
+    </a><figcaption class="image-caption">LTE 上下行传输顺序图</figcaption>
+    </figure>
+<h2 id="帧结构总览" class="headerLink">
+    <a href="#%e5%b8%a7%e7%bb%93%e6%9e%84%e6%80%bb%e8%a7%88" class="header-mark"></a>帧结构总览</h2><figure><a class="lightgallery" href="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE-UL-FS/UL_SlotStructure_Constellation.png" title="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE-UL-FS/UL_SlotStructure_Constellation.png" data-thumbnail="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE-UL-FS/UL_SlotStructure_Constellation.png" data-sub-html="<h2>上行帧结构概览</h2>">
+        <img
+            
+            loading="lazy"
+            src="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE-UL-FS/UL_SlotStructure_Constellation.png"
+            srcset="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE-UL-FS/UL_SlotStructure_Constellation.png, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE-UL-FS/UL_SlotStructure_Constellation.png 1.5x, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE-UL-FS/UL_SlotStructure_Constellation.png 2x"
+            sizes="auto"
+            alt="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE-UL-FS/UL_SlotStructure_Constellation.png">
+    </a><figcaption class="image-caption">上行帧结构概览</figcaption>
+    </figure>
+<h2 id="参考" class="headerLink">
+    <a href="#%e5%8f%82%e8%80%83" class="header-mark"></a>参考</h2><ul>
+<li>[1] <a href="http://www.sharetechnote.com/html/FrameStructure_UL.html" target="_blank" rel="noopener noreferrer">UL FrameStructure</a></li>
+</ul>]]></description>
+</item><item>
+    <title>LTE 系列：物理信道</title>
+    <link>https://www.techkoala.net/lte_physical_channels/</link>
+    <pubDate>Mon, 05 Aug 2019 21:06:48 &#43;0800</pubDate><author>
+        <name>TechKoala</name>
+    </author><guid>https://www.techkoala.net/lte_physical_channels/</guid>
+    <description><![CDATA[<blockquote>
+<p>LTE 物理信道详解</p>
+</blockquote>
+<h2 id="广播信道pbch" class="headerLink">
+    <a href="#%e5%b9%bf%e6%92%ad%e4%bf%a1%e9%81%93pbch" class="header-mark"></a>广播信道（PBCH）</h2><p>物理广播信道（Physical Broadcast CHannel，PBCH）用于承载系统的 MIB 广播信息。</p>
+<p>LTE 系统广播信息分为</p>
+<ul>
+<li>
+<p><strong>MIB（Master Information Block）</strong></p>
+<p>系统基本的配置信息，在 <code>PBCH</code> 固定的物理资源上进行传输 <code>MIB</code> 数据块的总长度为 40 比特，包含 24 个信息比特和 16 个 <code>CRC</code> 比特（以加扰的方式携带关于基站发射天线数目（1/2/4）的信息）。信息比特中包括：</p>
+<ul>
+<li>下行系统带宽指示（3 比特）</li>
+<li>PHICH 资源指示（3 比特）</li>
+<li>系统帧号 SFN（8 比特）</li>
+<li>预留的 10 个比特</li>
+</ul>
+<p><code>MIB</code> 信息的传输周期 <code>TTI=40ms</code>，在位于每个 <code>10ms</code> 无线帧的第一个子帧的 <code>PBCH</code> 信道上传输。<code>MIB</code> 数据块经过信道编码、速率匹配和加扰后，得到 1920 比特，映射到 <code>40ms</code> 内，间隔为 <code>10ms</code> 的 4 个子帧的 <code>PBCH</code> 信道的物理资源上。其中，每一个 <code>PBCH</code> 子帧都是可自解码的，也就是说假设信道质量足够好的话，终端可以通过 4 次中的任意一次的接收即可解调出 <code>MIB</code> 信息。</p>
+<figure><a class="lightgallery" href="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_26.webp" title="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_26.webp" data-thumbnail="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_26.webp" data-sub-html="<h2>LTE 物理广播信道</h2>">
+          <img
+              
+              loading="lazy"
+              src="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_26.webp"
+              srcset="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_26.webp, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_26.webp 1.5x, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_26.webp 2x"
+              sizes="auto"
+              alt="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_26.webp">
+      </a><figcaption class="image-caption">LTE 物理广播信道</figcaption>
+      </figure>
+</li>
+<li>
+<p><strong>SIB（System Information Block）</strong></p>
+</li>
+</ul>
+<p><code>PBCH</code> 信道位于每个 <code>10ms</code> 无线帧的第一个子帧，占用 4 个连续的 <code>OFDM</code> 符号，在频域上占用下行频带中心 <code>1.08MHz</code> 的带宽。也就是说，对于各种不同的系统带宽（1.4MHz、3MHz、5MHz、10MHz、15MHz、20MHz），物理广播信道 <code>PBCH</code> 的传输带宽相同，总是占用频带中心的 1.08MHz 带宽（72 个子载波）。物理广播信道 PBCH 频域结构。</p>
+<figure><a class="lightgallery" href="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_27.webp" title="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_27.webp" data-thumbnail="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_27.webp" data-sub-html="<h2>物理广播信道 PBCH 频域结构</h2>">
+        <img
+            
+            loading="lazy"
+            src="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_27.webp"
+            srcset="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_27.webp, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_27.webp 1.5x, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_27.webp 2x"
+            sizes="auto"
+            alt="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_27.webp">
+    </a><figcaption class="image-caption">物理广播信道 PBCH 频域结构</figcaption>
+    </figure>
+<p>当发射天线为 2/4 的时候，<code>PBCH</code> 采用<strong>发送分集</strong>（SFBC/SFBC+FSTD）的方式。在资源映射的时候，为了方便终端在不知道发射天线数目情况下的<strong>盲检测</strong>，对 1、2 或者 4 的发射天线数目，使用相同的物理资源映射方式，即总是空出 4 天线的小区公用导频 <code>CRS</code> 资源。</p>
+<h2 id="下行共享信道pdsch" class="headerLink">
+    <a href="#%e4%b8%8b%e8%a1%8c%e5%85%b1%e4%ba%ab%e4%bf%a1%e9%81%93pdsch" class="header-mark"></a>下行共享信道（PDSCH）</h2><p>下行物理共享信道（Physical Downlink Shared CHannel，PDSCH）用于下行数据的调度传输，是 LTE 物理层主要的下行<strong>数据承载信道</strong>，可以承载来自上层的不同的传输内容（即不同的逻辑信道），包括：</p>
+<ul>
+<li>寻呼信息</li>
+<li>广播信息</li>
+<li>控制信息和业务数据信息</li>
+</ul>
+<p>作为决定物理层性能的关键因素之一，PDSCH 的传输支持各种物理层机制，包括信道自适应的调度，<code>HARQ</code> 和各种 <code>MIMO</code> 机制。</p>
+<h3 id="控制格式指示信道pcfich" class="headerLink">
+    <a href="#%e6%8e%a7%e5%88%b6%e6%a0%bc%e5%bc%8f%e6%8c%87%e7%a4%ba%e4%bf%a1%e9%81%93pcfich" class="header-mark"></a>控制格式指示信道（PCFICH）</h3><p>物理控制格式指示信道（Physical Control Format Indicator CHannel，PCFICH）指示物理层控制信道的格式。</p>
+<p>在 LTE 中，物理层控制信道（PDCCH）在每个子帧的前几个 <code>OFDM</code> 符号上传输，根据系统物理层控制信息负载情况的不同，该数值可能是 1、2 或者 3（在使用最小值 <code>1.4MHz</code> 的系统带宽的时候，为了提供足够的物理层控制信息的容量，也可以设置为 4）。<code>PCFICH</code> 信道正是对该数值进行了指示，即在当前子帧中，前几个 <code>OFDM</code> 符号用于物理层控制信道 <code>PDCCH</code> 的传输。</p>
+<p><code>PCFICH</code> 指示当前子帧中 <code>PDCCH</code> 的符号数目：1、2、3（当系统带宽 1.4MHz 的时候，取值为 2、3、4）。</p>
+<p><code>PCFICH</code> 的基带处理过程如图所示，其携带的 3 种可能性通过编码映射得到 32 比特的信息，经过 <code>QPSK</code> 调制后形成 16 个调制符号，这 16 个调制符号将映射到子帧第 1 个 <code>OFDM</code> 符号上的 4 个资源单元组 <code>REG</code> 上（每个 <code>REG</code> 包含 4 个 <code>RE</code>，可以承载 4 个调制符号）。为了获得充分的分集增益，这 4 个 <code>REG</code> 均匀地分布在系统下行带宽上。可以注意到，其中频域的起始位置 k 与小区 ID 相关，因此不同小区的 <code>PCFICH</code> 将形成相对的频域偏移，避免不同小区的 <code>PCFICH</code> 之间的干扰。</p>
+<figure><a class="lightgallery" href="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_28.webp" title="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_28.webp" data-thumbnail="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_28.webp" data-sub-html="<h2>物理控制信道格式指示信道（PCFICH）</h2>">
+        <img
+            
+            loading="lazy"
+            src="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_28.webp"
+            srcset="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_28.webp, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_28.webp 1.5x, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_28.webp 2x"
+            sizes="auto"
+            alt="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_28.webp">
+    </a><figcaption class="image-caption">物理控制信道格式指示信道（PCFICH）</figcaption>
+    </figure>
+<p><code>PCFICH</code> 信道采用的发射天线与 <code>PBCH</code> 相同，即 1、2 或者 4。当发射天线数目为 2 或者 4 的时候，使用 <code>SFBC</code>/<code>SFBC+FSTD</code> 的发送分集方式。</p>
+<h3 id="harq-指示信道phich" class="headerLink">
+    <a href="#harq-%e6%8c%87%e7%a4%ba%e4%bf%a1%e9%81%93phich" class="header-mark"></a>HARQ 指示信道（PHICH）</h3><p>物理 HARQ 指示信道（Physical HARQ Indicator CHannel，PHICH）承载对上行数据传输的 <code>HARQ</code> <code>ACK</code>/<code>NACK</code> 反馈信息。</p>
+<p>物理层 <code>PHICH</code> 信道的传输以 <code>PHICH</code> 组的形式来组织，1 个 <code>PHICH</code> 信道由 <code>PHICH</code> <strong>组编号</strong>和<strong>组内编号</strong>共同确定。</p>
+<p>1 个 <code>PHICH</code> 组内的多个 <code>PHICH</code> 信道占用<strong>相同</strong>的时频域物理资源，采用<strong>正交扩频序列</strong>的复用方式。</p>
+<ul>
+<li>在 <code>Normal CP</code> 的情况下，采用扩频因子为 4 结合 <code>I/Q</code> 两路 <code>BPSK</code> 调制的复用方式，1 个 <code>PHICH </code>组占用 12 个调制符号（3 个 <code>REG</code>），可以复用 8 个 <code>PHICH</code> 信道</li>
+<li>在 <code>Extended CP</code> 时，针对频率选择性较强的无线信道，采用扩频因子为 2 结合 <code>I/Q </code>两路 <code>BPSK</code> 调制的复用方式，1 个 <code>PHICH</code> 组占用 6 个调制符号，可以复用 4 个 <code>PHICH</code> 信道，此时，2 个 <code>PHICH</code> 组共同占用 3 个 <code>REG</code> 的物理资源</li>
+</ul>
+<p><code>PHICH</code> 信道的基带处理过程如图所示，1 个比特的 <code>ACK</code>/<code>NACK</code>（0/1）信息使用重复编码的方式得到 3 个比特的编码后信息，然后经过 <code>BPSK</code> 调制以及系数为 4 的扩频操作，得到 12 个符号，映射在 <code>PHICH</code> 组所对应的 3 个 <code>REG</code> 的物理资源位置上。</p>
+<figure><a class="lightgallery" href="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_29.webp" title="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_29.webp" data-thumbnail="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_29.webp" data-sub-html="<h2>物理 HARQ 指示信道（PHICH）</h2>">
+        <img
+            
+            loading="lazy"
+            src="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_29.webp"
+            srcset="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_29.webp, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_29.webp 1.5x, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_29.webp 2x"
+            sizes="auto"
+            alt="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_29.webp">
+    </a><figcaption class="image-caption">物理 HARQ 指示信道（PHICH）</figcaption>
+    </figure>
+<ul>
+<li>在频域上，1 个 <code>PHICH</code> 组对应的 3 个 <code>REG</code> 采用分布式的映射方式，以获得分集增益</li>
+<li>在时间上，<code>PHICH</code> 有<strong>正常</strong>（normal）和<strong>扩展</strong>（extended）两种资源映射方式
+<ul>
+<li>在采用正常方式的时候，<code>PHICH</code> 信道映射在子帧的第一个 <code>OFDM</code> 符号上；</li>
+<li>当 <code>PDCCH</code> 的长度为 3 时（在混合载波的 MBSFN 子帧或者 <code>TDD</code> 特殊子帧中，<code>PDCCH</code> 长度为 2 时），<code>PHICH</code> 可以配置为采用扩展的方式，此时每 1 个 <code>PHICH</code> 信道将分布在 <code>PDCCH</code> 所占用的多个 <code>OFDM</code> 符号上。</li>
+</ul>
+</li>
+</ul>
+<p>在 <code>PCFICH</code> 所指示的前 n 个 <code>OFDM </code>符号中，除了用于 <code>PCFICH</code> 和 <code>PHICH</code> 传输的资源外，其余的将用于 <code>PDCCH</code> 的传输。</p>
+<p>为了确定用于 <code>PDCCH</code> 的资源，需要先确定用于 <code>PCFICH</code> 和 <code>PHICH</code> 的资源，其中 <code>PCFICH</code> 的资源是<strong>固定的</strong>，而用于 <code>PHICH</code> 传输的资源数目则由系统在 <code>PBCH </code>广播信息进行半静态的指示。<code>MIB</code> 信息中有 3 个比特用于 <code>PHICH</code> 资源的指示，其中包括了正常或者扩展两种时间长度以及 <code>PHICH </code>组数目 4 种可能性的指示。</p>
+<p><code>PHICH</code> 信道发射天线的数目与 <code>PBCH</code> <strong>相同</strong>，当发射天线数目为 2、4 的时候采用<code> SFBC</code>/<code>SFBC+FSTD</code> 的<strong>发送分集</strong>方式。</p>
+<p><code>PHICH</code> 信道的<strong>索引号</strong>与上行数据传输的资源位置<strong>相对应</strong>，也就是说，<strong>不需要</strong>采用信令进行指示，根据上行 <code>PUSCH</code> 数据传输的资源位置就可以确定下行 <code>PHICH</code> 信号的索引号。</p>
+<p>具体来说，由相应的上行 <code>PUSCH</code> 数据传输使用的第 1 个物理资源块 <code>PRB</code> 的序号所确定。另外，为了使得各个 <code>PHICH</code> 组中实际使用的 <code>PHICH</code> 信道数量的负载均衡，相邻的上行 <code>PRB</code> 位置对应于不同 <code>PHICH</code> 组中的 <code>PHICH</code> 信道。</p>
+<h2 id="下行控制信道pdcch" class="headerLink">
+    <a href="#%e4%b8%8b%e8%a1%8c%e6%8e%a7%e5%88%b6%e4%bf%a1%e9%81%93pdcch" class="header-mark"></a>下行控制信道（PDCCH）</h2><p>下行物理控制信道（Physical Downlink Control CHannel，PDCCH）用于承载物理层的下行控制消息，包括：</p>
+<ul>
+<li>上／下行数据传输的调度信息</li>
+<li>上行功率控制命令信息</li>
+</ul>
+<p><code>PDCCH</code> 信道的传输以控制信道单元（Control Channel Element，CCE）的形式来组织，1 个 CCE 由 9 个 REG 组成（即 9×4=36 个 RE）。根据所占用的 <code>CCE</code> 数目的不同，标准中定义了 4 种 <code>PDCCH</code> 格式，分别占用 1、2、4、8 个 CCE，相应的数值又称为 <code>PDCCH</code> 的聚合等级（Aggregation Level）。</p>
+<p>一个下行子帧可以承载多个 <code>PDCCH</code> 信道，各个 <code>PDCCH</code> 信道进行独立的 <code>CRC</code> 计算、加扰、信道编码并根据 Aggregation Level 进行速率匹配。然后，一个子帧中所有的 <code>PDCCH </code>信道将复用为 1 个数据比特流，对该数据流进行填充，使各个 <code>PDCCH</code> 信道符合定义的 <code>CCE</code> 起始位置的规则（Aggregation Level 为 n 的 <code>PDCCH</code> 的起始位置为 n 整数倍的 <code>CCE</code> 位置）；并且使填充后的数据比特流长度能够充满分配给 <code>PDCCH</code> 的 <code>OFDM</code> 符号的所有资源（除去 <code>PCFICH</code> 和 <code>PHICH</code>）。然后，对形成的数据流进行加扰、调制和多天线映射。最后映射到分配给 <code>PDCCH</code> 的物理资源上。</p>
+<p>在 <code>PDCCH</code> 数据流向物理资源的映射过程中，包含了交织的操作，数据流以 <code>REG</code>（4 个调制符号）为单位进行交织。通过交织的资源映射，每个 <code>PDCCH</code> 信道能够获得充分的分集增益。</p>
+<figure><a class="lightgallery" href="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_30.webp" title="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_30.webp" data-thumbnail="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_30.webp" data-sub-html="<h2>下行物理控制信道（PDCCH）</h2>">
+        <img
+            
+            loading="lazy"
+            src="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_30.webp"
+            srcset="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_30.webp, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_30.webp 1.5x, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_30.webp 2x"
+            sizes="auto"
+            alt="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_30.webp">
+    </a><figcaption class="image-caption">下行物理控制信道（PDCCH）</figcaption>
+    </figure>
+<p><code>PDCCH</code> 信道的发射天线与 <code>PBCH</code> 相同，即 1、2 或者 4。当发射天线数目为 2、4 的时候采用 <code>SFBC</code>/<code>SFBC+FSTD</code> 的发送分集方式。</p>
+<p>终端对 <code>PDCCH</code> 信道的接收采用<strong>盲检测</strong>的方式，即终端根据所使用的下行控制信息（DCI）的格式，解调所有可能属于自己的下行 <code>PDCCH</code> 信道，搜索属于自己的信息。</p>
+<h2 id="随机接入信道prach" class="headerLink">
+    <a href="#%e9%9a%8f%e6%9c%ba%e6%8e%a5%e5%85%a5%e4%bf%a1%e9%81%93prach" class="header-mark"></a>随机接入信道（PRACH）</h2><p>物理随机接入信道（Physical RandomAccess CHannel，PRACH）用于终端上行发送随机接入信号（random access preamble），启动随机接入的过程。</p>
+<p>随机接入信号由</p>
+<ul>
+<li><strong>循环前缀（Cyclic Prefix，CP）</strong></li>
+<li><strong>接入序列（Sequence）</strong></li>
+<li>**保护时间（Guard Time，GT）
+**
+3 个部分组成。</li>
+</ul>
+<figure><a class="lightgallery" href="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_31.webp" title="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_31.webp" data-thumbnail="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_31.webp" data-sub-html="<h2>物理随机接入信道</h2>">
+        <img
+            
+            loading="lazy"
+            src="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_31.webp"
+            srcset="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_31.webp, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_31.webp 1.5x, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_31.webp 2x"
+            sizes="auto"
+            alt="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_31.webp">
+    </a><figcaption class="image-caption">物理随机接入信道</figcaption>
+    </figure>
+<p>根据适用的场景的不同（例如：小区半径和链路的功率预算），LTE 物理层支持 5 种随机接入信号格式，具体使用过程中，由高层信令指示小区所使用的随机接入信道的配置。</p>
+<figure><a class="lightgallery" href="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_32.webp" title="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_32.webp" data-thumbnail="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_32.webp" data-sub-html="<h2>随机接入信号格式</h2>">
+        <img
+            
+            loading="lazy"
+            src="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_32.webp"
+            srcset="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_32.webp, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_32.webp 1.5x, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_32.webp 2x"
+            sizes="auto"
+            alt="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_32.webp">
+    </a><figcaption class="image-caption">随机接入信号格式</figcaption>
+    </figure>
+<p>其中格式 4 的随机接入信号仅用于 <code>TDD Type 2</code> 中，当 <code>TDD</code> 配置特殊时隙 <code>UpPTS</code> 的长度为 2 个 <code>OFDM</code> 符号时，可以在 <code>UpPTS</code> 的位置发送格式 4 的随机接入信号，以较小的开销实现随机接入的功能。</p>
+<p>在频域上，<code>PRACH</code> 占用 6 个 PRB（1.08MHz）的带宽。以 <code>Format 0</code> 为例，<code>PRACH</code> 信号的生成方式如图所示，信号占用的带宽为 <code>1 048.75kHz</code>，不足 <code>1.08MHz</code> 的部分作为频域的保护带。</p>
+<figure><a class="lightgallery" href="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_33.webp" title="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_33.webp" data-thumbnail="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_33.webp" data-sub-html="<h2>PRACH preamble 生成方法（Format 0）</h2>">
+        <img
+            
+            loading="lazy"
+            src="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_33.webp"
+            srcset="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_33.webp, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_33.webp 1.5x, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_33.webp 2x"
+            sizes="auto"
+            alt="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_33.webp">
+    </a><figcaption class="image-caption">PRACH preamble 生成方法（Format 0）</figcaption>
+    </figure>
+<p>LTE 物理层使用 <code>Zadoff-Chu</code> 序列作为生成随机接入信号的序列。每个小区有 64 个可用的序列，由小区的下行广播进行指示。</p>
+<p>小区中分配给上行随机接入信道的物理资源位置由高层信令进行指示。在关于小区随机接入信道配置的信息中，指示了使用的 <code>PRACH</code> 格式以及物理资源的位置。</p>
+<p>对于 <code>FDD Type 1</code>，每个时刻最多传输一个 <code>PRACH</code> 信道，即没有频分复用。结合配置信息中指示的<strong>PRACH 信道的时间位置</strong>和<strong>PRACH 信道频率位置</strong>的信息，可以确定小区中 <code>PRACH</code> 信道的时频资源位置。</p>
+<blockquote>
+<p>例如：设置使用 PRACH Format 0，周期等于 10ms，时间偏移量等于 1 个子帧，频率位置等于 1，那么小区中用于 PRACH 信道的物理资源位置</p>
+<figure><a class="lightgallery" href="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_34.webp" title="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_34.webp" data-thumbnail="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_34.webp" data-sub-html="<h2>随机接入信道的物理资源位置</h2>">
+        <img
+            
+            loading="lazy"
+            src="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_34.webp"
+            srcset="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_34.webp, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_34.webp 1.5x, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_34.webp 2x"
+            sizes="auto"
+            alt="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_34.webp">
+    </a><figcaption class="image-caption">随机接入信道的物理资源位置</figcaption>
+    </figure>
+</blockquote>
+<p>对于 <code>TDD Type 2</code>，除了在 <code>UpPTS</code> 上支持 <code>PRACH Format 4</code> 的发送之外，同一个时刻还可能传输多个频分的 <code>PRACH</code> 信道。</p>
+<figure><a class="lightgallery" href="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_35.webp" title="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_35.webp" data-thumbnail="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_35.webp" data-sub-html="<h2>TDD Type 2 中频分的 PRACH 信道</h2>">
+        <img
+            
+            loading="lazy"
+            src="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_35.webp"
+            srcset="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_35.webp, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_35.webp 1.5x, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_35.webp 2x"
+            sizes="auto"
+            alt="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_35.webp">
+    </a><figcaption class="image-caption">TDD Type 2 中频分的 PRACH 信道</figcaption>
+    </figure>
+<p>因为 <code>TDD</code> 支持不同的上下行时间比例的配置，在某些配置情况下上行时间较少，所以可能需要在同一个时刻支持多个 <code>PRACH</code> 信道，以提供足够的随机接入信道的容量。在普通子帧中，由于上行两边频带存在 <code>PUCCH</code> 控制信道，而中间是 <code>PUSCH</code> 数据信道，因此 <code>PRACH</code> 信道采用频率偏移结合上下交错的分配方式为 <code>PUCCH</code> 和 <code>PUSCH</code> 信道留出物理资源空间。而对于 <code>PRACH Format 4</code>，由于特殊时隙 <code>UpPTS</code> 上不存在 <code>PUCCH</code> 或者 <code>PUSCH</code> 信道，因此采用了不同的机制：从上行频域的边际开始，连续分布，在两次 <code>UpPTS</code> 之间采用跳频的方式，即交替地从上边带或者下边带开始，这样可以在随机接入信号需要多次传输的时候获得频率分集的增益。</p>
+<figure><a class="lightgallery" href="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_36.webp" title="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_36.webp" data-thumbnail="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_36.webp" data-sub-html="<h2>TDD Type 2 中 PRACH Format 4 的频分与跳频</h2>">
+        <img
+            
+            loading="lazy"
+            src="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_36.webp"
+            srcset="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_36.webp, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_36.webp 1.5x, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_36.webp 2x"
+            sizes="auto"
+            alt="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_36.webp">
+    </a><figcaption class="image-caption">TDD Type 2 中 PRACH Format 4 的频分与跳频</figcaption>
+    </figure>
+<h2 id="上行控制信道pucch" class="headerLink">
+    <a href="#%e4%b8%8a%e8%a1%8c%e6%8e%a7%e5%88%b6%e4%bf%a1%e9%81%93pucch" class="header-mark"></a>上行控制信道（PUCCH）</h2><p>上行物理控制信道（Physical Uplink Control CHannel，PUCCH）传输物理层上行控制信息，包括<strong>上行调度请求</strong>、<strong>对下行数据的 ACK/NACK 信息</strong>和<strong>信道状态信息 CSI 反馈（包括 CQI/PMI/RI）</strong>。</p>
+<p>每 1 组 <code>PUCCH</code> 信道占用 1 个 <code>RB-pair</code> 的物理资源，采用时隙跳频的方式，在系统上行频带的两边进行传输，而上行频带的中间部分用于传输上行共享信道（PUSCH）的数据。</p>
+<figure><a class="lightgallery" href="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_37.webp" title="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_37.webp" data-thumbnail="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_37.webp" data-sub-html="<h2>PUCCH 信道的资源分布</h2>">
+        <img
+            
+            loading="lazy"
+            src="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_37.webp"
+            srcset="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_37.webp, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_37.webp 1.5x, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_37.webp 2x"
+            sizes="auto"
+            alt="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_37.webp">
+    </a><figcaption class="image-caption">PUCCH 信道的资源分布</figcaption>
+    </figure>
+<p>根据所承载的上行控制信息，物理层设计了不同的 <code>PUCCH</code> 格式，对应于不同的发送方法。</p>
+<figure><a class="lightgallery" href="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_38.webp" title="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_38.webp" data-thumbnail="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_38.webp" data-sub-html="<h2>PUCCH 信道不同的格式</h2>">
+        <img
+            
+            loading="lazy"
+            src="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_38.webp"
+            srcset="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_38.webp, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_38.webp 1.5x, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_38.webp 2x"
+            sizes="auto"
+            alt="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_38.webp">
+    </a><figcaption class="image-caption">PUCCH 信道不同的格式</figcaption>
+    </figure>
+<p>根据不同格式的 <code>PUCCH</code> 信道的特点，它们在频域的分布情况如图所示。</p>
+<figure><a class="lightgallery" href="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_39.webp" title="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_39.webp" data-thumbnail="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_39.webp" data-sub-html="<h2>不同格式 PUCCH 信道在频域的分布情况</h2>">
+        <img
+            
+            loading="lazy"
+            src="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_39.webp"
+            srcset="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_39.webp, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_39.webp 1.5x, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_39.webp 2x"
+            sizes="auto"
+            alt="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_39.webp">
+    </a><figcaption class="image-caption">不同格式 PUCCH 信道在频域的分布情况</figcaption>
+    </figure>
+<ul>
+<li>PUCCH 2/2a/2b 承载的是信道状态 <code>CSI</code> 的反馈信息，在系统配置中，这一部分资源的数量是相对固定的，因此将它们分布在频带的最外侧，资源的具体数量通过高层信令进行半静态的指示。</li>
+<li><code>PUCCH 1/1a/1b</code> 承载的是调度请求信息和对下行数据的 <code>ACK</code> 信息，资源数量是动态变化的，与小区中发送的下行数据的数量相关，因此将这一部分资源放置在稍靠近频率中心的位置，方便将系统剩余的频率资源用于上行共享信道 <code>PUSCH</code> 的传输。</li>
+</ul>
+<p>在所占用的 1 个 <code>RB-pair</code> 的时频域资源中，<code>PUCCH 1/1a/1b</code> 和 <code>PUCCH 2/2a/2b</code> 都采用了码分的方式进一步地复用多个 <code>PUCCH</code> 信道。因此当配置的 <code>PUCCH 2/2a/2b</code> 信道数量所占用的资源数目不是 <code>RB-pair</code> 整数倍的时候，在 <code>PUCCH 2/2a/2b</code> 和 <code>PUCCH 1/1a/1b</code> 频域的交界处将出现它们在某 1 个 <code>RB-pair</code> 内以码分的方式混合传输的情况。</p>
+<h3 id="pucch-格式-11a1b" class="headerLink">
+    <a href="#pucch-%e6%a0%bc%e5%bc%8f-11a1b" class="header-mark"></a>PUCCH 格式 1/1a/1b</h3><p><code>PUCCH</code> 格式 <code>1/1a/1b</code> 用于终端发送<strong>调度请求信息</strong>或者<strong>1、2 比特的 ACK/NACK 信息</strong>。</p>
+<p>使用一个调制符号 $d(0)$ 来表示 <code>PUCCH 1/1a/1b</code> 发送的信息。对于 <code>PUCCH 1</code> 的<strong>调度请求信息</strong>，基站侧仅需要检测是否存在这样的发送，此时的 $d(0)$ 设置为预定义的固定值（d(0)=1）。对于 <code>PUCCH 1a/1b</code> 的 <code>ACK</code> 信息，$d(0)$ 为 <code>BPSK</code> 或者 <code>QPSK</code> 调制符号，分别对应于 1 比特或者 2 比特的 <code>ACK</code> 信息。</p>
+<p>在信息的发送过程中，首先使用正交扩频序列 $w(m)$ 进行扩频，将信息分散在一个时隙内用于 PUCCH 传输的多个上行符号上；然后，在每个上行符号上使用 1 个长度为 12 的 <code>Zadoff-Chu</code> 序列 $r_{u,v}^{\alpha}$ 进行调制，得到长度为 12 的复数序列对应于 1 个 <code>RB</code> 内的 12 个子载波。因此，<code>PUCCH 1/1a/1b</code> 的发送包含了<strong>正交扩频序列</strong>和<strong>Zadoff-Chu 序列</strong>两次码扩频的过程，可以复用的信道数目为二者的乘积。</p>
+<blockquote>
+<p>例如：在使用 Normal CP 的情况下有 3 个正交扩频序列，而所使用的 Zadoff-Chu 序列的长度为 12，假设设置 Zadoff-Chu 序列循环移位（Cyclic Shift）的复用间隔为 2，那么 1 个 RB-pair 上可以复用 3×6=18 个 PUCCH 1/1a/1b 信道。</p>
+<figure><a class="lightgallery" href="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_40.webp" title="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_40.webp" data-thumbnail="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_40.webp" data-sub-html="<h2>PUCCH 1/1a/1b 物理层信号发送方法（Normal CP）</h2>">
+        <img
+            
+            loading="lazy"
+            src="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_40.webp"
+            srcset="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_40.webp, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_40.webp 1.5x, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_40.webp 2x"
+            sizes="auto"
+            alt="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_40.webp">
+    </a><figcaption class="image-caption">PUCCH 1/1a/1b 物理层信号发送方法（Normal CP）</figcaption>
+    </figure>
+</blockquote>
+<p>为了增强信号的随机性，在 <code>PUCCH 1/1a/1b</code> 的发送过程中包含了<strong>跳频</strong>的概念。包括两种跳频：</p>
+<ul>
+<li>子帧内的 2 个时隙使用不同的正交扩频序列 $w(m)$，即<strong>正交序列跳频</strong></li>
+<li>时隙内的不同上行符号之间使用 <code>Zadoff-Chu</code> 序列不同的循环移位，即<strong>Cyclic Shift 跳频</strong></li>
+</ul>
+<h3 id="pucch-format-22a2b" class="headerLink">
+    <a href="#pucch-format-22a2b" class="header-mark"></a>PUCCH Format 2/2a/2b</h3><p><code>PUCCH</code> 格式 2 用于终端发送信道状态信息（Channel State Information，CSI），包括：</p>
+<ul>
+<li><strong>信道质量指示（Channel Quality Indicator，CQI）</strong></li>
+<li><strong>预编码向量指示（Precoding Matrix Indicator，PMI）</strong></li>
+<li><strong>复用秩的指示（Rank Indicator，RI）</strong></li>
+</ul>
+<p>在 <code>Normal CP</code> 的情况下，<code>PUCCH 格式 2</code> 还可以扩展成 <code>PUCCH 格式 2a/2b</code>，在这两种格式中，通过对 <code>PUCCH 格式 2</code> 中的导频符号进行调制，在 <code>CSI</code> 信息的基础上，进一步承载 1 或者 2 比特的 <code>ACK</code>/<code>NACK</code> 信息。</p>
+<p><code>CSI</code> 信息经过信道编码和加扰后形成长度为 20 比特的数据流，经过 <code>QPSK</code> 调制后形成 10 个调制符号（d(0)，…，d(9)），在 <code>PUCCH Format 2/2a/2b</code> 上发送。</p>
+<p><code>PUCCH Format 2/2a/2b</code> 信息的发送过程与 <code>PUCCH Format 1/1a/1b</code> 类似，只是<strong>没有了扩频的操作</strong>，因为要<strong>发送更多</strong>的比特信息。</p>
+<p>对于要发送的调制符号信息 d(0)，…，d(9)，在每个符号上使用长度为 12 的 <code>Zadoff-Chu</code> 序列 $r_{u,v}^{\alpha}$ 进行调制，然后将各个符号调制的结果映射在子帧内相应上行符号 1 个 <code>RB</code> 内的 12 个子载波上。通过长度为 12 的 <code>Zadoff-Chu</code> 序列的不同循环移位来进行同一个 RB 内不同 <code>PUCCH 2/2a/2b</code> 信道的复用。</p>
+<blockquote>
+<p>假设设置 <code>Zadoff-Chu</code> 序列循环移位的复用间隔为 2，那么 1 个 <code>RB-pair</code> 上可以复用 6 个 <code>PUCCH 2/2a/2b</code> 信道。</p>
+<figure><a class="lightgallery" href="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_41.webp" title="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_41.webp" data-thumbnail="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_41.webp" data-sub-html="<h2>PUCCH 2/2a/2b 物理层信号发送方法（Normal CP）</h2>">
+        <img
+            
+            loading="lazy"
+            src="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_41.webp"
+            srcset="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_41.webp, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_41.webp 1.5x, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_41.webp 2x"
+            sizes="auto"
+            alt="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE_Physical_Layer/LTE_physical_layer_41.webp">
+    </a><figcaption class="image-caption">PUCCH 2/2a/2b 物理层信号发送方法（Normal CP）</figcaption>
+    </figure>
+</blockquote>
+<p>在 <code>PUCCH 2a/2b</code> 中，除了 20 个比特的 <code>CSI</code> 信息之外，还承载 1 或者 2 比特的 <code>ACK</code> 信息。该 <code>ACK</code> 信息将通过 <code>BPSK</code> 或者 <code>QPSK</code> 的调制，形成一个调制符号 d(10)，然后调制在导频符号上进行传输。</p>
+<p><code>PUCCH 2a/2b</code> <strong>仅适用</strong>于 <code>Normal CP</code> 的情况，对于 <code>Extended CP</code> 的情况，由于 <code>PUCCH 格式 2</code> 的每个时隙内只有 1 列上行导频，难以将 <code>ACK</code>/<code>NAK</code> 信息调制在导频中。所以，在这种情况下，如果 <code>ACK</code>/<code>NAK</code> 和 <code>CQI</code> 需要<strong>同时</strong>传输，那么将对它们进行<strong>联合编码</strong>，形成 20 比特的编码后数据，采用 <code>Extended CP</code> 的 <code>PUCCH 格式 2</code> 进行发送。</p>
+<h2 id="上行共享信道pusch" class="headerLink">
+    <a href="#%e4%b8%8a%e8%a1%8c%e5%85%b1%e4%ba%ab%e4%bf%a1%e9%81%93pusch" class="header-mark"></a>上行共享信道（PUSCH）</h2><p>上行物理共享信道（Physical Uplink Shared CHannel，PUSCH）用于上行数据的调度传输，是物理层主要的上行数据承载信道，可以承载来自上层的不同的传输内容（即不同的逻辑信道），包括：</p>
+<ul>
+<li>控制信息</li>
+<li>用户业务信息</li>
+</ul>
+<p>与下行物理共享信道 <code>PDSCH</code> 相似，<code>PUSCH</code> 信道是决定系统上行数据传输性能的关键，因此，<code>PUSCH</code> 的传输支持各种物理层机制，包括<strong>信道自适应的调度</strong>、<strong>HARQ</strong> 等。</p>
+<p><strong>值得一提的是</strong>，上行物理层采用单载波（DFT-SOFDM）作为多址方式，这样的多址方式对终端上行功率效率方面带来好处的同时也带来了一些<strong>限制</strong>。</p>
+<blockquote>
+<p>例如：为了保持上行单载波的特性，LTE Release 8 物理层不支持单用户的上行共享信道（PUSCH）和上行控制信道（PUCCH）的频分复用，即 1 个用户不能在一个时刻同时发送 <code>PUSCH</code> 信道和 <code>PUCCH</code> 信道。当用户有上行数据 <code>PUSCH</code> 正在发送的时候，如果需要同时发送物理层上行控制信息（CSI、ACK 或者 RI），那么这些信息不能在 <code>PUCCH</code> 信道上传输，而是将这些控制信息与数据信息一起复用在 <code>PUSCH</code> 信道上进行传输。</p>
+</blockquote>
+<p>另外，单载波（DFT-SOFDM）多址方式的处理过程中包含了 <code>DFT</code> 的操作，为了降低 <code>DFT</code> 运算的复杂度，便于使用类似 <code>FFT</code> 的快速算法，标准中对上行 <code>PUSCH</code> 信道子载波分配的数目进行了规定，即上行分配的 RB 数目的数值必须能够被 2、3、5 这 3 个质数所分解，即必须满足条件$=2_{α2}、3_{α3}、5_{α5}$，其中 $α2 、α3 和 α5$ 是非负整数。</p>
+<h2 id="参考" class="headerLink">
+    <a href="#%e5%8f%82%e8%80%83" class="header-mark"></a>参考</h2><ul>
+<li>[1] LTE-Advanced 关键技术详解</li>
+</ul>]]></description>
+</item></channel>
+</rss>

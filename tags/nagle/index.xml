@@ -1,0 +1,89 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>Nagle - 标签 - TechKoala - Input/Output</title>
+        <link>https://www.techkoala.net/tags/nagle/</link>
+        <description>Nagle - 标签 - TechKoala - Input/Output</description>
+        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>admin@techkoala.net (TechKoala)</managingEditor>
+            <webMaster>admin@techkoala.net (TechKoala)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Sun, 28 Jun 2020 10:44:16 &#43;0800</lastBuildDate><atom:link href="https://www.techkoala.net/tags/nagle/" rel="self" type="application/rss+xml" /><item>
+    <title>Nagle 算法</title>
+    <link>https://www.techkoala.net/nagle/</link>
+    <pubDate>Sun, 28 Jun 2020 10:44:16 &#43;0800</pubDate><author>
+        <name>TechKoala</name>
+    </author><guid>https://www.techkoala.net/nagle/</guid>
+    <description><![CDATA[<blockquote>
+<p>简要介绍 Nagle 算法</p>
+</blockquote>
+<h2 id="nagle-算法" class="headerLink">
+    <a href="#nagle-%e7%ae%97%e6%b3%95" class="header-mark"></a>Nagle 算法</h2><p><code>Nagle</code> 算法通过减少网络发包频率从而提高 <code>TCP/IP</code> 网络的效率。</p>
+<p>主要解决由于 <code>TCP</code> 包头大小，导致频繁发送小数据包有效数据内容太少，开销过大段的问题。</p>
+<p><code>Nagle</code> 算法是将大量等待发送的小数据包合并起来，然后一次性全部发送出去。具体地说，只要有一个发送方没有收到任何确认的数据包，发送方就应该一直缓冲它的输出，直到它有一个完整的数据包的输出，这样就允许一次发送所有的输出。</p>
+<p>其思路可以由下面的步骤所描述：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">if there is new data to send then
+</span></span><span class="line"><span class="cl">    if the window size ≥ MSS and available data is ≥ MSS then
+</span></span><span class="line"><span class="cl">        send complete MSS segment now
+</span></span><span class="line"><span class="cl">    else
+</span></span><span class="line"><span class="cl">        if there is unconfirmed data still in the pipe then
+</span></span><span class="line"><span class="cl">            enqueue data in the buffer until an acknowledge is received
+</span></span><span class="line"><span class="cl">        else
+</span></span><span class="line"><span class="cl">            send data immediately
+</span></span><span class="line"><span class="cl">        end if
+</span></span><span class="line"><span class="cl">    end if
+</span></span><span class="line"><span class="cl">end if
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><code>Nagle</code> 算法可能导致期望实时响应和低延迟的应用程序体验不佳。</p>
+<p>诸如网络多人视频游戏或鼠标在远程控制的操作系统中移动等应用程序，期望立即发送操作，而算法故意延迟传输，以牺牲延迟为代价提高带宽效率。因此，具有低带宽时间敏感传输的应用程序通常用于绕过 Nagle 延迟的 ACK 延迟。</p>
+<h2 id="windows-下关闭-nagle-算法" class="headerLink">
+    <a href="#windows-%e4%b8%8b%e5%85%b3%e9%97%ad-nagle-%e7%ae%97%e6%b3%95" class="header-mark"></a>Windows 下关闭 Nagle 算法</h2><ol>
+<li>
+<p>打开注册表编辑器</p>
+</li>
+<li>
+<p>打开如下路径 <code>计算机 \HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters\Interfaces</code></p>
+</li>
+</ol>
+<figure><a class="lightgallery" href="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/Network/Nagle/Regedit.png" title="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/Network/Nagle/Regedit.png" data-thumbnail="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/Network/Nagle/Regedit.png" data-sub-html="<h2>注册表界面</h2>">
+        <img
+            
+            loading="lazy"
+            src="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/Network/Nagle/Regedit.png"
+            srcset="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/Network/Nagle/Regedit.png, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/Network/Nagle/Regedit.png 1.5x, https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/Network/Nagle/Regedit.png 2x"
+            sizes="auto"
+            alt="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/Network/Nagle/Regedit.png">
+    </a><figcaption class="image-caption">注册表界面</figcaption>
+    </figure>
+<ol start="3">
+<li>
+<p>依次点击下方注册表项，检查右窗格中是否包含 <code>DhcpIPAddress</code> 值；</p>
+</li>
+<li>
+<p>在包含有 <code>DhcpIPAddress</code> 的子项下，分别建立两个 <code>DWORD (32)</code> 值，依次命名为 <code>TcpAckFrequency</code> 和 <code>TCPNoDelay</code>，键值全部设为 <code>1</code>。</p>
+<p><strong>注意</strong> 包含 <code>DhcpIPAddress</code> 的子项可能不只一个，所有的都要添加。</p>
+</li>
+</ol>
+<h2 id="参考" class="headerLink">
+    <a href="#%e5%8f%82%e8%80%83" class="header-mark"></a>参考</h2><ul>
+<li>
+<p>[1] <a href="https://en.wikipedia.org/wiki/Nagle%27s_algorithm" target="_blank" rel="noopener noreferrer">Nagel 算法维基百科</a></p>
+</li>
+<li>
+<p>[2] <a href="https://www.ietf.org/rfc/rfc896.txt" target="_blank" rel="noopener noreferrer">RFC896</a></p>
+</li>
+</ul>]]></description>
+</item></channel>
+</rss>

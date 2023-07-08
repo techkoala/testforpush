@@ -1,0 +1,468 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noodp" />
+    <title>快速调整 Hyper-V 虚拟机磁盘大小 - TechKoala - Input/Output</title><meta name="Description" content="TechKoala 的自留地，输入知识/输出笔记，内容包括但不限于 Linux、虚拟机、路由器、网络工具、计算机网络、软件推荐及使用技巧等内容"><meta property="og:title" content="快速调整 Hyper-V 虚拟机磁盘大小" />
+<meta property="og:description" content="
+如何调整已建立的 Hyper-V 虚拟机磁盘大小？本文以 Ubuntu 为例，对此进行介绍。
+" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://www.techkoala.net/resize_vm_lvm_disk_size/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2021-09-02T11:25:59+08:00" />
+<meta property="article:modified_time" content="2021-09-02T12:32:23+08:00" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="快速调整 Hyper-V 虚拟机磁盘大小"/>
+<meta name="twitter:description" content="
+如何调整已建立的 Hyper-V 虚拟机磁盘大小？本文以 Ubuntu 为例，对此进行介绍。
+"/>
+<meta name="application-name" content="TechKoala">
+<meta name="apple-mobile-web-app-title" content="TechKoala">
+
+<meta name="theme-color" content="#f8f8f8"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://www.techkoala.net/resize_vm_lvm_disk_size/" /><link rel="prev" href="https://www.techkoala.net/bash_tricks/" /><link rel="next" href="https://www.techkoala.net/wi-fi7_synopsis/" />
+<link rel="stylesheet" href="/css/main.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css"><link rel="stylesheet" href="/css/color.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css">
+        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css"></noscript><link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css">
+        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css"></noscript>
+    
+    
+    
+    <script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "快速调整 Hyper-V 虚拟机磁盘大小",
+        "inLanguage": "zh-CN",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/www.techkoala.net\/resize_vm_lvm_disk_size\/"
+        },"genre": "posts","keywords": "Hyper-V, Linux","wordcount":  910 ,
+        "url": "https:\/\/www.techkoala.net\/resize_vm_lvm_disk_size\/","datePublished": "2021-09-02T11:25:59+08:00","dateModified": "2021-09-02T12:32:23+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+            "@type": "Organization",
+            "name": "TechKoala"},"author": {
+                "@type": "Person",
+                "name": "TechKoala"
+            },"description": ""
+    }
+    </script><script src="//instant.page/5.2.0" defer type="module" integrity="sha384-jnZyxPjiipYXnSU0ygqeac2q7CVYMbh84q0uHVRRxEtvFPiQYbXWUorga2aqZJ0z"></script>
+</head>
+
+<body header-desktop="auto" header-mobile="auto"><script type="text/javascript">
+        function setTheme(theme) {document.body.setAttribute('theme', theme); document.documentElement.style.setProperty('color-scheme', theme === 'light' ? 'light' : 'dark'); window.theme = theme;   window.isDark = window.theme !== 'light' }
+        function saveTheme(theme) {window.localStorage && localStorage.setItem('theme', theme);}
+        function getMeta(metaName) {const metas = document.getElementsByTagName('meta'); for (let i = 0; i < metas.length; i++) if (metas[i].getAttribute('name') === metaName) return metas[i]; return '';}
+        if (window.localStorage && localStorage.getItem('theme')) {let theme = localStorage.getItem('theme');theme === 'light' || theme === 'dark' || theme === 'black' ? setTheme(theme) : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? setTheme('dark') : setTheme('light')); } else { if ('auto' === 'light' || 'auto' === 'dark' || 'auto' === 'black') setTheme('auto'), saveTheme('auto'); else saveTheme('auto'), window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? setTheme('dark') : setTheme('light');}
+        let metaColors = {'light': '#f8f8f8','dark': '#252627','black': '#000000'}
+        getMeta('theme-color').content = metaColors[document.body.getAttribute('theme')];
+        window.switchThemeEventSet = new Set()
+    </script>
+    <div id="back-to-top"></div>
+    <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="TechKoala - Input/Output"><span class="header-title-pre"><i class='fas fa-home'></i></span>TechKoala</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts"><i class='fas fa-book'></i> 所有文章 </a><a class="menu-item" href="/tags"><i class='fas fa-tags'></i> 标签 </a><a class="menu-item" href="/categories"><i class='fas fa-folder'></i> 分类 </a><a class="menu-item" href="/tools"><i class='fas fa-tools'></i> 工具 </a><a class="menu-item" href="/softwares"><i class='fab fa-app-store-ios'></i> 软件 </a><a class="menu-item" href="/about"><i class='fas fa-id-card'></i> 关于 </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-desktop">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a></div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="TechKoala - Input/Output"><span class="header-title-pre"><i class='fas fa-home'></i></span>TechKoala</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-mobile">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </div>
+                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+                        取消
+                    </a>
+                </div><a class="menu-item" href="/posts" title=""><i class='fas fa-book'></i>所有文章</a><a class="menu-item" href="/tags" title=""><i class='fas fa-tags'></i>标签</a><a class="menu-item" href="/categories" title=""><i class='fas fa-folder'></i>分类</a><a class="menu-item" href="/tools" title=""><i class='fas fa-tools'></i>工具</a><a class="menu-item" href="/softwares" title=""><i class='fab fa-app-store-ios'></i>软件</a><a class="menu-item" href="/about" title=""><i class='fas fa-id-card'></i>关于</a><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+            <div class="container"><script>document.getElementsByTagName("main")[0].setAttribute("autoTOC", "true")</script><article class="page single"><h1 class="single-title animate__animated animate__flipInX">快速调整 Hyper-V 虚拟机磁盘大小</h1><div class="post-meta">
+            <div class="post-meta-line">
+                <span class="post-author"><span class="author fas fa-user-circle fa-fw"></span><a href="/" title="Author" rel=" author" class="author">TechKoala</a>
+                </span>&nbsp;<span class="post-category">收录于 </span>&nbsp;<span class="post-category">类别 <a href="/categories/vm/"><i class="far fa-folder fa-fw"></i>VM</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2021-09-02">2021-09-02</time>&nbsp;<i class="far fa-edit fa-fw"></i>&nbsp;<time datetime="2021-09-02">2021-09-02</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 910 字&nbsp;<i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 2 分钟&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  kept="">
+                <div class="details-summary toc-title">
+                    <span>目录</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#说明">说明</a></li>
+        <li><a href="#tldr">TL;DR</a></li>
+        <li><a href="#具体步骤">具体步骤</a>
+          <ul>
+            <li><a href="#查看剩余磁盘大小">查看剩余磁盘大小</a></li>
+            <li><a href="#调整虚拟机磁盘大小">调整虚拟机磁盘大小</a></li>
+            <li><a href="#重新分区">重新分区</a></li>
+            <li><a href="#扩容">扩容</a></li>
+            <li><a href="#确认">确认</a></li>
+          </ul>
+        </li>
+        <li><a href="#参考">参考</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><blockquote>
+<p>如何调整已建立的 Hyper-V 虚拟机磁盘大小？本文以 Ubuntu 为例，对此进行介绍。</p>
+</blockquote>
+<h2 id="说明" class="headerLink">
+    <a href="#%e8%af%b4%e6%98%8e" class="header-mark"></a>说明</h2><p>此教程适用于使用 LVM 格式化的任何 Ubuntu 文件系统。</p>
+<p>如果你在使用 VMware，基本步骤与下面的教程类似，区别参见<a href="https://unix.stackexchange.com/questions/196512/how-to-extend-filesystem-partition-on-ubuntu-vm" target="_blank" rel="noopener noreferrer">这里</a>。</p>
+<h2 id="tldr" class="headerLink">
+    <a href="#tldr" class="header-mark"></a>TL;DR</h2><ol>
+<li>fdisk -l (note it’s partition 3 by looking at the current Size)</li>
+<li>parted</li>
+<li>resizepart, Fix, 3, 100% (type this instead), quit</li>
+<li>pvresize /dev/sda3</li>
+<li>lvextend -l +100%FREE /dev/mapper/ubuntu–vg-ubuntu–lv</li>
+<li>resize2fs /dev/mapper/ubuntu–vg-ubuntu–lv</li>
+<li>df -h</li>
+</ol>
+<h2 id="具体步骤" class="headerLink">
+    <a href="#%e5%85%b7%e4%bd%93%e6%ad%a5%e9%aa%a4" class="header-mark"></a>具体步骤</h2><h3 id="查看剩余磁盘大小" class="headerLink">
+    <a href="#%e6%9f%a5%e7%9c%8b%e5%89%a9%e4%bd%99%e7%a3%81%e7%9b%98%e5%a4%a7%e5%b0%8f" class="header-mark"></a>查看剩余磁盘大小</h3><p>在下面的输出中，请注意 /root 卷只有 3.9 GB 的磁盘空间：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">user@server:~$ df -h
+</span></span><span class="line"><span class="cl">Filesystem Size Used Avail Use% Mounted on
+</span></span><span class="line"><span class="cl">udev 1.9G <span class="m">0</span> 1.9G 0% /dev
+</span></span><span class="line"><span class="cl">tmpfs 394M 1.1M 393M 1% /run
+</span></span><span class="line"><span class="cl">/dev/mapper/ubuntu--vg-ubuntu--lv 3.9G 3.2G 489M 87% /
+</span></span><span class="line"><span class="cl">tmpfs 2.0G <span class="m">0</span> 2.0G 0% /dev/shm
+</span></span><span class="line"><span class="cl">tmpfs 5.0M <span class="m">0</span> 5.0M 0% /run/lock
+</span></span><span class="line"><span class="cl">tmpfs 2.0G <span class="m">0</span> 2.0G 0% /sys/fs/cgroup
+</span></span><span class="line"><span class="cl">/dev/loop0 89M 89M <span class="m">0</span> 100% /snap/core/7270
+</span></span><span class="line"><span class="cl">/dev/sda2 976M 77M 833M 9% /boot
+</span></span><span class="line"><span class="cl">/dev/loop1 90M 90M <span class="m">0</span> 100% /snap/core/7713
+</span></span><span class="line"><span class="cl">tmpfs 394M <span class="m">0</span> 394M 0% /run/user/1000
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>接下来，在输出中可以看出实际上还有更多可用空间未利用。例如 /dev/sda3 卷上有 24G。另一个 1GB 用于启动卷和 BIOS 启动</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">user@server:~# fdisk -l
+</span></span><span class="line"><span class="cl">Disk /dev/loop0: 88.5 MiB, <span class="m">92778496</span> bytes, <span class="m">181208</span> sectors
+</span></span><span class="line"><span class="cl">Units: sectors of <span class="m">1</span> * <span class="nv">512</span> <span class="o">=</span> <span class="m">512</span> bytes
+</span></span><span class="line"><span class="cl">Sector size <span class="o">(</span>logical/physical<span class="o">)</span>: <span class="m">512</span> bytes / <span class="m">512</span> bytes
+</span></span><span class="line"><span class="cl">I/O size <span class="o">(</span>minimum/optimal<span class="o">)</span>: <span class="m">512</span> bytes / <span class="m">512</span> bytes
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Disk /dev/loop1: <span class="m">89</span> MiB, <span class="m">93327360</span> bytes, <span class="m">182280</span> sectors
+</span></span><span class="line"><span class="cl">Units: sectors of <span class="m">1</span> * <span class="nv">512</span> <span class="o">=</span> <span class="m">512</span> bytes
+</span></span><span class="line"><span class="cl">Sector size <span class="o">(</span>logical/physical<span class="o">)</span>: <span class="m">512</span> bytes / <span class="m">512</span> bytes
+</span></span><span class="line"><span class="cl">I/O size <span class="o">(</span>minimum/optimal<span class="o">)</span>: <span class="m">512</span> bytes / <span class="m">512</span> bytes
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">...
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Disk /dev/sda: <span class="m">25</span> GiB, <span class="m">26843545600</span> bytes, <span class="m">52428800</span> sectors
+</span></span><span class="line"><span class="cl">Units: sectors of <span class="m">1</span> * <span class="nv">512</span> <span class="o">=</span> <span class="m">512</span> bytes
+</span></span><span class="line"><span class="cl">Sector size <span class="o">(</span>logical/physical<span class="o">)</span>: <span class="m">512</span> bytes / <span class="m">4096</span> bytes
+</span></span><span class="line"><span class="cl">I/O size <span class="o">(</span>minimum/optimal<span class="o">)</span>: <span class="m">4096</span> bytes / <span class="m">4096</span> bytes
+</span></span><span class="line"><span class="cl">Disklabel type: gpt
+</span></span><span class="line"><span class="cl">Disk identifier: ED41F7A6-5D09-457B-A55C-C7F1E30DE419
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Device Start End Sectors Size Type
+</span></span><span class="line"><span class="cl">/dev/sda1 <span class="m">2048</span> <span class="m">4095</span> <span class="m">2048</span> 1M BIOS boot
+</span></span><span class="line"><span class="cl">/dev/sda2 <span class="m">4096</span> <span class="m">2101247</span> <span class="m">2097152</span> 1G Linux filesystem
+</span></span><span class="line"><span class="cl">/dev/sda3 <span class="m">2101248</span> <span class="m">52426751</span> <span class="m">50325504</span> 24G Linux filesystem
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Disk /dev/mapper/ubuntu--vg-ubuntu--lv: <span class="m">4</span> GiB, <span class="m">4294967296</span> bytes, <span class="m">8388608</span> sectors
+</span></span><span class="line"><span class="cl">Units: sectors of <span class="m">1</span> * <span class="nv">512</span> <span class="o">=</span> <span class="m">512</span> bytes
+</span></span><span class="line"><span class="cl">Sector size <span class="o">(</span>logical/physical<span class="o">)</span>: <span class="m">512</span> bytes / <span class="m">4096</span> bytes
+</span></span><span class="line"><span class="cl">I/O size <span class="o">(</span>minimum/optimal<span class="o">)</span>: <span class="m">4096</span> bytes / <span class="m">4096</span> bytes
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="调整虚拟机磁盘大小" class="headerLink">
+    <a href="#%e8%b0%83%e6%95%b4%e8%99%9a%e6%8b%9f%e6%9c%ba%e7%a3%81%e7%9b%98%e5%a4%a7%e5%b0%8f" class="header-mark"></a>调整虚拟机磁盘大小</h3><p>进入 Hyper-V 虚拟机设置界面，编辑硬盘驱动器，然后对此进行扩容，此后重启虚拟机。</p>
+<h3 id="重新分区" class="headerLink">
+    <a href="#%e9%87%8d%e6%96%b0%e5%88%86%e5%8c%ba" class="header-mark"></a>重新分区</h3><p>下面利用 parted 进行对新加的磁盘进行分区。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">user@server:~# parted
+</span></span><span class="line"><span class="cl">GNU Parted 3.2
+</span></span><span class="line"><span class="cl">Using /dev/sda
+</span></span><span class="line"><span class="cl">Welcome to GNU Parted! Type <span class="s1">&#39;help&#39;</span> to view a list of commands.
+</span></span><span class="line"><span class="cl"><span class="o">(</span>parted<span class="o">)</span> print
+</span></span><span class="line"><span class="cl">Model: Msft Virtual Disk <span class="o">(</span>scsi<span class="o">)</span>
+</span></span><span class="line"><span class="cl">Disk /dev/sda: 26.8GB
+</span></span><span class="line"><span class="cl">Sector size <span class="o">(</span>logical/physical<span class="o">)</span>: 512B/4096B
+</span></span><span class="line"><span class="cl">Partition Table: gpt
+</span></span><span class="line"><span class="cl">Disk Flags:
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Number Start End Size File system Name Flags
+</span></span><span class="line"><span class="cl"><span class="m">1</span> 1049kB 2097kB 1049kB bios_grub
+</span></span><span class="line"><span class="cl"><span class="m">2</span> 2097kB 1076MB 1074MB ext4
+</span></span><span class="line"><span class="cl"><span class="m">3</span> 1076MB 26.8GB 25.8GB
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">(</span>parted<span class="o">)</span> quit
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">user@server:~# parted
+</span></span><span class="line"><span class="cl">GNU Parted 3.2
+</span></span><span class="line"><span class="cl">Using /dev/sda
+</span></span><span class="line"><span class="cl">Welcome to GNU Parted! Type <span class="s1">&#39;help&#39;</span> to view a list of commands.
+</span></span><span class="line"><span class="cl"><span class="o">(</span>parted<span class="o">)</span> resizepart
+</span></span><span class="line"><span class="cl">Partition number? <span class="m">3</span>
+</span></span><span class="line"><span class="cl">End? <span class="o">[</span>26.8GB<span class="o">]</span>?
+</span></span><span class="line"><span class="cl"><span class="o">(</span>parted<span class="o">)</span> quit
+</span></span><span class="line"><span class="cl">Information: You may need to update /etc/fstab.
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">user@server:~# pvresize /dev/sda3
+</span></span><span class="line"><span class="cl">Physical volume <span class="s2">&#34;/dev/sda3&#34;</span> changed
+</span></span><span class="line"><span class="cl"><span class="m">1</span> physical volume<span class="o">(</span>s<span class="o">)</span> resized / <span class="m">0</span> physical volume<span class="o">(</span>s<span class="o">)</span> not resized
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="扩容" class="headerLink">
+    <a href="#%e6%89%a9%e5%ae%b9" class="header-mark"></a>扩容</h3><p>接下来，对 LVM 虚拟磁盘进行扩容。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">user@server:~# resize2fs /dev/mapper/ubuntu--vg-ubuntu--lv
+</span></span><span class="line"><span class="cl">resize2fs 1.44.1 <span class="o">(</span>24-Mar-2018<span class="o">)</span>
+</span></span><span class="line"><span class="cl">Filesystem at /dev/mapper/ubuntu--vg-ubuntu--lv is mounted on /<span class="p">;</span> on-line resizing required
+</span></span><span class="line"><span class="cl"><span class="nv">old_desc_blocks</span> <span class="o">=</span> 1, <span class="nv">new_desc_blocks</span> <span class="o">=</span> <span class="m">3</span>
+</span></span><span class="line"><span class="cl">The filesystem on /dev/mapper/ubuntu--vg-ubuntu--lv is now <span class="m">6029312</span> <span class="o">(</span>4k<span class="o">)</span> blocks long.
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="确认" class="headerLink">
+    <a href="#%e7%a1%ae%e8%ae%a4" class="header-mark"></a>确认</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">user@server:~# df -h
+</span></span><span class="line"><span class="cl">Filesystem Size Used Avail Use% Mounted on
+</span></span><span class="line"><span class="cl">udev 1.9G <span class="m">0</span> 1.9G 0% /dev
+</span></span><span class="line"><span class="cl">tmpfs 394M 1.1M 393M 1% /run
+</span></span><span class="line"><span class="cl">/dev/mapper/ubuntu--vg-ubuntu--lv 23G 3.2G 19G 15% /
+</span></span><span class="line"><span class="cl">tmpfs 2.0G <span class="m">0</span> 2.0G 0% /dev/shm
+</span></span><span class="line"><span class="cl">tmpfs 5.0M <span class="m">0</span> 5.0M 0% /run/lock
+</span></span><span class="line"><span class="cl">tmpfs 2.0G <span class="m">0</span> 2.0G 0% /sys/fs/cgroup
+</span></span><span class="line"><span class="cl">/dev/loop0 89M 89M <span class="m">0</span> 100% /snap/core/7270
+</span></span><span class="line"><span class="cl">/dev/sda2 976M 77M 833M 9% /boot
+</span></span><span class="line"><span class="cl">/dev/loop1 90M 90M <span class="m">0</span> 100% /snap/core/7713
+</span></span><span class="line"><span class="cl">tmpfs 394M <span class="m">0</span> 394M 0% /run/user/1000
+</span></span><span class="line"><span class="cl">user@server:~#
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="参考" class="headerLink">
+    <a href="#%e5%8f%82%e8%80%83" class="header-mark"></a>参考</h2><ul>
+<li>[1] <a href="https://vander.host/knowledgebase/operating-systems/how-to-resize-an-ubuntu-18-04-lvm-disk/" target="_blank" rel="noopener noreferrer">How to resize an Ubuntu 18.04/20.04 LVM disk</a></li>
+</ul></div>
+
+        <div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>更新于 2021-09-02&nbsp;<a class="git-hash" href="/root/ron159/.git//commit/2173dedbcc878463d59d68b1a584f20ec7833574" target="_blank" title="commit by techkoala(admin@techkoala.top) 2173dedbcc878463d59d68b1a584f20ec7833574: update" rel="noopener noreferrer">
+                                    <i class="fas fa-hashtag fa-fw"></i>2173ded</a></span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"></div>
+            <div class="post-info-share"><button title="分享到 Twitter" data-sharer="twitter" data-url="https://www.techkoala.net/resize_vm_lvm_disk_size/" data-title="快速调整 Hyper-V 虚拟机磁盘大小" data-hashtags="Hyper-V,Linux"><span class="fab fa-twitter fa-fw"></span></button><button title="分享到 Facebook" data-sharer="facebook" data-url="https://www.techkoala.net/resize_vm_lvm_disk_size/" data-hashtag="Hyper-V"><span class="fab fa-facebook-square fa-fw"></span></button><button title="分享到 Pocket" data-sharer="pocket" data-url="https://www.techkoala.net/resize_vm_lvm_disk_size/"><span class="fab fa-get-pocket fa-fw"></span></button><button title="分享到 微博" data-sharer="weibo" data-url="https://www.techkoala.net/resize_vm_lvm_disk_size/" data-title="快速调整 Hyper-V 虚拟机磁盘大小"><span class="fab fa-weibo fa-fw"></span></button><button title="分享到 Evernote" data-sharer="evernote" data-url="https://www.techkoala.net/resize_vm_lvm_disk_size/" data-title="快速调整 Hyper-V 虚拟机磁盘大小"><span class="fab fa-evernote fa-fw"></span></button></div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/hyper-v/">Hyper-V</a>,&nbsp;<a href="/tags/linux/">Linux</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/bash_tricks/" class="prev" rel="prev" title="不容错过的 Bash 技巧"><i class="fas fa-angle-left fa-fw"></i>不容错过的 Bash 技巧</a>
+            <a href="/wi-fi7_synopsis/" class="next" rel="next" title="Wi-Fi 7 概述">Wi-Fi 7 概述<i class="fas fa-angle-right fa-fw"></i></a></div>
+</div>
+<div id="comments"><div id="waline" class="comment"></div><noscript>
+                Please enable JavaScript to view the comments powered by <a href="https://waline.js.org/">Waline</a>.
+            </noscript></div></article></div>
+        </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/">Hugo</a> with <a href="https://github.com/HEIGE-PCloud/DoIt">DoIt</a></div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2023</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank" rel="noopener noreferrer">TechKoala</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+            <div class="footer-line"></div>
+            <div class="footer-line">
+            </div>
+        </div><script>
+                    if('serviceWorker' in navigator) {
+                        navigator.serviceWorker
+                            .register('/sw.min.js', { scope: '/' })
+                            .then(function(registration) {
+                            });
+                
+                        navigator.serviceWorker
+                            .ready
+                            .then(function(registration) {
+                            });
+                    }
+                </script></footer></div>
+
+    <div id="fixed-buttons"><a href="#back-to-top" id="back-to-top-button" class="fixed-button" title="回到顶部">
+            <i class="fas fa-arrow-up fa-fw"></i>
+        </a><a href="#" id="view-comments" class="fixed-button" title="查看评论">
+            <i class="fas fa-comment fa-fw"></i>
+        </a>
+    </div><div class="assets"><link rel="stylesheet" href="/lib/waline/waline.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css"><link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/copy-tex.min.css">
+        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/copy-tex.min.css"></noscript><script type="text/javascript">window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":10},"comment":{"waline":{"copyright":true,"dark":"body[theme='dark'], body[theme='black']","el":"#waline","emoji":"https://fastly.jsdelivr.net/gh/walinejs/emojis@1.0.0/bilibili","lang":"zh-cn","meta":["nick","mail","link"],"pageSize":10,"serverURL":"https://blog-comments-eight.vercel.app"}},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false},"search":{"distance":null,"findAllMatches":null,"fuseIndexURL":"/index.json","highlightTag":"em","ignoreFieldNorm":null,"ignoreLocation":null,"isCaseSensitive":null,"location":null,"maxResultLength":10,"minMatchCharLength":null,"noResultsFound":"没有找到结果","snippetLength":50,"threshold":null,"type":"fuse","useExtendedSearch":null},"sharerjs":true};</script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.4.0/sharer.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" defer></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" defer></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/copy-tex.min.js" defer></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/mhchem.min.js" defer></script><script type="text/javascript" src="/js/katex.min.js" defer></script><script type="text/javascript" src="/js/theme.min.js" defer></script><script type="text/javascript" src="/lib/waline/waline.js" defer></script><script type="text/javascript" src="/js/waline.min.js" defer></script><script type="text/javascript">
+            window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());
+            gtag('config', 'UA-166130360-1');
+        </script><script type="text/javascript" src="https://www.googletagmanager.com/gtag/js?id=UA-166130360-1" async></script></div>
+</body>
+
+</html>

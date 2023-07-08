@@ -1,0 +1,398 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noodp" />
+    <title>OpenWRT overlay 空间扩容 - TechKoala - Input/Output</title><meta name="Description" content="TechKoala 的自留地，输入知识/输出笔记，内容包括但不限于 Linux、虚拟机、路由器、网络工具、计算机网络、软件推荐及使用技巧等内容"><meta property="og:title" content="OpenWRT overlay 空间扩容" />
+<meta property="og:description" content="
+安装 AdguardHome 运行几天后，可怜的剩余空间被日志耗尽，不得不对 OpenWRT overlay 进行扩容，本文对此进行了记录
+" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://www.techkoala.net/openwrt_resize/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2020-10-09T15:57:29+08:00" />
+<meta property="article:modified_time" content="2021-09-07T13:07:01+08:00" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="OpenWRT overlay 空间扩容"/>
+<meta name="twitter:description" content="
+安装 AdguardHome 运行几天后，可怜的剩余空间被日志耗尽，不得不对 OpenWRT overlay 进行扩容，本文对此进行了记录
+"/>
+<meta name="application-name" content="TechKoala">
+<meta name="apple-mobile-web-app-title" content="TechKoala">
+
+<meta name="theme-color" content="#f8f8f8"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://www.techkoala.net/openwrt_resize/" /><link rel="prev" href="https://www.techkoala.net/openwrt_compile_single_ipk/" /><link rel="next" href="https://www.techkoala.net/arp_rarp/" />
+<link rel="stylesheet" href="/css/main.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css"><link rel="stylesheet" href="/css/color.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css">
+        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css"></noscript><link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css">
+        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css"></noscript>
+    
+    
+    
+    <script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "OpenWRT overlay 空间扩容",
+        "inLanguage": "zh-CN",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/www.techkoala.net\/openwrt_resize\/"
+        },"genre": "posts","keywords": "OpenWRT, Router","wordcount":  920 ,
+        "url": "https:\/\/www.techkoala.net\/openwrt_resize\/","datePublished": "2020-10-09T15:57:29+08:00","dateModified": "2021-09-07T13:07:01+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+            "@type": "Organization",
+            "name": "TechKoala"},"author": {
+                "@type": "Person",
+                "name": "TechKoala"
+            },"description": ""
+    }
+    </script><script src="//instant.page/5.2.0" defer type="module" integrity="sha384-jnZyxPjiipYXnSU0ygqeac2q7CVYMbh84q0uHVRRxEtvFPiQYbXWUorga2aqZJ0z"></script>
+</head>
+
+<body header-desktop="auto" header-mobile="auto"><script type="text/javascript">
+        function setTheme(theme) {document.body.setAttribute('theme', theme); document.documentElement.style.setProperty('color-scheme', theme === 'light' ? 'light' : 'dark'); window.theme = theme;   window.isDark = window.theme !== 'light' }
+        function saveTheme(theme) {window.localStorage && localStorage.setItem('theme', theme);}
+        function getMeta(metaName) {const metas = document.getElementsByTagName('meta'); for (let i = 0; i < metas.length; i++) if (metas[i].getAttribute('name') === metaName) return metas[i]; return '';}
+        if (window.localStorage && localStorage.getItem('theme')) {let theme = localStorage.getItem('theme');theme === 'light' || theme === 'dark' || theme === 'black' ? setTheme(theme) : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? setTheme('dark') : setTheme('light')); } else { if ('auto' === 'light' || 'auto' === 'dark' || 'auto' === 'black') setTheme('auto'), saveTheme('auto'); else saveTheme('auto'), window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? setTheme('dark') : setTheme('light');}
+        let metaColors = {'light': '#f8f8f8','dark': '#252627','black': '#000000'}
+        getMeta('theme-color').content = metaColors[document.body.getAttribute('theme')];
+        window.switchThemeEventSet = new Set()
+    </script>
+    <div id="back-to-top"></div>
+    <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="TechKoala - Input/Output"><span class="header-title-pre"><i class='fas fa-home'></i></span>TechKoala</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts"><i class='fas fa-book'></i> 所有文章 </a><a class="menu-item" href="/tags"><i class='fas fa-tags'></i> 标签 </a><a class="menu-item" href="/categories"><i class='fas fa-folder'></i> 分类 </a><a class="menu-item" href="/tools"><i class='fas fa-tools'></i> 工具 </a><a class="menu-item" href="/softwares"><i class='fab fa-app-store-ios'></i> 软件 </a><a class="menu-item" href="/about"><i class='fas fa-id-card'></i> 关于 </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-desktop">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a></div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="TechKoala - Input/Output"><span class="header-title-pre"><i class='fas fa-home'></i></span>TechKoala</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-mobile">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </div>
+                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+                        取消
+                    </a>
+                </div><a class="menu-item" href="/posts" title=""><i class='fas fa-book'></i>所有文章</a><a class="menu-item" href="/tags" title=""><i class='fas fa-tags'></i>标签</a><a class="menu-item" href="/categories" title=""><i class='fas fa-folder'></i>分类</a><a class="menu-item" href="/tools" title=""><i class='fas fa-tools'></i>工具</a><a class="menu-item" href="/softwares" title=""><i class='fab fa-app-store-ios'></i>软件</a><a class="menu-item" href="/about" title=""><i class='fas fa-id-card'></i>关于</a><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+            <div class="container"><script>document.getElementsByTagName("main")[0].setAttribute("autoTOC", "true")</script><article class="page single"><h1 class="single-title animate__animated animate__flipInX">OpenWRT overlay 空间扩容</h1><div class="post-meta">
+            <div class="post-meta-line">
+                <span class="post-author"><span class="author fas fa-user-circle fa-fw"></span><a href="/" title="Author" rel=" author" class="author">TechKoala</a>
+                </span>&nbsp;<span class="post-category">收录于 </span>&nbsp;<span class="post-category">类别 <a href="/categories/network/"><i class="far fa-folder fa-fw"></i>Network</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-10-09">2020-10-09</time>&nbsp;<i class="far fa-edit fa-fw"></i>&nbsp;<time datetime="2021-09-07">2021-09-07</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 920 字&nbsp;<i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 2 分钟&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  kept="">
+                <div class="details-summary toc-title">
+                    <span>目录</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#什么是-overlay">什么是 overlay</a></li>
+        <li><a href="#创建新分区">创建新分区</a></li>
+        <li><a href="#格式化分区">格式化分区</a></li>
+        <li><a href="#挂载新分区">挂载新分区</a></li>
+        <li><a href="#转移到新分区">转移到新分区</a></li>
+        <li><a href="#web-界面配置修改">Web 界面配置修改</a></li>
+        <li><a href="#完成">完成</a></li>
+        <li><a href="#自动挂载">自动挂载</a></li>
+        <li><a href="#参考">参考</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><blockquote>
+<p>安装 AdguardHome 运行几天后，可怜的剩余空间被日志耗尽，不得不对 OpenWRT overlay 进行扩容，本文对此进行了记录</p>
+</blockquote>
+<h2 id="什么是-overlay" class="headerLink">
+    <a href="#%e4%bb%80%e4%b9%88%e6%98%af-overlay" class="header-mark"></a>什么是 overlay</h2><p><code>OpenWRT</code> 一般使用的文件系统是 <code>SquashFS</code> ，这个文件系统的特点就是：<strong>只读</strong>。</p>
+<p>一个只读的文件系统要怎么做到保存设置和安装软件的呢？这里就是使用 <code>/overlay</code> 的分区，<code>overlay</code> 顾名思义就是覆盖在上面一层的意思。虽然原来的文件不能修改，但把修改的部分放在 <code>overlay</code> 分区上，然后映射到原来的位置，读取的时候就可以读到修改过的文件了。</p>
+<p>为什么要用这么复杂的方法呢？ <code>OpenWRT</code> 当然也可以使用 <code>EXT4</code> 文件系统，但使用 <code>SquashFS + overlay</code> 的方式有一定的优点。</p>
+<ul>
+<li><code>SquashFS</code> 是经过压缩的，在路由器这种小型 <code>ROM</code> 的设备可以放下更多的东西。</li>
+<li><code>OpenWRT</code> 的恢复出厂设置也要依赖于这个方式。在你重置的时候，它只需要把 <code>overlay</code> 分区清空就可以了，一切都回到了刚刷进去的样子。</li>
+</ul>
+<p>如果是 <code>EXT4</code> 文件系统，就只能够备份每个修改的文件，在恢复出厂设置的时候复制回来，十分复杂。</p>
+<p>当然，<code>SquashFS + overlay</code> 也有它的缺点：</p>
+<ul>
+<li>修改文件的时候会占用更多的空间。首先你不能够删除文件，因为删除文件实际上是在 <code>overlay</code> 分区中写入一个删除的标识，反而占用更多的空间。</li>
+<li>另外在修改文件的时候相当于增加了一份文件的副本，占用了双份的空间。</li>
+</ul>
+<figure><a class="lightgallery" href="/images/Network/OpenWRT_overlay/overlay.webp" title="/images/Network/OpenWRT_overlay/overlay.webp" data-thumbnail="/images/Network/OpenWRT_overlay/overlay.webp" data-sub-html="<h2>overlay 示意图</h2>">
+        <img
+            
+            loading="lazy"
+            src="/images/Network/OpenWRT_overlay/overlay.webp"
+            srcset="/images/Network/OpenWRT_overlay/overlay.webp, /images/Network/OpenWRT_overlay/overlay.webp 1.5x, /images/Network/OpenWRT_overlay/overlay.webp 2x"
+            sizes="auto"
+            alt="/images/Network/OpenWRT_overlay/overlay.webp">
+    </a><figcaption class="image-caption">overlay 示意图</figcaption>
+    </figure>
+<h2 id="创建新分区" class="headerLink">
+    <a href="#%e5%88%9b%e5%bb%ba%e6%96%b0%e5%88%86%e5%8c%ba" class="header-mark"></a>创建新分区</h2><p>首先，需要创建一个新的分区，这里使用的是 <code>cfdisk</code></p>
+<p>如果此前没有安装，首先使用下列命令进行安装：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">opkg update
+</span></span><span class="line"><span class="cl">opkg install cfdisk
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>然后输入</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">cfdisk
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>打开磁盘管理界面：</p>
+<figure><a class="lightgallery" href="/images/Network/OpenWRT_overlay/cfdisk.webp" title="/images/Network/OpenWRT_overlay/cfdisk.webp" data-thumbnail="/images/Network/OpenWRT_overlay/cfdisk.webp" data-sub-html="<h2>磁盘界面</h2>">
+        <img
+            
+            loading="lazy"
+            src="/images/Network/OpenWRT_overlay/cfdisk.webp"
+            srcset="/images/Network/OpenWRT_overlay/cfdisk.webp, /images/Network/OpenWRT_overlay/cfdisk.webp 1.5x, /images/Network/OpenWRT_overlay/cfdisk.webp 2x"
+            sizes="auto"
+            alt="/images/Network/OpenWRT_overlay/cfdisk.webp">
+    </a><figcaption class="image-caption">磁盘界面</figcaption>
+    </figure>
+<p>这里可以看到，目前一共有两个已有分区，现在新建一个分区：</p>
+<p>选中 <code>Free Space</code>，再选中 <code>New</code>，输入需要的大小，比如 5G。</p>
+<p>接着选择 <code>primary</code></p>
+<figure><a class="lightgallery" href="/images/Network/OpenWRT_overlay/primary.webp" title="/images/Network/OpenWRT_overlay/primary.webp" data-thumbnail="/images/Network/OpenWRT_overlay/primary.webp" data-sub-html="<h2>选择主分区</h2>">
+        <img
+            
+            loading="lazy"
+            src="/images/Network/OpenWRT_overlay/primary.webp"
+            srcset="/images/Network/OpenWRT_overlay/primary.webp, /images/Network/OpenWRT_overlay/primary.webp 1.5x, /images/Network/OpenWRT_overlay/primary.webp 2x"
+            sizes="auto"
+            alt="/images/Network/OpenWRT_overlay/primary.webp">
+    </a><figcaption class="image-caption">选择主分区</figcaption>
+    </figure>
+<p>选择 <code>Write</code>
+<figure><a class="lightgallery" href="/images/Network/OpenWRT_overlay/write.webp" title="/images/Network/OpenWRT_overlay/write.webp" data-thumbnail="/images/Network/OpenWRT_overlay/write.webp" data-sub-html="<h2>写入更改</h2>">
+        <img
+            
+            loading="lazy"
+            src="/images/Network/OpenWRT_overlay/write.webp"
+            srcset="/images/Network/OpenWRT_overlay/write.webp, /images/Network/OpenWRT_overlay/write.webp 1.5x, /images/Network/OpenWRT_overlay/write.webp 2x"
+            sizes="auto"
+            alt="/images/Network/OpenWRT_overlay/write.webp">
+    </a><figcaption class="image-caption">写入更改</figcaption>
+    </figure></p>
+<p>输入 <code>yes</code>，完成新分区的创建</p>
+<figure><a class="lightgallery" href="/images/Network/OpenWRT_overlay/yes.webp" title="/images/Network/OpenWRT_overlay/yes.webp" data-thumbnail="/images/Network/OpenWRT_overlay/yes.webp" data-sub-html="<h2>确认</h2>">
+        <img
+            
+            loading="lazy"
+            src="/images/Network/OpenWRT_overlay/yes.webp"
+            srcset="/images/Network/OpenWRT_overlay/yes.webp, /images/Network/OpenWRT_overlay/yes.webp 1.5x, /images/Network/OpenWRT_overlay/yes.webp 2x"
+            sizes="auto"
+            alt="/images/Network/OpenWRT_overlay/yes.webp">
+    </a><figcaption class="image-caption">确认</figcaption>
+    </figure>
+<h2 id="格式化分区" class="headerLink">
+    <a href="#%e6%a0%bc%e5%bc%8f%e5%8c%96%e5%88%86%e5%8c%ba" class="header-mark"></a>格式化分区</h2><p>使用命令：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">mkfs.ext4 /dev/sda3
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>格式化分区</p>
+<figure><a class="lightgallery" href="/images/Network/OpenWRT_overlay/format.webp" title="/images/Network/OpenWRT_overlay/format.webp" data-thumbnail="/images/Network/OpenWRT_overlay/format.webp" data-sub-html="<h2>格式化分区</h2>">
+        <img
+            
+            loading="lazy"
+            src="/images/Network/OpenWRT_overlay/format.webp"
+            srcset="/images/Network/OpenWRT_overlay/format.webp, /images/Network/OpenWRT_overlay/format.webp 1.5x, /images/Network/OpenWRT_overlay/format.webp 2x"
+            sizes="auto"
+            alt="/images/Network/OpenWRT_overlay/format.webp">
+    </a><figcaption class="image-caption">格式化分区</figcaption>
+    </figure>
+<h2 id="挂载新分区" class="headerLink">
+    <a href="#%e6%8c%82%e8%bd%bd%e6%96%b0%e5%88%86%e5%8c%ba" class="header-mark"></a>挂载新分区</h2><p>使用命令：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">mount /dev/sda3 /mnt/sda3
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>挂载分区</p>
+<h2 id="转移到新分区" class="headerLink">
+    <a href="#%e8%bd%ac%e7%a7%bb%e5%88%b0%e6%96%b0%e5%88%86%e5%8c%ba" class="header-mark"></a>转移到新分区</h2><p>然后将原来 <code>upper</code> 层中的数据复制到新的分区中：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">cp -r /overlay/* /mnt/sda3
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="web-界面配置修改" class="headerLink">
+    <a href="#web-%e7%95%8c%e9%9d%a2%e9%85%8d%e7%bd%ae%e4%bf%ae%e6%94%b9" class="header-mark"></a>Web 界面配置修改</h2><p>进入 <code>OpenWRT</code> Web 界面的<code>挂载点</code>对配置进行修改：</p>
+<figure><a class="lightgallery" href="/images/Network/OpenWRT_overlay/openwrt.webp" title="/images/Network/OpenWRT_overlay/openwrt.webp" data-thumbnail="/images/Network/OpenWRT_overlay/openwrt.webp" data-sub-html="<h2>Web 界面</h2>">
+        <img
+            
+            loading="lazy"
+            src="/images/Network/OpenWRT_overlay/openwrt.webp"
+            srcset="/images/Network/OpenWRT_overlay/openwrt.webp, /images/Network/OpenWRT_overlay/openwrt.webp 1.5x, /images/Network/OpenWRT_overlay/openwrt.webp 2x"
+            sizes="auto"
+            alt="/images/Network/OpenWRT_overlay/openwrt.webp">
+    </a><figcaption class="image-caption">Web 界面</figcaption>
+    </figure>
+<p>在<code>挂载点</code>下方点击<code>添加</code>，然后如下配置：</p>
+<figure><a class="lightgallery" href="/images/Network/OpenWRT_overlay/mountpoint.webp" title="/images/Network/OpenWRT_overlay/mountpoint.webp" data-thumbnail="/images/Network/OpenWRT_overlay/mountpoint.webp" data-sub-html="<h2>挂载点配置</h2>">
+        <img
+            
+            loading="lazy"
+            src="/images/Network/OpenWRT_overlay/mountpoint.webp"
+            srcset="/images/Network/OpenWRT_overlay/mountpoint.webp, /images/Network/OpenWRT_overlay/mountpoint.webp 1.5x, /images/Network/OpenWRT_overlay/mountpoint.webp 2x"
+            sizes="auto"
+            alt="/images/Network/OpenWRT_overlay/mountpoint.webp">
+    </a><figcaption class="image-caption">挂载点配置</figcaption>
+    </figure>
+<h2 id="完成" class="headerLink">
+    <a href="#%e5%ae%8c%e6%88%90" class="header-mark"></a>完成</h2><p>到这一步，只需要重启 <code>OpenWRT</code> 即可成功扩容。</p>
+<p>重启后到 <code>系统 -&gt; 软件包</code> 可以看到变大后的空间容量。</p>
+<h2 id="自动挂载" class="headerLink">
+    <a href="#%e8%87%aa%e5%8a%a8%e6%8c%82%e8%bd%bd" class="header-mark"></a>自动挂载</h2><p>分区默认会在 <code>OpenWRT</code> 重启后会自动挂载，如果遇到没有挂载的情况，需要编辑 <code>/etc/rc.local</code></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">vim /etc/rc.local
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>在 <code>exit 0</code> 之前加入一行 <code>mount /dev/sda3 /overlay</code> 即可。</p>
+<h2 id="参考" class="headerLink">
+    <a href="#%e5%8f%82%e8%80%83" class="header-mark"></a>参考</h2><ul>
+<li>
+<p>[1] <a href="https://blog.msm.moe/mount-sd-card-to-overlay-on-openwrt/" target="_blank" rel="noopener noreferrer">OpenWrt 下把 SD 卡挂载到 /overlay ，扩大软件空间</a></p>
+</li>
+<li>
+<p>[2] <a href="https://www.jianshu.com/p/8179b19cfa6d" target="_blank" rel="noopener noreferrer">软路由 LEDE 折腾 overlay 分区扩容之路</a></p>
+</li>
+<li>
+<p>[3] <a href="https://www.vediotalk.com/archives/13889" target="_blank" rel="noopener noreferrer">ESXI 下 OpenWrt 扩容 Overlay,增加安装插件空间</a></p>
+</li>
+</ul></div>
+
+        <div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>更新于 2021-09-07&nbsp;<a class="git-hash" href="/root/ron159/.git//commit/f574f2193048f1481a550301e9e5f85c5bb6f5a2" target="_blank" title="commit by techkoala(admin@techkoala.top) f574f2193048f1481a550301e9e5f85c5bb6f5a2: update" rel="noopener noreferrer">
+                                    <i class="fas fa-hashtag fa-fw"></i>f574f21</a></span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"></div>
+            <div class="post-info-share"><button title="分享到 Twitter" data-sharer="twitter" data-url="https://www.techkoala.net/openwrt_resize/" data-title="OpenWRT overlay 空间扩容" data-hashtags="OpenWRT,Router"><span class="fab fa-twitter fa-fw"></span></button><button title="分享到 Facebook" data-sharer="facebook" data-url="https://www.techkoala.net/openwrt_resize/" data-hashtag="OpenWRT"><span class="fab fa-facebook-square fa-fw"></span></button><button title="分享到 Pocket" data-sharer="pocket" data-url="https://www.techkoala.net/openwrt_resize/"><span class="fab fa-get-pocket fa-fw"></span></button><button title="分享到 微博" data-sharer="weibo" data-url="https://www.techkoala.net/openwrt_resize/" data-title="OpenWRT overlay 空间扩容"><span class="fab fa-weibo fa-fw"></span></button><button title="分享到 Evernote" data-sharer="evernote" data-url="https://www.techkoala.net/openwrt_resize/" data-title="OpenWRT overlay 空间扩容"><span class="fab fa-evernote fa-fw"></span></button></div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/openwrt/">OpenWRT</a>,&nbsp;<a href="/tags/router/">Router</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/openwrt_compile_single_ipk/" class="prev" rel="prev" title="单独编译 OpenWRT ipk 插件"><i class="fas fa-angle-left fa-fw"></i>单独编译 OpenWRT ipk 插件</a>
+            <a href="/arp_rarp/" class="next" rel="next" title="ARP &amp; RARP 详解">ARP &amp; RARP 详解<i class="fas fa-angle-right fa-fw"></i></a></div>
+</div>
+<div id="comments"><div id="waline" class="comment"></div><noscript>
+                Please enable JavaScript to view the comments powered by <a href="https://waline.js.org/">Waline</a>.
+            </noscript></div></article></div>
+        </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/">Hugo</a> with <a href="https://github.com/HEIGE-PCloud/DoIt">DoIt</a></div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2023</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank" rel="noopener noreferrer">TechKoala</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+            <div class="footer-line"></div>
+            <div class="footer-line">
+            </div>
+        </div><script>
+                    if('serviceWorker' in navigator) {
+                        navigator.serviceWorker
+                            .register('/sw.min.js', { scope: '/' })
+                            .then(function(registration) {
+                            });
+                
+                        navigator.serviceWorker
+                            .ready
+                            .then(function(registration) {
+                            });
+                    }
+                </script></footer></div>
+
+    <div id="fixed-buttons"><a href="#back-to-top" id="back-to-top-button" class="fixed-button" title="回到顶部">
+            <i class="fas fa-arrow-up fa-fw"></i>
+        </a><a href="#" id="view-comments" class="fixed-button" title="查看评论">
+            <i class="fas fa-comment fa-fw"></i>
+        </a>
+    </div><div class="assets"><link rel="stylesheet" href="/lib/waline/waline.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css"><link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/copy-tex.min.css">
+        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/copy-tex.min.css"></noscript><script type="text/javascript">window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":10},"comment":{"waline":{"copyright":true,"dark":"body[theme='dark'], body[theme='black']","el":"#waline","emoji":"https://fastly.jsdelivr.net/gh/walinejs/emojis@1.0.0/bilibili","lang":"zh-cn","meta":["nick","mail","link"],"pageSize":10,"serverURL":"https://blog-comments-eight.vercel.app"}},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false},"search":{"distance":null,"findAllMatches":null,"fuseIndexURL":"/index.json","highlightTag":"em","ignoreFieldNorm":null,"ignoreLocation":null,"isCaseSensitive":null,"location":null,"maxResultLength":10,"minMatchCharLength":null,"noResultsFound":"没有找到结果","snippetLength":50,"threshold":null,"type":"fuse","useExtendedSearch":null},"sharerjs":true};</script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.4.0/sharer.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" defer></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" defer></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/copy-tex.min.js" defer></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/mhchem.min.js" defer></script><script type="text/javascript" src="/js/katex.min.js" defer></script><script type="text/javascript" src="/js/theme.min.js" defer></script><script type="text/javascript" src="/lib/waline/waline.js" defer></script><script type="text/javascript" src="/js/waline.min.js" defer></script><script type="text/javascript">
+            window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());
+            gtag('config', 'UA-166130360-1');
+        </script><script type="text/javascript" src="https://www.googletagmanager.com/gtag/js?id=UA-166130360-1" async></script></div>
+</body>
+
+</html>
