@@ -33,6 +33,13 @@
     </author><guid>https://www.techkoala.net/tags/wi-fi/</guid>
     <description><![CDATA[]]></description>
 </item><item>
+    <title>Hugo</title>
+    <link>https://www.techkoala.net/tags/hugo/</link>
+    <pubDate>Thu, 02 Sep 2021 11:25:59 &#43;0800</pubDate><author>
+        <name>TechKoala</name>
+    </author><guid>https://www.techkoala.net/tags/hugo/</guid>
+    <description><![CDATA[]]></description>
+</item><item>
     <title>Hyper-V</title>
     <link>https://www.techkoala.net/tags/hyper-v/</link>
     <pubDate>Thu, 02 Sep 2021 11:25:59 &#43;0800</pubDate><author>
@@ -66,13 +73,6 @@
     <pubDate>Fri, 28 May 2021 23:25:46 &#43;0800</pubDate><author>
         <name>TechKoala</name>
     </author><guid>https://www.techkoala.net/tags/docker/</guid>
-    <description><![CDATA[]]></description>
-</item><item>
-    <title>FreshRSS</title>
-    <link>https://www.techkoala.net/tags/freshrss/</link>
-    <pubDate>Fri, 28 May 2021 23:25:46 &#43;0800</pubDate><author>
-        <name>TechKoala</name>
-    </author><guid>https://www.techkoala.net/tags/freshrss/</guid>
     <description><![CDATA[]]></description>
 </item></channel>
 </rss>
