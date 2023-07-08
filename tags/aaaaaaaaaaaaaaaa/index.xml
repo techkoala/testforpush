@@ -1,0 +1,49 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>aaaaaaaaaaaaaaaa - 标签 - TechKoala - Input/Output</title>
+        <link>https://www.techkoala.net/tags/aaaaaaaaaaaaaaaa/</link>
+        <description>aaaaaaaaaaaaaaaa - 标签 - TechKoala - Input/Output</description>
+        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>admin@techkoala.net (TechKoala)</managingEditor>
+            <webMaster>admin@techkoala.net (TechKoala)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><atom:link href="https://www.techkoala.net/tags/aaaaaaaaaaaaaaaa/" rel="self" type="application/rss+xml" /><item>
+    <title>abc</title>
+    <link>https://www.techkoala.net/test/</link>
+    <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate><author>
+        <name>TechKoala</name>
+    </author><guid>https://www.techkoala.net/test/</guid>
+    <description><![CDATA[<p>dadsdas</p>
+<table>
+<thead>
+<tr>
+<th>col1</th>
+<th>col2</th>
+<th>col3</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>dad</td>
+<td>da<br />\</td>
+</tr>
+</tbody>
+</table>
+<p><code>dasda</code></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(){</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>2023-7-8T17:51:33.441+8:0</p>
+]]></description>
+</item></channel>
+</rss>
