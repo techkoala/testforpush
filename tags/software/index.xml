@@ -1726,7 +1726,7 @@
 </span></span><span class="line"><span class="cl">-N, --no-delay	        设置 “TCP no delay” 选项，禁用 Nagle 的算法。通常，仅对交互式应用程序（如 telnet）禁用此功能
 </span></span><span class="line"><span class="cl">-4, --version4	        仅使用 IPv4.
 </span></span><span class="line"><span class="cl">-6, --version4	        仅使用 IPv6.
-</span></span><span class="line"><span class="cl">-S, --tos               传出数据包的服务类型。<span class="o">(</span>许多路由器会忽略TOS字段。）可以使用十六进制值（0x）作为前缀，使用八进制数（0）作为前缀，或者使用十进制来指定值。 例如，<span class="s1">&#39;0x10&#39;</span>十六进制<span class="o">=</span><span class="s1">&#39;020&#39;</span>八进制<span class="o">=</span><span class="s1">&#39;16&#39;</span>十进制。RFC 1349中指定的TOS编号为：
+</span></span><span class="line"><span class="cl">-S, --tos               传出数据包的服务类型。<span class="o">(</span>许多路由器会忽略TOS字段。）可以使用十六进制值（0x）作为前缀，使用八进制数（0）作为前缀，或者使用十进制来指定值。 例如，<span class="s1">&#39;0x10&#39;</span><span class="nv">十六进制</span><span class="o">=</span><span class="s1">&#39;020&#39;</span><span class="nv">八进制</span><span class="o">=</span><span class="s1">&#39;16&#39;</span>十进制。RFC 1349中指定的TOS编号为：
 </span></span><span class="line"><span class="cl">                        IPTOS_LOWDELAY     minimize delay        0x10
 </span></span><span class="line"><span class="cl">                        IPTOS_THROUGHPUT   maximize throughput   0x08
 </span></span><span class="line"><span class="cl">                        IPTOS_RELIABILITY  maximize reliability  0x04
