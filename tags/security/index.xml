@@ -307,13 +307,13 @@
 </span><span class="lnt">7
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">[ssh]
-</span></span><span class="line"><span class="cl">enabled  = true
-</span></span><span class="line"><span class="cl">port     = ssh
-</span></span><span class="line"><span class="cl">filter   = sshd
-</span></span><span class="line"><span class="cl">action   = iptables[name=SSH, port=ssh, protocol=tcp]
-</span></span><span class="line"><span class="cl">logpath  = /var/log/auth.log
-</span></span><span class="line"><span class="cl">maxretry = 6
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="p">[</span><span class="n">ssh</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="n">enabled</span>  <span class="o">=</span> <span class="bp">true</span>
+</span></span><span class="line"><span class="cl"><span class="n">port</span>     <span class="o">=</span> <span class="n">ssh</span>
+</span></span><span class="line"><span class="cl"><span class="n">filter</span>   <span class="o">=</span> <span class="n">sshd</span>
+</span></span><span class="line"><span class="cl"><span class="n">action</span>   <span class="o">=</span> <span class="n">iptables</span><span class="p">[</span><span class="n">name</span><span class="o">=</span><span class="n">SSH</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="n">ssh</span><span class="p">,</span> <span class="n">protocol</span><span class="o">=</span><span class="n">tcp</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="n">logpath</span>  <span class="o">=</span> <span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="nb">log</span><span class="o">/</span><span class="n">auth</span><span class="o">.</span><span class="n">log</span>
+</span></span><span class="line"><span class="cl"><span class="n">maxretry</span> <span class="o">=</span> <span class="mi">6</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>其余未设置的项尊崇全局设置。</p>
@@ -374,15 +374,15 @@
 </span><span class="lnt">9
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">Status for the jail: sshd
-</span></span><span class="line"><span class="cl">|- Filter
-</span></span><span class="line"><span class="cl">|  |- Currently failed: 0
-</span></span><span class="line"><span class="cl">|  |- Total failed:     2479
-</span></span><span class="line"><span class="cl">|  `- File list:        /var/log/auth.log
-</span></span><span class="line"><span class="cl">`- Actions
-</span></span><span class="line"><span class="cl">   |- Currently banned: 4
-</span></span><span class="line"><span class="cl">   |- Total banned:     118
-</span></span><span class="line"><span class="cl">   `- Banned IP list:   31.184.198.75 173.212.240.196 116.110.108.227 171.227.208.32
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="n">Status</span> <span class="k">for</span> <span class="n">the</span> <span class="n">jail</span><span class="p">:</span> <span class="n">sshd</span>
+</span></span><span class="line"><span class="cl"><span class="o">|-</span> <span class="n">Filter</span>
+</span></span><span class="line"><span class="cl"><span class="o">|</span>  <span class="o">|-</span> <span class="n">Currently</span> <span class="n">failed</span><span class="p">:</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl"><span class="o">|</span>  <span class="o">|-</span> <span class="n">Total</span> <span class="n">failed</span><span class="p">:</span>     <span class="mi">2479</span>
+</span></span><span class="line"><span class="cl"><span class="o">|</span>  <span class="err">`</span><span class="o">-</span> <span class="ne">File</span> <span class="n">list</span><span class="p">:</span>        <span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="nb">log</span><span class="o">/</span><span class="n">auth</span><span class="o">.</span><span class="n">log</span>
+</span></span><span class="line"><span class="cl"><span class="err">`</span><span class="o">-</span> <span class="n">Actions</span>
+</span></span><span class="line"><span class="cl">   <span class="o">|-</span> <span class="n">Currently</span> <span class="n">banned</span><span class="p">:</span> <span class="mi">4</span>
+</span></span><span class="line"><span class="cl">   <span class="o">|-</span> <span class="n">Total</span> <span class="n">banned</span><span class="p">:</span>     <span class="mi">118</span>
+</span></span><span class="line"><span class="cl">   <span class="err">`</span><span class="o">-</span> <span class="n">Banned</span> <span class="ne">IP</span> <span class="n">list</span><span class="p">:</span>   <span class="mf">31.184</span><span class="o">.</span><span class="mf">198.75</span> <span class="mf">173.212</span><span class="o">.</span><span class="mf">240.196</span> <span class="mf">116.110</span><span class="o">.</span><span class="mf">108.227</span> <span class="mf">171.227</span><span class="o">.</span><span class="mf">208.32</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><h2 id="参考" class="headerLink">

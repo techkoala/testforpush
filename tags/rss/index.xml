@@ -80,41 +80,41 @@
 </span><span class="lnt">35
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl"># ~/freshrss/docker-compose.yml
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="c1"># ~/freshrss/docker-compose.yml</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">version: &#34;3&#34;
+</span></span><span class="line"><span class="cl"><span class="n">version</span><span class="p">:</span> <span class="s2">&#34;3&#34;</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">services:
-</span></span><span class="line"><span class="cl">  freshrss-db:
-</span></span><span class="line"><span class="cl">    image: postgres:latest            # 官方示例中给出了 MySQL/MarriaDB/PostgreSQL 三种方案
-</span></span><span class="line"><span class="cl">    container_name: freshrss-db
-</span></span><span class="line"><span class="cl">    hostname: freshrss-db
-</span></span><span class="line"><span class="cl">    restart: always
-</span></span><span class="line"><span class="cl">    volumes:
-</span></span><span class="line"><span class="cl">      - freshrss-db:/var/lib/postgresql/data
-</span></span><span class="line"><span class="cl">    environment:
-</span></span><span class="line"><span class="cl">      POSTGRES_USER: freshrss       # 数据库配置，请自行修改、避免使用默认配置
-</span></span><span class="line"><span class="cl">      POSTGRES_PASSWORD: freshrss   # 数据库配置，请自行修改、避免使用默认配置
-</span></span><span class="line"><span class="cl">      POSTGRES_DB: freshrss         # 数据库配置，请自行修改、避免使用默认配置
+</span></span><span class="line"><span class="cl"><span class="n">services</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">  <span class="n">freshrss</span><span class="o">-</span><span class="n">db</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="n">image</span><span class="p">:</span> <span class="n">postgres</span><span class="p">:</span><span class="n">latest</span>            <span class="c1"># 官方示例中给出了 MySQL/MarriaDB/PostgreSQL 三种方案</span>
+</span></span><span class="line"><span class="cl">    <span class="n">container_name</span><span class="p">:</span> <span class="n">freshrss</span><span class="o">-</span><span class="n">db</span>
+</span></span><span class="line"><span class="cl">    <span class="n">hostname</span><span class="p">:</span> <span class="n">freshrss</span><span class="o">-</span><span class="n">db</span>
+</span></span><span class="line"><span class="cl">    <span class="n">restart</span><span class="p">:</span> <span class="n">always</span>
+</span></span><span class="line"><span class="cl">    <span class="n">volumes</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">      <span class="o">-</span> <span class="n">freshrss</span><span class="o">-</span><span class="n">db</span><span class="p">:</span><span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">postgresql</span><span class="o">/</span><span class="n">data</span>
+</span></span><span class="line"><span class="cl">    <span class="n">environment</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">      <span class="n">POSTGRES_USER</span><span class="p">:</span> <span class="n">freshrss</span>       <span class="c1"># 数据库配置，请自行修改、避免使用默认配置</span>
+</span></span><span class="line"><span class="cl">      <span class="n">POSTGRES_PASSWORD</span><span class="p">:</span> <span class="n">freshrss</span>   <span class="c1"># 数据库配置，请自行修改、避免使用默认配置</span>
+</span></span><span class="line"><span class="cl">      <span class="n">POSTGRES_DB</span><span class="p">:</span> <span class="n">freshrss</span>         <span class="c1"># 数据库配置，请自行修改、避免使用默认配置</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">  freshrss-app:
-</span></span><span class="line"><span class="cl">    image: freshrss/freshrss:latest
-</span></span><span class="line"><span class="cl">    container_name: freshrss-app
-</span></span><span class="line"><span class="cl">    hostname: freshrss-app
-</span></span><span class="line"><span class="cl">    restart: always
-</span></span><span class="line"><span class="cl">    ports:
-</span></span><span class="line"><span class="cl">      - &#34;39954:80&#34;                   # 映射端口
-</span></span><span class="line"><span class="cl">    depends_on:
-</span></span><span class="line"><span class="cl">      - freshrss-db
-</span></span><span class="line"><span class="cl">    volumes:
-</span></span><span class="line"><span class="cl">      - ./data:/var/www/FreshRSS/data
-</span></span><span class="line"><span class="cl">      - ./extensions:/var/www/FreshRSS/extensions
-</span></span><span class="line"><span class="cl">    environment:
-</span></span><span class="line"><span class="cl">      CRON_MIN: &#39;*/45&#39;             # RSS 刷新周期，单位为分钟，*/45 表示每 45 分钟刷新一次
-</span></span><span class="line"><span class="cl">      TZ: Asia/Shanghai            # 时区
+</span></span><span class="line"><span class="cl">  <span class="n">freshrss</span><span class="o">-</span><span class="n">app</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="n">image</span><span class="p">:</span> <span class="n">freshrss</span><span class="o">/</span><span class="n">freshrss</span><span class="p">:</span><span class="n">latest</span>
+</span></span><span class="line"><span class="cl">    <span class="n">container_name</span><span class="p">:</span> <span class="n">freshrss</span><span class="o">-</span><span class="n">app</span>
+</span></span><span class="line"><span class="cl">    <span class="n">hostname</span><span class="p">:</span> <span class="n">freshrss</span><span class="o">-</span><span class="n">app</span>
+</span></span><span class="line"><span class="cl">    <span class="n">restart</span><span class="p">:</span> <span class="n">always</span>
+</span></span><span class="line"><span class="cl">    <span class="n">ports</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">      <span class="o">-</span> <span class="s2">&#34;39954:80&#34;</span>                   <span class="c1"># 映射端口</span>
+</span></span><span class="line"><span class="cl">    <span class="n">depends_on</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">      <span class="o">-</span> <span class="n">freshrss</span><span class="o">-</span><span class="n">db</span>
+</span></span><span class="line"><span class="cl">    <span class="n">volumes</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">      <span class="o">-</span> <span class="o">./</span><span class="n">data</span><span class="p">:</span><span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="n">www</span><span class="o">/</span><span class="n">FreshRSS</span><span class="o">/</span><span class="n">data</span>
+</span></span><span class="line"><span class="cl">      <span class="o">-</span> <span class="o">./</span><span class="n">extensions</span><span class="p">:</span><span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="n">www</span><span class="o">/</span><span class="n">FreshRSS</span><span class="o">/</span><span class="n">extensions</span>
+</span></span><span class="line"><span class="cl">    <span class="n">environment</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">      <span class="n">CRON_MIN</span><span class="p">:</span> <span class="s1">&#39;*/45&#39;</span>             <span class="c1"># RSS 刷新周期，单位为分钟，*/45 表示每 45 分钟刷新一次</span>
+</span></span><span class="line"><span class="cl">      <span class="n">TZ</span><span class="p">:</span> <span class="n">Asia</span><span class="o">/</span><span class="n">Shanghai</span>            <span class="c1"># 时区</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">volumes:
-</span></span><span class="line"><span class="cl">  freshrss-db:
+</span></span><span class="line"><span class="cl"><span class="n">volumes</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">  <span class="n">freshrss</span><span class="o">-</span><span class="n">db</span><span class="p">:</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>确认配置后，运行：</p>

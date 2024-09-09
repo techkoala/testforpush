@@ -7,19 +7,20 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noodp" />
-    <title>5G NR 系列：如何做到空口 &lt;1ms 的延迟 - TechKoala - Input/Output</title><meta name="Description" content="TechKoala 的自留地，输入知识/输出笔记，内容包括但不限于 Linux、虚拟机、路由器、网络工具、计算机网络、软件推荐及使用技巧等内容"><meta property="og:title" content="5G NR 系列：如何做到空口 &lt;1ms 的延迟" />
-<meta property="og:description" content="
-无线网络中的时延是如何一步步进化到 5G 中的 &lt;1ms ？
-" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://www.techkoala.net/5g_time_delay/" /><meta property="article:section" content="posts" />
-<meta property="article:published_time" content="2019-08-12T23:14:44+08:00" />
-<meta property="article:modified_time" content="2022-05-28T20:40:38+08:00" />
-<meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="5G NR 系列：如何做到空口 &lt;1ms 的延迟"/>
-<meta name="twitter:description" content="
-无线网络中的时延是如何一步步进化到 5G 中的 &lt;1ms ？
-"/>
+    <title>5G NR 系列：如何做到空口 &lt;1ms 的延迟 - TechKoala - Input/Output</title><meta name="Description" content="TechKoala 的自留地，输入知识/输出笔记，内容包括但不限于 Linux、虚拟机、路由器、网络工具、计算机网络、软件推荐及使用技巧等内容"><meta property="og:url" content="https://www.techkoala.net/5g_time_delay/">
+  <meta property="og:site_name" content="TechKoala - Input/Output">
+  <meta property="og:title" content="5G NR 系列：如何做到空口 &lt;1ms 的延迟">
+  <meta property="og:description" content=" 无线网络中的时延是如何一步步进化到 5G 中的 &lt;1ms ？">
+  <meta property="og:locale" content="zh_CN">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2019-08-12T23:14:44+08:00">
+    <meta property="article:modified_time" content="2022-05-28T20:40:38+08:00">
+    <meta property="article:tag" content="5G">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="5G NR 系列：如何做到空口 &lt;1ms 的延迟">
+  <meta name="twitter:description" content=" 无线网络中的时延是如何一步步进化到 5G 中的 &lt;1ms ？">
 <meta name="application-name" content="TechKoala">
 <meta name="apple-mobile-web-app-title" content="TechKoala">
 
@@ -41,7 +42,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/www.techkoala.net\/5g_time_delay\/"
-        },"genre": "posts","keywords": "5G","wordcount":  8330 ,
+        },"genre": "posts","keywords": "5G","wordcount":  8328 ,
         "url": "https:\/\/www.techkoala.net\/5g_time_delay\/","datePublished": "2019-08-12T23:14:44+08:00","dateModified": "2022-05-28T20:40:38+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
             "@type": "Organization",
             "name": "TechKoala"},"author": {
@@ -126,7 +127,7 @@
             <div class="post-meta-line">
                 <span class="post-author"><span class="author fas fa-user-circle fa-fw"></span><a href="/" title="Author" rel=" author" class="author">TechKoala</a>
                 </span>&nbsp;<span class="post-category">收录于 </span>&nbsp;<span class="post-category">类别 <a href="/categories/wirelesscommunication/"><i class="far fa-folder fa-fw"></i>WirelessCommunication</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2019-08-12">2019-08-12</time>&nbsp;<i class="far fa-edit fa-fw"></i>&nbsp;<time datetime="2022-05-28">2022-05-28</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 8330 字&nbsp;<i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 17 分钟&nbsp;</div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2019-08-12">2019-08-12</time>&nbsp;<i class="far fa-edit fa-fw"></i>&nbsp;<time datetime="2022-05-28">2022-05-28</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 8328 字&nbsp;<i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 17 分钟&nbsp;</div>
         </div><div class="details toc" id="toc-static"  kept="">
                 <div class="details-summary toc-title">
                     <span>目录</span>
@@ -451,7 +452,7 @@
 <h3 id="信道编码" class="headerLink">
     <a href="#%e4%bf%a1%e9%81%93%e7%bc%96%e7%a0%81" class="header-mark"></a>信道编码</h3><p>4G LTE 采用 Turbo 和 Simple code 来编解码数据达到无线传输的可靠性。在 5G 中使用的是 LDPC 和 Polar 码来提升数据和控制信道的编解码效率，经过编码界研究的不懈努力，编解码的性能和计算复杂度的提升对于降低时延也有所帮助。</p>
 <h3 id="更短的传输时间间隔可变的-numerology" class="headerLink">
-    <a href="#%e6%9b%b4%e7%9f%ad%e7%9a%84%e4%bc%a0%e8%be%93%e6%97%b6%e9%97%b4%e9%97%b4%e9%9a%94%e5%8f%af%e5%8f%98%e7%9a%84-numerology" class="header-mark"></a>更短的传输时间间隔（可变的 Numerology）</h3><p>从更短的时间间隔这点说 5G 是天生丽质一点都不为过，LTE 规定的一个子载波 (传送信息的最小频域单位) 是 15KHz，时间域是 1ms （正常情况下）。5G 所需要支持的频率范围非常广，中低频从 450MHz~6000MHz（FR1），高频从 24.25GHz~52.6GHz（FR2）。高频意味着更高的相位噪声，所以需要设计更加宽的子载波间隔来抵御相位噪声的干扰。更宽的子载波间隔，意味着时域上更短的时隙，更短的传输时间间隔，我们在 4G LTE 时代千方百计想要降低的传输时间间隔在 5G 时代只需要使用更高的频段，更宽的子载波间隔就轻而易举的降低了。而且根据不同的频段可以选择从 15KHz, 30KHz 到 120KHz 的子载波间隔，可以简单的理解为，<strong>5G 子载波间隔相比于 LTE 15KHz 增加了多少倍，那么在时域上的传输时间间隔就减少相应的倍数</strong>。</p>
+    <a href="#%e6%9b%b4%e7%9f%ad%e7%9a%84%e4%bc%a0%e8%be%93%e6%97%b6%e9%97%b4%e9%97%b4%e9%9a%94%e5%8f%af%e5%8f%98%e7%9a%84-numerology" class="header-mark"></a>更短的传输时间间隔（可变的 Numerology）</h3><p>从更短的时间间隔这点说 5G 是天生丽质一点都不为过，LTE 规定的一个子载波 (传送信息的最小频域单位) 是 15KHz，时间域是 1ms （正常情况下）。5G 所需要支持的频率范围非常广，中低频从 450MHz<del>6000MHz（FR1），高频从 24.25GHz</del>52.6GHz（FR2）。高频意味着更高的相位噪声，所以需要设计更加宽的子载波间隔来抵御相位噪声的干扰。更宽的子载波间隔，意味着时域上更短的时隙，更短的传输时间间隔，我们在 4G LTE 时代千方百计想要降低的传输时间间隔在 5G 时代只需要使用更高的频段，更宽的子载波间隔就轻而易举的降低了。而且根据不同的频段可以选择从 15KHz, 30KHz 到 120KHz 的子载波间隔，可以简单的理解为，<strong>5G 子载波间隔相比于 LTE 15KHz 增加了多少倍，那么在时域上的传输时间间隔就减少相应的倍数</strong>。</p>
 <figure><a class="lightgallery" href="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/5G/Delay/Subcarrier_spacing.webp" title="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/5G/Delay/Subcarrier_spacing.webp" data-thumbnail="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/5G/Delay/Subcarrier_spacing.webp" data-sub-html="<h2>频域子载波间隔成倍增加，时域符号时长相应倍数减少（Source: Ultra Reliable and Low LatencyCommunications in 5G Downlink: PhysicalLayer Aspects）</h2>">
         <img
             
@@ -649,7 +650,7 @@
                 Please enable JavaScript to view the comments powered by <a href="https://waline.js.org/">Waline</a>.
             </noscript></div></article></div>
         </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/">Hugo</a> with <a href="https://github.com/HEIGE-PCloud/DoIt">DoIt</a></div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2023</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank" rel="noopener noreferrer">TechKoala</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/">Hugo</a> with <a href="https://github.com/HEIGE-PCloud/DoIt">DoIt</a></div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2024</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank" rel="noopener noreferrer">TechKoala</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
             <div class="footer-line"></div>
             <div class="footer-line">
             </div>

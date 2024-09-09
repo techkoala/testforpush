@@ -7,19 +7,21 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noodp" />
-    <title>LTE 系列：下行链路帧结构 - TechKoala - Input/Output</title><meta name="Description" content="TechKoala 的自留地，输入知识/输出笔记，内容包括但不限于 Linux、虚拟机、路由器、网络工具、计算机网络、软件推荐及使用技巧等内容"><meta property="og:title" content="LTE 系列：下行链路帧结构" />
-<meta property="og:description" content="
-LTE 下行链路帧结构详细讲解
-" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://www.techkoala.net/lte_downlink_frame_structure/" /><meta property="article:section" content="posts" />
-<meta property="article:published_time" content="2019-07-29T17:53:52+08:00" />
-<meta property="article:modified_time" content="2022-05-28T20:40:38+08:00" />
-<meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="LTE 系列：下行链路帧结构"/>
-<meta name="twitter:description" content="
-LTE 下行链路帧结构详细讲解
-"/>
+    <title>LTE 系列：下行链路帧结构 - TechKoala - Input/Output</title><meta name="Description" content="TechKoala 的自留地，输入知识/输出笔记，内容包括但不限于 Linux、虚拟机、路由器、网络工具、计算机网络、软件推荐及使用技巧等内容"><meta property="og:url" content="https://www.techkoala.net/lte_downlink_frame_structure/">
+  <meta property="og:site_name" content="TechKoala - Input/Output">
+  <meta property="og:title" content="LTE 系列：下行链路帧结构">
+  <meta property="og:description" content=" LTE 下行链路帧结构详细讲解">
+  <meta property="og:locale" content="zh_CN">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2019-07-29T17:53:52+08:00">
+    <meta property="article:modified_time" content="2022-05-28T20:40:38+08:00">
+    <meta property="article:tag" content="LTE">
+    <meta property="article:tag" content="Translation">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="LTE 系列：下行链路帧结构">
+  <meta name="twitter:description" content=" LTE 下行链路帧结构详细讲解">
 <meta name="application-name" content="TechKoala">
 <meta name="apple-mobile-web-app-title" content="TechKoala">
 
@@ -219,45 +221,45 @@ LTE 下行链路帧结构详细讲解
 </li>
 </ul>
 <table>
-<thead>
-<tr>
-<th>System BW</th>
-<th>Number of RBs</th>
-<th>$N_{ifft}$ (bins/IFFT)</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>1.4</td>
-<td>6</td>
-<td>128</td>
-</tr>
-<tr>
-<td>3.0</td>
-<td>15</td>
-<td>256</td>
-</tr>
-<tr>
-<td>5.0</td>
-<td>25</td>
-<td>512</td>
-</tr>
-<tr>
-<td>10.0</td>
-<td>50</td>
-<td>1024</td>
-</tr>
-<tr>
-<td>15.0</td>
-<td>75</td>
-<td>2048</td>
-</tr>
-<tr>
-<td>20.0</td>
-<td>100</td>
-<td>2048</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left">System BW</th>
+          <th style="text-align: left">Number of RBs</th>
+          <th style="text-align: left">$N_{ifft}$ (bins/IFFT)</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">1.4</td>
+          <td style="text-align: left">6</td>
+          <td style="text-align: left">128</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">3.0</td>
+          <td style="text-align: left">15</td>
+          <td style="text-align: left">256</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">5.0</td>
+          <td style="text-align: left">25</td>
+          <td style="text-align: left">512</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">10.0</td>
+          <td style="text-align: left">50</td>
+          <td style="text-align: left">1024</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">15.0</td>
+          <td style="text-align: left">75</td>
+          <td style="text-align: left">2048</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">20.0</td>
+          <td style="text-align: left">100</td>
+          <td style="text-align: left">2048</td>
+      </tr>
+  </tbody>
 </table>
 <p>下图是<code>LTE 资源网格</code>的总体子帧结构：</p>
 <figure><a class="lightgallery" href="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE-DL-FS/LTE_DL_FrameStructure_01.png" title="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE-DL-FS/LTE_DL_FrameStructure_01.png" data-thumbnail="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE-DL-FS/LTE_DL_FrameStructure_01.png" data-sub-html="<h2>LTE 资源网格</h2>">
@@ -373,58 +375,58 @@ LTE 下行链路帧结构详细讲解
     </figure>
 <p>以下是使用 <a href="http://dhagle.in/LTE" target="_blank" rel="noopener noreferrer">Sandesh Dhagle&rsquo;s Resource Grid Tools</a> 生成的各种配置的 <code>TDD</code> <code>UL/DL</code> 资源分配图。</p>
 <table>
-<thead>
-<tr>
-<th>类别</th>
-<th>颜色</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>PDCCH</td>
-<td>橙色</td>
-</tr>
-<tr>
-<td>PBCH</td>
-<td>蓝色</td>
-</tr>
-<tr>
-<td>PSS</td>
-<td>紫色</td>
-</tr>
-<tr>
-<td>SSS</td>
-<td>浅蓝色</td>
-</tr>
-<tr>
-<td>PDSCH</td>
-<td>白色</td>
-</tr>
-<tr>
-<td>Reserved</td>
-<td>黑色</td>
-</tr>
-<tr>
-<td>Ref Signal</td>
-<td>红色</td>
-</tr>
-<tr>
-<td>PCFICH</td>
-<td>浅绿色</td>
-</tr>
-<tr>
-<td>PHICH</td>
-<td>黄色</td>
-</tr>
-<tr>
-<td>TDD Uplink</td>
-<td>绿色</td>
-</tr>
-<tr>
-<td>Guard Period</td>
-<td>灰色</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left">类别</th>
+          <th style="text-align: left">颜色</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">PDCCH</td>
+          <td style="text-align: left">橙色</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">PBCH</td>
+          <td style="text-align: left">蓝色</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">PSS</td>
+          <td style="text-align: left">紫色</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">SSS</td>
+          <td style="text-align: left">浅蓝色</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">PDSCH</td>
+          <td style="text-align: left">白色</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Reserved</td>
+          <td style="text-align: left">黑色</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Ref Signal</td>
+          <td style="text-align: left">红色</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">PCFICH</td>
+          <td style="text-align: left">浅绿色</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">PHICH</td>
+          <td style="text-align: left">黄色</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">TDD Uplink</td>
+          <td style="text-align: left">绿色</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Guard Period</td>
+          <td style="text-align: left">灰色</td>
+      </tr>
+  </tbody>
 </table>
 <figure><a class="lightgallery" href="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE-DL-FS/TDD_UL_DL_Configuration_0_SpecialSubframeConfig_0_01.png" title="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE-DL-FS/TDD_UL_DL_Configuration_0_SpecialSubframeConfig_0_01.png" data-thumbnail="https://fastly.jsdelivr.net/gh/techkoala/techkoala.github.io@master/images/WirelessCommunication/LTE/LTE-DL-FS/TDD_UL_DL_Configuration_0_SpecialSubframeConfig_0_01.png" data-sub-html="<h2>Configuration 0, Special Subframe Config 0</h2>">
         <img
@@ -629,7 +631,7 @@ LTE 下行链路帧结构详细讲解
                 Please enable JavaScript to view the comments powered by <a href="https://waline.js.org/">Waline</a>.
             </noscript></div></article></div>
         </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/">Hugo</a> with <a href="https://github.com/HEIGE-PCloud/DoIt">DoIt</a></div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2023</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank" rel="noopener noreferrer">TechKoala</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/">Hugo</a> with <a href="https://github.com/HEIGE-PCloud/DoIt">DoIt</a></div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2024</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank" rel="noopener noreferrer">TechKoala</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
             <div class="footer-line"></div>
             <div class="footer-line">
             </div>

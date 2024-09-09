@@ -117,9 +117,9 @@
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">payload:
-</span></span><span class="line"><span class="cl">- DOMAIN-SUFFIX,cloud.cupronickel.goog
-</span></span><span class="line"><span class="cl">- DOMAIN-SUFFIX,googleapis.com
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="n">payload</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl"><span class="o">-</span> <span class="n">DOMAIN</span><span class="o">-</span><span class="n">SUFFIX</span><span class="p">,</span><span class="n">cloud</span><span class="o">.</span><span class="n">cupronickel</span><span class="o">.</span><span class="n">goog</span>
+</span></span><span class="line"><span class="cl"><span class="o">-</span> <span class="n">DOMAIN</span><span class="o">-</span><span class="n">SUFFIX</span><span class="p">,</span><span class="n">googleapis</span><span class="o">.</span><span class="n">com</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>手机通过代理后，即可使用 Google One app 成功连接上对应地区的 Google One VPN 服务器</p>

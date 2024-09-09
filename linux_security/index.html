@@ -7,27 +7,20 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noodp" />
-    <title>Linux 安全分析与加固 - TechKoala - Input/Output</title><meta name="Description" content="TechKoala 的自留地，输入知识/输出笔记，内容包括但不限于 Linux、虚拟机、路由器、网络工具、计算机网络、软件推荐及使用技巧等内容"><meta property="og:title" content="Linux 安全分析与加固" />
-<meta property="og:description" content="
-        
-    Linux
-    
+    <title>Linux 安全分析与加固 - TechKoala - Input/Output</title><meta name="Description" content="TechKoala 的自留地，输入知识/输出笔记，内容包括但不限于 Linux、虚拟机、路由器、网络工具、计算机网络、软件推荐及使用技巧等内容"><meta property="og:url" content="https://www.techkoala.net/linux_security/">
+  <meta property="og:site_name" content="TechKoala - Input/Output">
+  <meta property="og:title" content="Linux 安全分析与加固">
+  <meta property="og:description" content=" Linux 记录一些常见的 Linux 服务器安全问题分析以及防护措施">
+  <meta property="og:locale" content="zh_CN">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2020-06-07T23:22:43+08:00">
+    <meta property="article:modified_time" content="2022-05-28T20:40:38+08:00">
+    <meta property="article:tag" content="Security">
 
-记录一些常见的 Linux 服务器安全问题分析以及防护措施
-" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://www.techkoala.net/linux_security/" /><meta property="article:section" content="posts" />
-<meta property="article:published_time" content="2020-06-07T23:22:43+08:00" />
-<meta property="article:modified_time" content="2022-05-28T20:40:38+08:00" />
-<meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Linux 安全分析与加固"/>
-<meta name="twitter:description" content="
-        
-    Linux
-    
-
-记录一些常见的 Linux 服务器安全问题分析以及防护措施
-"/>
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Linux 安全分析与加固">
+  <meta name="twitter:description" content=" Linux 记录一些常见的 Linux 服务器安全问题分析以及防护措施">
 <meta name="application-name" content="TechKoala">
 <meta name="apple-mobile-web-app-title" content="TechKoala">
 
@@ -480,13 +473,13 @@
 </span><span class="lnt">7
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">[ssh]
-</span></span><span class="line"><span class="cl">enabled  = true
-</span></span><span class="line"><span class="cl">port     = ssh
-</span></span><span class="line"><span class="cl">filter   = sshd
-</span></span><span class="line"><span class="cl">action   = iptables[name=SSH, port=ssh, protocol=tcp]
-</span></span><span class="line"><span class="cl">logpath  = /var/log/auth.log
-</span></span><span class="line"><span class="cl">maxretry = 6
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="p">[</span><span class="n">ssh</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="n">enabled</span>  <span class="o">=</span> <span class="bp">true</span>
+</span></span><span class="line"><span class="cl"><span class="n">port</span>     <span class="o">=</span> <span class="n">ssh</span>
+</span></span><span class="line"><span class="cl"><span class="n">filter</span>   <span class="o">=</span> <span class="n">sshd</span>
+</span></span><span class="line"><span class="cl"><span class="n">action</span>   <span class="o">=</span> <span class="n">iptables</span><span class="p">[</span><span class="n">name</span><span class="o">=</span><span class="n">SSH</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="n">ssh</span><span class="p">,</span> <span class="n">protocol</span><span class="o">=</span><span class="n">tcp</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="n">logpath</span>  <span class="o">=</span> <span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="nb">log</span><span class="o">/</span><span class="n">auth</span><span class="o">.</span><span class="n">log</span>
+</span></span><span class="line"><span class="cl"><span class="n">maxretry</span> <span class="o">=</span> <span class="mi">6</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>其余未设置的项尊崇全局设置。</p>
@@ -547,15 +540,15 @@
 </span><span class="lnt">9
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">Status for the jail: sshd
-</span></span><span class="line"><span class="cl">|- Filter
-</span></span><span class="line"><span class="cl">|  |- Currently failed: 0
-</span></span><span class="line"><span class="cl">|  |- Total failed:     2479
-</span></span><span class="line"><span class="cl">|  `- File list:        /var/log/auth.log
-</span></span><span class="line"><span class="cl">`- Actions
-</span></span><span class="line"><span class="cl">   |- Currently banned: 4
-</span></span><span class="line"><span class="cl">   |- Total banned:     118
-</span></span><span class="line"><span class="cl">   `- Banned IP list:   31.184.198.75 173.212.240.196 116.110.108.227 171.227.208.32
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="n">Status</span> <span class="k">for</span> <span class="n">the</span> <span class="n">jail</span><span class="p">:</span> <span class="n">sshd</span>
+</span></span><span class="line"><span class="cl"><span class="o">|-</span> <span class="n">Filter</span>
+</span></span><span class="line"><span class="cl"><span class="o">|</span>  <span class="o">|-</span> <span class="n">Currently</span> <span class="n">failed</span><span class="p">:</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl"><span class="o">|</span>  <span class="o">|-</span> <span class="n">Total</span> <span class="n">failed</span><span class="p">:</span>     <span class="mi">2479</span>
+</span></span><span class="line"><span class="cl"><span class="o">|</span>  <span class="err">`</span><span class="o">-</span> <span class="ne">File</span> <span class="n">list</span><span class="p">:</span>        <span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="nb">log</span><span class="o">/</span><span class="n">auth</span><span class="o">.</span><span class="n">log</span>
+</span></span><span class="line"><span class="cl"><span class="err">`</span><span class="o">-</span> <span class="n">Actions</span>
+</span></span><span class="line"><span class="cl">   <span class="o">|-</span> <span class="n">Currently</span> <span class="n">banned</span><span class="p">:</span> <span class="mi">4</span>
+</span></span><span class="line"><span class="cl">   <span class="o">|-</span> <span class="n">Total</span> <span class="n">banned</span><span class="p">:</span>     <span class="mi">118</span>
+</span></span><span class="line"><span class="cl">   <span class="err">`</span><span class="o">-</span> <span class="n">Banned</span> <span class="ne">IP</span> <span class="n">list</span><span class="p">:</span>   <span class="mf">31.184</span><span class="o">.</span><span class="mf">198.75</span> <span class="mf">173.212</span><span class="o">.</span><span class="mf">240.196</span> <span class="mf">116.110</span><span class="o">.</span><span class="mf">108.227</span> <span class="mf">171.227</span><span class="o">.</span><span class="mf">208.32</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><h2 id="参考" class="headerLink">
@@ -600,7 +593,7 @@
                 Please enable JavaScript to view the comments powered by <a href="https://waline.js.org/">Waline</a>.
             </noscript></div></article></div>
         </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/">Hugo</a> with <a href="https://github.com/HEIGE-PCloud/DoIt">DoIt</a></div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2023</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank" rel="noopener noreferrer">TechKoala</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/">Hugo</a> with <a href="https://github.com/HEIGE-PCloud/DoIt">DoIt</a></div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2024</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank" rel="noopener noreferrer">TechKoala</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
             <div class="footer-line"></div>
             <div class="footer-line">
             </div>

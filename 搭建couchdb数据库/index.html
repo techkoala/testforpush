@@ -7,21 +7,28 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noodp" />
-    <title>搭建 CouchDB 数据库 - TechKoala - Input/Output</title><meta name="Description" content="TechKoala 的自留地，输入知识/输出笔记，内容包括但不限于 Linux、虚拟机、路由器、网络工具、计算机网络、软件推荐及使用技巧等内容"><meta property="og:title" content="搭建 CouchDB 数据库" />
-<meta property="og:description" content="记录一下 CouchDB 搭建流程，用于同步 MoonFM、Obsidian 很早之前就购买了 MoonFM，但是鉴于没有自带同步服务，所以一直使用 Spotify 听播客。现在" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://www.techkoala.net/%E6%90%AD%E5%BB%BAcouchdb%E6%95%B0%E6%8D%AE%E5%BA%93/" /><meta property="article:section" content="posts" />
+    <title>搭建 CouchDB 数据库 - TechKoala - Input/Output</title><meta name="Description" content="TechKoala 的自留地，输入知识/输出笔记，内容包括但不限于 Linux、虚拟机、路由器、网络工具、计算机网络、软件推荐及使用技巧等内容"><meta property="og:url" content="https://www.techkoala.net/%E6%90%AD%E5%BB%BAcouchdb%E6%95%B0%E6%8D%AE%E5%BA%93/">
+  <meta property="og:site_name" content="TechKoala - Input/Output">
+  <meta property="og:title" content="搭建 CouchDB 数据库">
+  <meta property="og:description" content=" 记录一下 CouchDB 搭建流程，用于同步 MoonFM、Obsidian
+很早之前就购买了 MoonFM，但是鉴于没有自带同步服务，所以一直使用 Spotify 听播客。现在终于忍不了这种音乐和播客混在一起，乱七八糟的感觉了，因此抽空研究了 MoonFM 使用的 Couchdb 数据库同步方案，实现了自建同步服务。同时也刚好一并将 Obsidian 的同步服务从Remotely save迁移到了obsidian-livesync，实现了更好的同步体验！">
+  <meta property="og:locale" content="zh_CN">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:tag" content="CouchDB">
+    <meta property="article:tag" content="MoonFM">
+    <meta property="article:tag" content="Flyio">
 
-
-<meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="搭建 CouchDB 数据库"/>
-<meta name="twitter:description" content="记录一下 CouchDB 搭建流程，用于同步 MoonFM、Obsidian 很早之前就购买了 MoonFM，但是鉴于没有自带同步服务，所以一直使用 Spotify 听播客。现在"/>
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="搭建 CouchDB 数据库">
+  <meta name="twitter:description" content=" 记录一下 CouchDB 搭建流程，用于同步 MoonFM、Obsidian
+很早之前就购买了 MoonFM，但是鉴于没有自带同步服务，所以一直使用 Spotify 听播客。现在终于忍不了这种音乐和播客混在一起，乱七八糟的感觉了，因此抽空研究了 MoonFM 使用的 Couchdb 数据库同步方案，实现了自建同步服务。同时也刚好一并将 Obsidian 的同步服务从Remotely save迁移到了obsidian-livesync，实现了更好的同步体验！">
 <meta name="application-name" content="TechKoala">
 <meta name="apple-mobile-web-app-title" content="TechKoala">
 
 <meta name="theme-color" content="#f8f8f8"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://www.techkoala.net/%E6%90%AD%E5%BB%BAcouchdb%E6%95%B0%E6%8D%AE%E5%BA%93/" /><link rel="next" href="https://www.techkoala.net/mobile_phone_systems/" />
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://www.techkoala.net/%E6%90%AD%E5%BB%BAcouchdb%E6%95%B0%E6%8D%AE%E5%BA%93/" /><link rel="prev" href="https://www.techkoala.net/follow/" /><link rel="next" href="https://www.techkoala.net/mobile_phone_systems/" />
 <link rel="stylesheet" href="/css/main.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css"><link rel="stylesheet" href="/css/color.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css">
         <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css"></noscript><link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css">
         <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css"></noscript>
@@ -318,20 +325,20 @@
     </div>
 
     <div class="post-info-more">
-        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/couchdb/">CouchDB</a>,&nbsp;<a href="/tags/moonfm/">MoonFM</a>,&nbsp;<a href="/tags/flyio/">flyio</a></section>
+        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/couchdb/">CouchDB</a>,&nbsp;<a href="/tags/moonfm/">MoonFM</a>,&nbsp;<a href="/tags/flyio/">Flyio</a></section>
         <section>
             <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
         </section>
     </div>
 
-    <div class="post-nav">
+    <div class="post-nav"><a href="/follow/" class="prev" rel="prev" title="拥抱Follow"><i class="fas fa-angle-left fa-fw"></i>拥抱Follow</a>
             <a href="/mobile_phone_systems/" class="next" rel="next" title="五大移动端系统谁先被淘汰？">五大移动端系统谁先被淘汰？<i class="fas fa-angle-right fa-fw"></i></a></div>
 </div>
 <div id="comments"><div id="waline" class="comment"></div><noscript>
                 Please enable JavaScript to view the comments powered by <a href="https://waline.js.org/">Waline</a>.
             </noscript></div></article></div>
         </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/">Hugo</a> with <a href="https://github.com/HEIGE-PCloud/DoIt">DoIt</a></div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2023</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank" rel="noopener noreferrer">TechKoala</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/">Hugo</a> with <a href="https://github.com/HEIGE-PCloud/DoIt">DoIt</a></div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2024</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank" rel="noopener noreferrer">TechKoala</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
             <div class="footer-line"></div>
             <div class="footer-line">
             </div>

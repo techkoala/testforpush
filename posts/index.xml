@@ -117,9 +117,9 @@
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">payload:
-</span></span><span class="line"><span class="cl">- DOMAIN-SUFFIX,cloud.cupronickel.goog
-</span></span><span class="line"><span class="cl">- DOMAIN-SUFFIX,googleapis.com
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="n">payload</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl"><span class="o">-</span> <span class="n">DOMAIN</span><span class="o">-</span><span class="n">SUFFIX</span><span class="p">,</span><span class="n">cloud</span><span class="o">.</span><span class="n">cupronickel</span><span class="o">.</span><span class="n">goog</span>
+</span></span><span class="line"><span class="cl"><span class="o">-</span> <span class="n">DOMAIN</span><span class="o">-</span><span class="n">SUFFIX</span><span class="p">,</span><span class="n">googleapis</span><span class="o">.</span><span class="n">com</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>手机通过代理后，即可使用 Google One app 成功连接上对应地区的 Google One VPN 服务器</p>
@@ -1246,41 +1246,41 @@
 </span><span class="lnt">35
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl"># ~/freshrss/docker-compose.yml
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="c1"># ~/freshrss/docker-compose.yml</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">version: &#34;3&#34;
+</span></span><span class="line"><span class="cl"><span class="n">version</span><span class="p">:</span> <span class="s2">&#34;3&#34;</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">services:
-</span></span><span class="line"><span class="cl">  freshrss-db:
-</span></span><span class="line"><span class="cl">    image: postgres:latest            # 官方示例中给出了 MySQL/MarriaDB/PostgreSQL 三种方案
-</span></span><span class="line"><span class="cl">    container_name: freshrss-db
-</span></span><span class="line"><span class="cl">    hostname: freshrss-db
-</span></span><span class="line"><span class="cl">    restart: always
-</span></span><span class="line"><span class="cl">    volumes:
-</span></span><span class="line"><span class="cl">      - freshrss-db:/var/lib/postgresql/data
-</span></span><span class="line"><span class="cl">    environment:
-</span></span><span class="line"><span class="cl">      POSTGRES_USER: freshrss       # 数据库配置，请自行修改、避免使用默认配置
-</span></span><span class="line"><span class="cl">      POSTGRES_PASSWORD: freshrss   # 数据库配置，请自行修改、避免使用默认配置
-</span></span><span class="line"><span class="cl">      POSTGRES_DB: freshrss         # 数据库配置，请自行修改、避免使用默认配置
+</span></span><span class="line"><span class="cl"><span class="n">services</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">  <span class="n">freshrss</span><span class="o">-</span><span class="n">db</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="n">image</span><span class="p">:</span> <span class="n">postgres</span><span class="p">:</span><span class="n">latest</span>            <span class="c1"># 官方示例中给出了 MySQL/MarriaDB/PostgreSQL 三种方案</span>
+</span></span><span class="line"><span class="cl">    <span class="n">container_name</span><span class="p">:</span> <span class="n">freshrss</span><span class="o">-</span><span class="n">db</span>
+</span></span><span class="line"><span class="cl">    <span class="n">hostname</span><span class="p">:</span> <span class="n">freshrss</span><span class="o">-</span><span class="n">db</span>
+</span></span><span class="line"><span class="cl">    <span class="n">restart</span><span class="p">:</span> <span class="n">always</span>
+</span></span><span class="line"><span class="cl">    <span class="n">volumes</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">      <span class="o">-</span> <span class="n">freshrss</span><span class="o">-</span><span class="n">db</span><span class="p">:</span><span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">postgresql</span><span class="o">/</span><span class="n">data</span>
+</span></span><span class="line"><span class="cl">    <span class="n">environment</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">      <span class="n">POSTGRES_USER</span><span class="p">:</span> <span class="n">freshrss</span>       <span class="c1"># 数据库配置，请自行修改、避免使用默认配置</span>
+</span></span><span class="line"><span class="cl">      <span class="n">POSTGRES_PASSWORD</span><span class="p">:</span> <span class="n">freshrss</span>   <span class="c1"># 数据库配置，请自行修改、避免使用默认配置</span>
+</span></span><span class="line"><span class="cl">      <span class="n">POSTGRES_DB</span><span class="p">:</span> <span class="n">freshrss</span>         <span class="c1"># 数据库配置，请自行修改、避免使用默认配置</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">  freshrss-app:
-</span></span><span class="line"><span class="cl">    image: freshrss/freshrss:latest
-</span></span><span class="line"><span class="cl">    container_name: freshrss-app
-</span></span><span class="line"><span class="cl">    hostname: freshrss-app
-</span></span><span class="line"><span class="cl">    restart: always
-</span></span><span class="line"><span class="cl">    ports:
-</span></span><span class="line"><span class="cl">      - &#34;39954:80&#34;                   # 映射端口
-</span></span><span class="line"><span class="cl">    depends_on:
-</span></span><span class="line"><span class="cl">      - freshrss-db
-</span></span><span class="line"><span class="cl">    volumes:
-</span></span><span class="line"><span class="cl">      - ./data:/var/www/FreshRSS/data
-</span></span><span class="line"><span class="cl">      - ./extensions:/var/www/FreshRSS/extensions
-</span></span><span class="line"><span class="cl">    environment:
-</span></span><span class="line"><span class="cl">      CRON_MIN: &#39;*/45&#39;             # RSS 刷新周期，单位为分钟，*/45 表示每 45 分钟刷新一次
-</span></span><span class="line"><span class="cl">      TZ: Asia/Shanghai            # 时区
+</span></span><span class="line"><span class="cl">  <span class="n">freshrss</span><span class="o">-</span><span class="n">app</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="n">image</span><span class="p">:</span> <span class="n">freshrss</span><span class="o">/</span><span class="n">freshrss</span><span class="p">:</span><span class="n">latest</span>
+</span></span><span class="line"><span class="cl">    <span class="n">container_name</span><span class="p">:</span> <span class="n">freshrss</span><span class="o">-</span><span class="n">app</span>
+</span></span><span class="line"><span class="cl">    <span class="n">hostname</span><span class="p">:</span> <span class="n">freshrss</span><span class="o">-</span><span class="n">app</span>
+</span></span><span class="line"><span class="cl">    <span class="n">restart</span><span class="p">:</span> <span class="n">always</span>
+</span></span><span class="line"><span class="cl">    <span class="n">ports</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">      <span class="o">-</span> <span class="s2">&#34;39954:80&#34;</span>                   <span class="c1"># 映射端口</span>
+</span></span><span class="line"><span class="cl">    <span class="n">depends_on</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">      <span class="o">-</span> <span class="n">freshrss</span><span class="o">-</span><span class="n">db</span>
+</span></span><span class="line"><span class="cl">    <span class="n">volumes</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">      <span class="o">-</span> <span class="o">./</span><span class="n">data</span><span class="p">:</span><span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="n">www</span><span class="o">/</span><span class="n">FreshRSS</span><span class="o">/</span><span class="n">data</span>
+</span></span><span class="line"><span class="cl">      <span class="o">-</span> <span class="o">./</span><span class="n">extensions</span><span class="p">:</span><span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="n">www</span><span class="o">/</span><span class="n">FreshRSS</span><span class="o">/</span><span class="n">extensions</span>
+</span></span><span class="line"><span class="cl">    <span class="n">environment</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">      <span class="n">CRON_MIN</span><span class="p">:</span> <span class="s1">&#39;*/45&#39;</span>             <span class="c1"># RSS 刷新周期，单位为分钟，*/45 表示每 45 分钟刷新一次</span>
+</span></span><span class="line"><span class="cl">      <span class="n">TZ</span><span class="p">:</span> <span class="n">Asia</span><span class="o">/</span><span class="n">Shanghai</span>            <span class="c1"># 时区</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">volumes:
-</span></span><span class="line"><span class="cl">  freshrss-db:
+</span></span><span class="line"><span class="cl"><span class="n">volumes</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">  <span class="n">freshrss</span><span class="o">-</span><span class="n">db</span><span class="p">:</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>确认配置后，运行：</p>
@@ -1670,81 +1670,81 @@
 </span><span class="lnt">75
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">user www www;
-</span></span><span class="line"><span class="cl">worker_processes auto;
-</span></span><span class="line"><span class="cl">error_log /var/log/nginx/error.log warn;
-</span></span><span class="line"><span class="cl">pid /var/run/nginx.pid;
-</span></span><span class="line"><span class="cl">worker_rlimit_nofile 8192;
-</span></span><span class="line"><span class="cl">events {
-</span></span><span class="line"><span class="cl">    worker_connections 4096;
-</span></span><span class="line"><span class="cl">}
-</span></span><span class="line"><span class="cl">http {
-</span></span><span class="line"><span class="cl">    include mime.types;
-</span></span><span class="line"><span class="cl">    default_type application/octet-stream;
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="n">user</span> <span class="n">www</span> <span class="n">www</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">worker_processes</span> <span class="n">auto</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">error_log</span> <span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="nb">log</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">error</span><span class="o">.</span><span class="n">log</span> <span class="n">warn</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">pid</span> <span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="n">run</span><span class="o">/</span><span class="n">nginx</span><span class="o">.</span><span class="n">pid</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">worker_rlimit_nofile</span> <span class="mi">8192</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">events</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">worker_connections</span> <span class="mi">4096</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="n">http</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">include</span> <span class="n">mime</span><span class="o">.</span><span class="n">types</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">default_type</span> <span class="n">application</span><span class="o">/</span><span class="n">octet</span><span class="o">-</span><span class="n">stream</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">    client_max_body_size 0;
-</span></span><span class="line"><span class="cl">    client_body_buffer_size 512k;
+</span></span><span class="line"><span class="cl">    <span class="n">client_max_body_size</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">client_body_buffer_size</span> <span class="mi">512</span><span class="n">k</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">    sendfile on;
-</span></span><span class="line"><span class="cl">    sendfile_max_chunk 1m;
-</span></span><span class="line"><span class="cl">    tcp_nopush on;
-</span></span><span class="line"><span class="cl">    tcp_nodelay on;
-</span></span><span class="line"><span class="cl">    keepalive_timeout 65;
+</span></span><span class="line"><span class="cl">    <span class="n">sendfile</span> <span class="n">on</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">sendfile_max_chunk</span> <span class="mi">1</span><span class="n">m</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">tcp_nopush</span> <span class="n">on</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">tcp_nodelay</span> <span class="n">on</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">keepalive_timeout</span> <span class="mi">65</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">    types_hash_max_size 4096;
+</span></span><span class="line"><span class="cl">    <span class="n">types_hash_max_size</span> <span class="mi">4096</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">    proxy_cache_path /var/run/nginx-proxy-cache levels=1:2 keys_zone=cache_one:20m inactive=1d max_size=500m;
-</span></span><span class="line"><span class="cl">    proxy_cache cache_one;
-</span></span><span class="line"><span class="cl">    proxy_temp_path /var/run/proxy_temp_dir;
-</span></span><span class="line"><span class="cl">    proxy_temp_file_write_size 128k;
-</span></span><span class="line"><span class="cl">    proxy_next_upstream error timeout invalid_header http_500 http_503 http_404;
-</span></span><span class="line"><span class="cl">    proxy_buffer_size 16k;
-</span></span><span class="line"><span class="cl">    proxy_busy_buffers_size 24k;
-</span></span><span class="line"><span class="cl">    proxy_buffers 64 4k;
+</span></span><span class="line"><span class="cl">    <span class="n">proxy_cache_path</span> <span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="n">run</span><span class="o">/</span><span class="n">nginx</span><span class="o">-</span><span class="n">proxy</span><span class="o">-</span><span class="n">cache</span> <span class="n">levels</span><span class="o">=</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span> <span class="n">keys_zone</span><span class="o">=</span><span class="n">cache_one</span><span class="p">:</span><span class="mi">20</span><span class="n">m</span> <span class="n">inactive</span><span class="o">=</span><span class="mi">1</span><span class="n">d</span> <span class="n">max_size</span><span class="o">=</span><span class="mi">500</span><span class="n">m</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">proxy_cache</span> <span class="n">cache_one</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">proxy_temp_path</span> <span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="n">run</span><span class="o">/</span><span class="n">proxy_temp_dir</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">proxy_temp_file_write_size</span> <span class="mi">128</span><span class="n">k</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">proxy_next_upstream</span> <span class="n">error</span> <span class="n">timeout</span> <span class="n">invalid_header</span> <span class="n">http_500</span> <span class="n">http_503</span> <span class="n">http_404</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">proxy_buffer_size</span> <span class="mi">16</span><span class="n">k</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">proxy_busy_buffers_size</span> <span class="mi">24</span><span class="n">k</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">proxy_buffers</span> <span class="mi">64</span> <span class="mi">4</span><span class="n">k</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">    gzip on;
-</span></span><span class="line"><span class="cl">    gzip_min_length 1k;
-</span></span><span class="line"><span class="cl">    gzip_buffers 4 16k;
-</span></span><span class="line"><span class="cl">    gzip_http_version 1.1;
-</span></span><span class="line"><span class="cl">    gzip_comp_level 2;
-</span></span><span class="line"><span class="cl">    gzip_types text/plain application/javascript application/x-javascript text/javascript text/css application/xml;
-</span></span><span class="line"><span class="cl">    gzip_vary on;
-</span></span><span class="line"><span class="cl">    gzip_proxied expired no-cache no-store private auth;
-</span></span><span class="line"><span class="cl">    gzip_disable &#34;MSIE [1-6]\.&#34;;
+</span></span><span class="line"><span class="cl">    <span class="n">gzip</span> <span class="n">on</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">gzip_min_length</span> <span class="mi">1</span><span class="n">k</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">gzip_buffers</span> <span class="mi">4</span> <span class="mi">16</span><span class="n">k</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">gzip_http_version</span> <span class="mf">1.1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">gzip_comp_level</span> <span class="mi">2</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">gzip_types</span> <span class="n">text</span><span class="o">/</span><span class="n">plain</span> <span class="n">application</span><span class="o">/</span><span class="n">javascript</span> <span class="n">application</span><span class="o">/</span><span class="n">x</span><span class="o">-</span><span class="n">javascript</span> <span class="n">text</span><span class="o">/</span><span class="n">javascript</span> <span class="n">text</span><span class="o">/</span><span class="n">css</span> <span class="n">application</span><span class="o">/</span><span class="n">xml</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">gzip_vary</span> <span class="n">on</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">gzip_proxied</span> <span class="n">expired</span> <span class="n">no</span><span class="o">-</span><span class="n">cache</span> <span class="n">no</span><span class="o">-</span><span class="n">store</span> <span class="n">private</span> <span class="n">auth</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">gzip_disable</span> <span class="s2">&#34;MSIE [1-6]\.&#34;</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">    server_tokens off;
+</span></span><span class="line"><span class="cl">    <span class="n">server_tokens</span> <span class="n">off</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">    server {
-</span></span><span class="line"><span class="cl">        listen 443 ssl http2;
-</span></span><span class="line"><span class="cl">        server_name xxx.xxx.xxx;                        # 域名
+</span></span><span class="line"><span class="cl">    <span class="n">server</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">listen</span> <span class="mi">443</span> <span class="n">ssl</span> <span class="n">http2</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">server_name</span> <span class="n">xxx</span><span class="o">.</span><span class="n">xxx</span><span class="o">.</span><span class="n">xxx</span><span class="p">;</span>                        <span class="c1"># 域名</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">        ssl_certificate /xxx/cert/fullchain.pem;        # 证书路径
-</span></span><span class="line"><span class="cl">        ssl_certificate_key /xxx/cert/privkey.pem;
-</span></span><span class="line"><span class="cl">        ssl_protocols TLSv1.2 TLSv1.3;
-</span></span><span class="line"><span class="cl">        ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384;
-</span></span><span class="line"><span class="cl">        ssl_prefer_server_ciphers off;
-</span></span><span class="line"><span class="cl">        ssl_session_cache shared:SSL:10m;
-</span></span><span class="line"><span class="cl">        ssl_session_timeout 1d;
+</span></span><span class="line"><span class="cl">        <span class="n">ssl_certificate</span> <span class="o">/</span><span class="n">xxx</span><span class="o">/</span><span class="n">cert</span><span class="o">/</span><span class="n">fullchain</span><span class="o">.</span><span class="n">pem</span><span class="p">;</span>        <span class="c1"># 证书路径</span>
+</span></span><span class="line"><span class="cl">        <span class="n">ssl_certificate_key</span> <span class="o">/</span><span class="n">xxx</span><span class="o">/</span><span class="n">cert</span><span class="o">/</span><span class="n">privkey</span><span class="o">.</span><span class="n">pem</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">ssl_protocols</span> <span class="n">TLSv1</span><span class="o">.</span><span class="mi">2</span> <span class="n">TLSv1</span><span class="o">.</span><span class="mi">3</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">ssl_ciphers</span> <span class="n">ECDHE</span><span class="o">-</span><span class="n">ECDSA</span><span class="o">-</span><span class="n">AES128</span><span class="o">-</span><span class="n">GCM</span><span class="o">-</span><span class="n">SHA256</span><span class="p">:</span><span class="n">ECDHE</span><span class="o">-</span><span class="n">RSA</span><span class="o">-</span><span class="n">AES128</span><span class="o">-</span><span class="n">GCM</span><span class="o">-</span><span class="n">SHA256</span><span class="p">:</span><span class="n">ECDHE</span><span class="o">-</span><span class="n">ECDSA</span><span class="o">-</span><span class="n">AES256</span><span class="o">-</span><span class="n">GCM</span><span class="o">-</span><span class="n">SHA384</span><span class="p">:</span><span class="n">ECDHE</span><span class="o">-</span><span class="n">RSA</span><span class="o">-</span><span class="n">AES256</span><span class="o">-</span><span class="n">GCM</span><span class="o">-</span><span class="n">SHA384</span><span class="p">:</span><span class="n">ECDHE</span><span class="o">-</span><span class="n">ECDSA</span><span class="o">-</span><span class="n">CHACHA20</span><span class="o">-</span><span class="n">POLY1305</span><span class="p">:</span><span class="n">ECDHE</span><span class="o">-</span><span class="n">RSA</span><span class="o">-</span><span class="n">CHACHA20</span><span class="o">-</span><span class="n">POLY1305</span><span class="p">:</span><span class="n">DHE</span><span class="o">-</span><span class="n">RSA</span><span class="o">-</span><span class="n">AES128</span><span class="o">-</span><span class="n">GCM</span><span class="o">-</span><span class="n">SHA256</span><span class="p">:</span><span class="n">DHE</span><span class="o">-</span><span class="n">RSA</span><span class="o">-</span><span class="n">AES256</span><span class="o">-</span><span class="n">GCM</span><span class="o">-</span><span class="n">SHA384</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">ssl_prefer_server_ciphers</span> <span class="n">off</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">ssl_session_cache</span> <span class="n">shared</span><span class="p">:</span><span class="n">SSL</span><span class="p">:</span><span class="mi">10</span><span class="n">m</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">ssl_session_timeout</span> <span class="mi">1</span><span class="n">d</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">        location / {
-</span></span><span class="line"><span class="cl">            proxy_pass http://127.0.0.1:8080;
-</span></span><span class="line"><span class="cl">            proxy_set_header Host $host;
-</span></span><span class="line"><span class="cl">            proxy_set_header X-Real-IP $remote_addr;
-</span></span><span class="line"><span class="cl">            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-</span></span><span class="line"><span class="cl">            proxy_set_header X-Forwarded-Proto $scheme;
-</span></span><span class="line"><span class="cl">        }
+</span></span><span class="line"><span class="cl">        <span class="n">location</span> <span class="o">/</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">proxy_pass</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="mf">127.0</span><span class="o">.</span><span class="mf">0.1</span><span class="p">:</span><span class="mi">8080</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="n">proxy_set_header</span> <span class="n">Host</span> <span class="o">$</span><span class="n">host</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="n">proxy_set_header</span> <span class="n">X</span><span class="o">-</span><span class="n">Real</span><span class="o">-</span><span class="ne">IP</span> <span class="o">$</span><span class="n">remote_addr</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="n">proxy_set_header</span> <span class="n">X</span><span class="o">-</span><span class="n">Forwarded</span><span class="o">-</span><span class="n">For</span> <span class="o">$</span><span class="n">proxy_add_x_forwarded_for</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="n">proxy_set_header</span> <span class="n">X</span><span class="o">-</span><span class="n">Forwarded</span><span class="o">-</span><span class="n">Proto</span> <span class="o">$</span><span class="n">scheme</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">        location /notifications/hub {
-</span></span><span class="line"><span class="cl">            proxy_pass http://127.0.0.1:3012;
-</span></span><span class="line"><span class="cl">            proxy_set_header Upgrade $http_upgrade;
-</span></span><span class="line"><span class="cl">            proxy_set_header Connection &#34;upgrade&#34;;
-</span></span><span class="line"><span class="cl">        }
+</span></span><span class="line"><span class="cl">        <span class="n">location</span> <span class="o">/</span><span class="n">notifications</span><span class="o">/</span><span class="n">hub</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">proxy_pass</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="mf">127.0</span><span class="o">.</span><span class="mf">0.1</span><span class="p">:</span><span class="mi">3012</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="n">proxy_set_header</span> <span class="n">Upgrade</span> <span class="o">$</span><span class="n">http_upgrade</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="n">proxy_set_header</span> <span class="n">Connection</span> <span class="s2">&#34;upgrade&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">        location /notifications/hub/negotiate {
-</span></span><span class="line"><span class="cl">            proxy_pass http://127.0.0.1:8080;
-</span></span><span class="line"><span class="cl">        }
-</span></span><span class="line"><span class="cl">    }
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">        <span class="n">location</span> <span class="o">/</span><span class="n">notifications</span><span class="o">/</span><span class="n">hub</span><span class="o">/</span><span class="n">negotiate</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">proxy_pass</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="mf">127.0</span><span class="o">.</span><span class="mf">0.1</span><span class="p">:</span><span class="mi">8080</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><h2 id="服务器配置文件" class="headerLink">
@@ -1842,95 +1842,95 @@
 </span><span class="lnt">89
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">user www-data;
-</span></span><span class="line"><span class="cl">worker_processes auto;
-</span></span><span class="line"><span class="cl">pid /var/run/nginx.pid;
-</span></span><span class="line"><span class="cl">include /etc/nginx/modules-enabled/*.conf;
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="n">user</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">worker_processes</span> <span class="n">auto</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">pid</span> <span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="n">run</span><span class="o">/</span><span class="n">nginx</span><span class="o">.</span><span class="n">pid</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">include</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">modules</span><span class="o">-</span><span class="n">enabled</span><span class="o">/*.</span><span class="n">conf</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">events {
-</span></span><span class="line"><span class="cl">	worker_connections 768;
-</span></span><span class="line"><span class="cl">	# multi_accept on;
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl"><span class="n">events</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="n">worker_connections</span> <span class="mi">768</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="c1"># multi_accept on;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">stream {
-</span></span><span class="line"><span class="cl">    map $ssl_preread_server_name $name {
-</span></span><span class="line"><span class="cl">        xxx.techkoala.net frps-bitwarden;   # Bitwarden 域名
-</span></span><span class="line"><span class="cl">        xxx.techkoala.net trojan;           # Trojan 域名
-</span></span><span class="line"><span class="cl">        xxx.techkoala.net rss;              # FreshRSS 域名
-</span></span><span class="line"><span class="cl">        xxx.techkoala.net xtls;             # Xray 域名
-</span></span><span class="line"><span class="cl">    }
-</span></span><span class="line"><span class="cl">    upstream frps-bitwarden {
-</span></span><span class="line"><span class="cl">        server 127.0.0.1:8080;         # Bitwarden的 frps 端口
-</span></span><span class="line"><span class="cl">    }
-</span></span><span class="line"><span class="cl">    upstream trojan {
-</span></span><span class="line"><span class="cl">        server 127.0.0.1:4443;         # Trojan 本地监听端口
-</span></span><span class="line"><span class="cl">    }
-</span></span><span class="line"><span class="cl">    upstream rss {
-</span></span><span class="line"><span class="cl">        server 172.17.0.1:39955;       # FreshRSS Docker IP 以及映射本地监听端口
-</span></span><span class="line"><span class="cl">    }
-</span></span><span class="line"><span class="cl">    upstream xtls {
-</span></span><span class="line"><span class="cl">        server 127.0.0.1:8443;       # Xray 本地监听端口
-</span></span><span class="line"><span class="cl">    }
-</span></span><span class="line"><span class="cl">    server {
-</span></span><span class="line"><span class="cl">        listen 443 reuseport;
-</span></span><span class="line"><span class="cl">        listen [::]:443 reuseport;
-</span></span><span class="line"><span class="cl">        proxy_pass	$name;
-</span></span><span class="line"><span class="cl">        ssl_preread on;               # 开启 ssl_preread
-</span></span><span class="line"><span class="cl">    }
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl"><span class="n">stream</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">map</span> <span class="o">$</span><span class="n">ssl_preread_server_name</span> <span class="o">$</span><span class="n">name</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">xxx</span><span class="o">.</span><span class="n">techkoala</span><span class="o">.</span><span class="n">net</span> <span class="n">frps</span><span class="o">-</span><span class="n">bitwarden</span><span class="p">;</span>   <span class="c1"># Bitwarden 域名</span>
+</span></span><span class="line"><span class="cl">        <span class="n">xxx</span><span class="o">.</span><span class="n">techkoala</span><span class="o">.</span><span class="n">net</span> <span class="n">trojan</span><span class="p">;</span>           <span class="c1"># Trojan 域名</span>
+</span></span><span class="line"><span class="cl">        <span class="n">xxx</span><span class="o">.</span><span class="n">techkoala</span><span class="o">.</span><span class="n">net</span> <span class="n">rss</span><span class="p">;</span>              <span class="c1"># FreshRSS 域名</span>
+</span></span><span class="line"><span class="cl">        <span class="n">xxx</span><span class="o">.</span><span class="n">techkoala</span><span class="o">.</span><span class="n">net</span> <span class="n">xtls</span><span class="p">;</span>             <span class="c1"># Xray 域名</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="n">upstream</span> <span class="n">frps</span><span class="o">-</span><span class="n">bitwarden</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">server</span> <span class="mf">127.0</span><span class="o">.</span><span class="mf">0.1</span><span class="p">:</span><span class="mi">8080</span><span class="p">;</span>         <span class="c1"># Bitwarden的 frps 端口</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="n">upstream</span> <span class="n">trojan</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">server</span> <span class="mf">127.0</span><span class="o">.</span><span class="mf">0.1</span><span class="p">:</span><span class="mi">4443</span><span class="p">;</span>         <span class="c1"># Trojan 本地监听端口</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="n">upstream</span> <span class="n">rss</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">server</span> <span class="mf">172.17</span><span class="o">.</span><span class="mf">0.1</span><span class="p">:</span><span class="mi">39955</span><span class="p">;</span>       <span class="c1"># FreshRSS Docker IP 以及映射本地监听端口</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="n">upstream</span> <span class="n">xtls</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">server</span> <span class="mf">127.0</span><span class="o">.</span><span class="mf">0.1</span><span class="p">:</span><span class="mi">8443</span><span class="p">;</span>       <span class="c1"># Xray 本地监听端口</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="n">server</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">listen</span> <span class="mi">443</span> <span class="n">reuseport</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">listen</span> <span class="p">[::]:</span><span class="mi">443</span> <span class="n">reuseport</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">proxy_pass</span>	<span class="o">$</span><span class="n">name</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">ssl_preread</span> <span class="n">on</span><span class="p">;</span>               <span class="c1"># 开启 ssl_preread</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">http {
-</span></span><span class="line"><span class="cl">	##
-</span></span><span class="line"><span class="cl">	# Basic Settings
-</span></span><span class="line"><span class="cl">	##
+</span></span><span class="line"><span class="cl"><span class="n">http</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">##</span>
+</span></span><span class="line"><span class="cl">	<span class="c1"># Basic Settings</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">##</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	sendfile on;
-</span></span><span class="line"><span class="cl">	tcp_nopush on;
-</span></span><span class="line"><span class="cl">	tcp_nodelay on;
-</span></span><span class="line"><span class="cl">	keepalive_timeout 65;
-</span></span><span class="line"><span class="cl">	types_hash_max_size 2048;
-</span></span><span class="line"><span class="cl">	# server_tokens off;
+</span></span><span class="line"><span class="cl">	<span class="n">sendfile</span> <span class="n">on</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">tcp_nopush</span> <span class="n">on</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">tcp_nodelay</span> <span class="n">on</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">keepalive_timeout</span> <span class="mi">65</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">types_hash_max_size</span> <span class="mi">2048</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="c1"># server_tokens off;</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	# server_names_hash_bucket_size 64;
-</span></span><span class="line"><span class="cl">	# server_name_in_redirect off;
+</span></span><span class="line"><span class="cl">	<span class="c1"># server_names_hash_bucket_size 64;</span>
+</span></span><span class="line"><span class="cl">	<span class="c1"># server_name_in_redirect off;</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	include /etc/nginx/mime.types;
-</span></span><span class="line"><span class="cl">	default_type application/octet-stream;
+</span></span><span class="line"><span class="cl">	<span class="n">include</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">mime</span><span class="o">.</span><span class="n">types</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">default_type</span> <span class="n">application</span><span class="o">/</span><span class="n">octet</span><span class="o">-</span><span class="n">stream</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	##
-</span></span><span class="line"><span class="cl">	# SSL Settings
-</span></span><span class="line"><span class="cl">	##
+</span></span><span class="line"><span class="cl">	<span class="c1">##</span>
+</span></span><span class="line"><span class="cl">	<span class="c1"># SSL Settings</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">##</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	ssl_protocols TLSv1 TLSv1.1 TLSv1.2 TLSv1.3; # Dropping SSLv3, ref: POODLE
-</span></span><span class="line"><span class="cl">	ssl_prefer_server_ciphers on;
+</span></span><span class="line"><span class="cl">	<span class="n">ssl_protocols</span> <span class="n">TLSv1</span> <span class="n">TLSv1</span><span class="o">.</span><span class="mi">1</span> <span class="n">TLSv1</span><span class="o">.</span><span class="mi">2</span> <span class="n">TLSv1</span><span class="o">.</span><span class="mi">3</span><span class="p">;</span> <span class="c1"># Dropping SSLv3, ref: POODLE</span>
+</span></span><span class="line"><span class="cl">	<span class="n">ssl_prefer_server_ciphers</span> <span class="n">on</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	##
-</span></span><span class="line"><span class="cl">	# Logging Settings
-</span></span><span class="line"><span class="cl">	##
+</span></span><span class="line"><span class="cl">	<span class="c1">##</span>
+</span></span><span class="line"><span class="cl">	<span class="c1"># Logging Settings</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">##</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	access_log /var/log/nginx/access.log;
-</span></span><span class="line"><span class="cl">	error_log /var/log/nginx/error.log;
+</span></span><span class="line"><span class="cl">	<span class="n">access_log</span> <span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="nb">log</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">access</span><span class="o">.</span><span class="n">log</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">error_log</span> <span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="nb">log</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">error</span><span class="o">.</span><span class="n">log</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	##
-</span></span><span class="line"><span class="cl">	# Gzip Settings
-</span></span><span class="line"><span class="cl">	##
+</span></span><span class="line"><span class="cl">	<span class="c1">##</span>
+</span></span><span class="line"><span class="cl">	<span class="c1"># Gzip Settings</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">##</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	gzip on;
+</span></span><span class="line"><span class="cl">	<span class="n">gzip</span> <span class="n">on</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	# gzip_vary on;
-</span></span><span class="line"><span class="cl">	# gzip_proxied any;
-</span></span><span class="line"><span class="cl">	# gzip_comp_level 6;
-</span></span><span class="line"><span class="cl">	# gzip_buffers 16 8k;
-</span></span><span class="line"><span class="cl">	# gzip_http_version 1.1;
-</span></span><span class="line"><span class="cl">	# gzip_types text/plain text/css application/json application/javascript text/xml application/xml application/xml+rss text/javascript;
+</span></span><span class="line"><span class="cl">	<span class="c1"># gzip_vary on;</span>
+</span></span><span class="line"><span class="cl">	<span class="c1"># gzip_proxied any;</span>
+</span></span><span class="line"><span class="cl">	<span class="c1"># gzip_comp_level 6;</span>
+</span></span><span class="line"><span class="cl">	<span class="c1"># gzip_buffers 16 8k;</span>
+</span></span><span class="line"><span class="cl">	<span class="c1"># gzip_http_version 1.1;</span>
+</span></span><span class="line"><span class="cl">	<span class="c1"># gzip_types text/plain text/css application/json application/javascript text/xml application/xml application/xml+rss text/javascript;</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	##
-</span></span><span class="line"><span class="cl">	# Virtual Host Configs
-</span></span><span class="line"><span class="cl">	##
+</span></span><span class="line"><span class="cl">	<span class="c1">##</span>
+</span></span><span class="line"><span class="cl">	<span class="c1"># Virtual Host Configs</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">##</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	include /etc/nginx/conf.d/*.conf;
-</span></span><span class="line"><span class="cl">	include /etc/nginx/sites-enabled/*;     # 启用的网站配置放置在此文件夹下
-</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">	<span class="n">include</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">conf</span><span class="o">.</span><span class="n">d</span><span class="o">/*.</span><span class="n">conf</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">include</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">sites</span><span class="o">-</span><span class="n">enabled</span><span class="o">/*</span><span class="p">;</span>     <span class="c1"># 启用的网站配置放置在此文件夹下</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><h3 id="bitwarden-相关配置" class="headerLink">
