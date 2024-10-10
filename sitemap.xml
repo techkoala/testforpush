@@ -2,14 +2,21 @@
     xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
     xmlns:xhtml="http://www.w3.org/1999/xhtml"
     ><url>
-            <loc>https://www.techkoala.net/categories/</loc><lastmod>2023-06-25T12:47:05&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
+            <loc>https://www.techkoala.net/categories/</loc><lastmod>2024-10-10T23:25:02&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>1</priority></url><url>
+            <loc>https://www.techkoala.net/tags/follow/</loc><lastmod>2024-10-10T23:25:02&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>1</priority></url><url>
+            <loc>https://www.techkoala.net/posts/</loc><lastmod>2024-10-10T23:25:02&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>1</priority></url><url>
+            <loc>https://www.techkoala.net/categories/rss/</loc><lastmod>2024-10-10T23:25:02&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>1</priority></url><url>
+            <loc>https://www.techkoala.net/tags/</loc><lastmod>2024-10-10T23:25:02&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>1</priority></url><url>
+            <loc>https://www.techkoala.net/</loc><lastmod>2024-10-10T23:25:02&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>1</priority></url><url>
+            <loc>https://www.techkoala.net/follow/</loc><lastmod>2024-10-10T23:25:02&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>1</priority></url><url>
+            <loc>https://www.techkoala.net/tags/couchdb/</loc><lastmod>2023-10-11T17:54:00&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
+            <loc>https://www.techkoala.net/tags/flyio/</loc><lastmod>2023-10-11T17:54:00&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
+            <loc>https://www.techkoala.net/tags/moonfm/</loc><lastmod>2023-10-11T17:54:00&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
+            <loc>https://www.techkoala.net/categories/network/</loc><lastmod>2023-10-11T17:54:00&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
+            <loc>https://www.techkoala.net/%E6%90%AD%E5%BB%BAcouchdb%E6%95%B0%E6%8D%AE%E5%BA%93/</loc><lastmod>2023-10-11T17:54:00&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
             <loc>https://www.techkoala.net/tags/google/</loc><lastmod>2023-06-25T12:47:05&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
             <loc>https://www.techkoala.net/google_one_vpn/</loc><lastmod>2023-06-25T12:47:05&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
-            <loc>https://www.techkoala.net/categories/network/</loc><lastmod>2023-06-25T12:47:05&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
             <loc>https://www.techkoala.net/tags/openclash/</loc><lastmod>2023-06-25T12:47:05&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
-            <loc>https://www.techkoala.net/posts/</loc><lastmod>2024-09-09T23:28:19&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>1</priority></url><url>
-            <loc>https://www.techkoala.net/tags/</loc><lastmod>2023-06-25T12:47:05&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
-            <loc>https://www.techkoala.net/</loc><lastmod>2024-09-09T23:28:19&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>1</priority></url><url>
             <loc>https://www.techkoala.net/tags/vpn/</loc><lastmod>2023-06-25T12:47:05&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
             <loc>https://www.techkoala.net/tags/wi-fi/</loc><lastmod>2023-01-20T11:46:10&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
             <loc>https://www.techkoala.net/wi-fi7_phy_synopsis/</loc><lastmod>2023-01-20T11:46:10&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
@@ -135,9 +142,4 @@
             <loc>https://www.techkoala.net/tags/symbian/</loc><lastmod>2022-05-28T20:40:38&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
             <loc>https://www.techkoala.net/brief_history_of_symbian/</loc><lastmod>2022-05-28T20:40:38&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
             <loc>https://www.techkoala.net/tags/system/</loc><lastmod>2020-09-12T11:34:07&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
-            <loc>https://www.techkoala.net/mobile_phone_systems/</loc><lastmod>2020-09-12T11:34:07&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
-            <loc>https://www.techkoala.net/tags/couchdb/</loc><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
-            <loc>https://www.techkoala.net/tags/flyio/</loc><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
-            <loc>https://www.techkoala.net/tags/moonfm/</loc><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
-            <loc>https://www.techkoala.net/%E6%90%AD%E5%BB%BAcouchdb%E6%95%B0%E6%8D%AE%E5%BA%93/</loc><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
-            <loc>https://www.techkoala.net/follow/</loc><lastmod>2024-09-09T23:28:19&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>1</priority></url></urlset>
+            <loc>https://www.techkoala.net/mobile_phone_systems/</loc><lastmod>2020-09-12T11:34:07&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url></urlset>

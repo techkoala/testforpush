@@ -2,8 +2,6 @@
 
 > 记录一下 CouchDB 搭建流程，用于同步 MoonFM、Obsidian
 
-
-
 很早之前就购买了 MoonFM，但是鉴于没有自带同步服务，所以一直使用 Spotify 听播客。现在终于忍不了这种音乐和播客混在一起，乱七八糟的感觉了，因此抽空研究了 MoonFM 使用的 Couchdb 数据库同步方案，实现了自建同步服务。同时也刚好一并将 Obsidian 的同步服务从[Remotely save](https://github.com/remotely-save/remotely-save)迁移到了[obsidian-livesync](https://github.com/vrtmrz/obsidian-livesync)，实现了更好的同步体验！
 
 ## Docker 安装 CouchDB

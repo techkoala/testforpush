@@ -4,7 +4,176 @@
         <link>https://www.techkoala.net/categories/network/</link>
         <description>Network - 分类 - TechKoala - Input/Output</description>
         <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>admin@techkoala.net (TechKoala)</managingEditor>
-            <webMaster>admin@techkoala.net (TechKoala)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Fri, 24 Feb 2023 20:22:43 &#43;0800</lastBuildDate><atom:link href="https://www.techkoala.net/categories/network/" rel="self" type="application/rss+xml" /><item>
+            <webMaster>admin@techkoala.net (TechKoala)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Wed, 11 Oct 2023 17:54:00 &#43;0800</lastBuildDate><atom:link href="https://www.techkoala.net/categories/network/" rel="self" type="application/rss+xml" /><item>
+    <title>搭建 CouchDB 数据库</title>
+    <link>https://www.techkoala.net/%E6%90%AD%E5%BB%BAcouchdb%E6%95%B0%E6%8D%AE%E5%BA%93/</link>
+    <pubDate>Wed, 11 Oct 2023 17:54:00 &#43;0800</pubDate><author>
+        <name>TechKoala</name>
+    </author><guid>https://www.techkoala.net/%E6%90%AD%E5%BB%BAcouchdb%E6%95%B0%E6%8D%AE%E5%BA%93/</guid>
+    <description><![CDATA[<blockquote>
+<p>记录一下 CouchDB 搭建流程，用于同步 MoonFM、Obsidian</p>
+</blockquote>
+<p>很早之前就购买了 MoonFM，但是鉴于没有自带同步服务，所以一直使用 Spotify 听播客。现在终于忍不了这种音乐和播客混在一起，乱七八糟的感觉了，因此抽空研究了 MoonFM 使用的 Couchdb 数据库同步方案，实现了自建同步服务。同时也刚好一并将 Obsidian 的同步服务从<a href="https://github.com/remotely-save/remotely-save" target="_blank" rel="noopener noreferrer">Remotely save</a>迁移到了<a href="https://github.com/vrtmrz/obsidian-livesync" target="_blank" rel="noopener noreferrer">obsidian-livesync</a>，实现了更好的同步体验！</p>
+<h2 id="docker-安装-couchdb" class="headerLink">
+    <a href="#docker-%e5%ae%89%e8%a3%85-couchdb" class="header-mark"></a>Docker 安装 CouchDB</h2><p>首先需要创建一个 data 文件夹和一个 local.ini 用于 docker 内部文件夹和配置文件的映射。其中 local.ini 如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="p">[</span><span class="l">couchdb]</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">single_node=true</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">[</span><span class="l">chttpd_auth]</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">require_valid_user = true</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">authentication_redirect = /_utils/session.html</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">[</span><span class="l">httpd]</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">WWW-Authenticate = Basic realm=&#34;couchdb&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">enable_cors = true</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">[</span><span class="l">cors]</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">origins = capacitor://localhost,http://localhost</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">credentials = true</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">headers = accept, authorization, content-type, origin, referer</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">methods = GET, PUT, POST, HEAD, DELETE</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">max_age = 3600</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">[</span><span class="l">couch_peruser]</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">database_prefix = userdb_</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">delete_dbs = false</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">enable = true</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>docker-compose 文件如下，需要自己修改一下映射端口，账号密码等：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;3&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">services</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">couchdb</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">ports</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="s2">&#34;5984:5984&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">volumes</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="s2">&#34;./data:/opt/couchdb/data&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="s2">&#34;./local.ini:/opt/couchdb/etc/local.ini&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">environment</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="l">COUCHDB_USER=管理后台账户名</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="l">COUCHDB_PASSWORD=管理后台密码</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">restart</span><span class="p">:</span><span class="w"> </span><span class="l">always</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">network_mode</span><span class="p">:</span><span class="w"> </span><span class="l">bridge</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">container_name</span><span class="p">:</span><span class="w"> </span><span class="l">couchdb</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l">couchdb</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>然后使用<code>docker-compose up -d</code>启动 docker</p>
+<h2 id="数据库管理" class="headerLink">
+    <a href="#%e6%95%b0%e6%8d%ae%e5%ba%93%e7%ae%a1%e7%90%86" class="header-mark"></a>数据库管理</h2><p>通过<code>http://IP地址:端口号/_utils/</code>访问数据口后台，账号密码就是上一步自己定义的密码。</p>
+<p>页面中就可以创建并管理自己的数据库和用户，但是我更习惯使用命令行进行管理：</p>
+<p>以 MoonFM 同步数据库创建为例，依次执行下面的命令即可：</p>
+<ul>
+<li>
+<p>创建用户</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">curl -X PUT http://管理后台账户名:管理后台密码@IP地址:端口号/_users/org.couchdb.user:用户账号名
+</span></span><span class="line"><span class="cl">-H &#34;Accept: application/json&#34;
+</span></span><span class="line"><span class="cl">-H &#34;Content-Type: application/json&#34;
+</span></span><span class="line"><span class="cl">-d &#39;{&#34;name&#34;: &#34;用户账号名&#34;, &#34;password&#34;: &#34;用户密码&#34;, &#34;roles&#34;: [], &#34;type&#34;: &#34;user&#34;}&#39;
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>创建数据库</p>
+</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">curl -X PUT http://管理后台账户名:管理后台密码@IP地址:端口号/数据库名
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>
+<p>添加用户到数据库</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">curl -X PUT http://管理后台账户名:管理后台密码@IP地址:端口号/数据库名/_security
+</span></span><span class="line"><span class="cl">-H &#34;Accept: application/json&#34;
+</span></span><span class="line"><span class="cl">-H &#34;Content-Type: application/json&#34;
+</span></span><span class="line"><span class="cl">-d &#39;{&#34;admins&#34;: {&#34;names&#34;: [], &#34;roles&#34;: []}, &#34;members&#34;: {&#34;names&#34;: [&#34;用户账号名&#34;], &#34;roles&#34;: []}}&#39;
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+</ul>
+<p>获得的同步链接如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">http://用户账号名:用户账号密码@IP地址:端口号/数据库名
+</span></span></code></pre></td></tr></table>
+</div>
+</div><blockquote>
+<p>这里需要注意区分 curl 参数填入的管理后台账户名密码和数据库用户名密码</p>
+</blockquote>
+<p>此后还可以进行反向代理等操作，这里可以参考<a href="https://www.techkoala.net/nginx_port_reuse/" target="_blank" rel="noopener noreferrer">使用 Nginx 实现多服务复用端口</a></p>
+<h2 id="flyio-搭建免费-couchdb-数据库" class="headerLink">
+    <a href="#flyio-%e6%90%ad%e5%bb%ba%e5%85%8d%e8%b4%b9-couchdb-%e6%95%b0%e6%8d%ae%e5%ba%93" class="header-mark"></a>fly.io 搭建免费 CouchDB 数据库</h2><p>未完待续</p>
+]]></description>
+</item><item>
     <title>Google One VPN 愉快玩耍指南</title>
     <link>https://www.techkoala.net/google_one_vpn/</link>
     <pubDate>Fri, 24 Feb 2023 20:22:43 &#43;0800</pubDate><author>
@@ -2240,82 +2409,5 @@ MAC addresses for the link layer.</div>
 <p>[3] <a href="https://www.vediotalk.com/archives/13889" target="_blank" rel="noopener noreferrer">ESXI 下 OpenWrt 扩容 Overlay,增加安装插件空间</a></p>
 </li>
 </ul>]]></description>
-</item><item>
-    <title>单独编译 OpenWRT ipk 插件</title>
-    <link>https://www.techkoala.net/openwrt_compile_single_ipk/</link>
-    <pubDate>Fri, 09 Oct 2020 15:57:29 &#43;0800</pubDate><author>
-        <name>TechKoala</name>
-    </author><guid>https://www.techkoala.net/openwrt_compile_single_ipk/</guid>
-    <description><![CDATA[<blockquote>
-<p>本文介绍如何单独编译 OpenWRT 的 ipk 插件</p>
-</blockquote>
-<div class="details admonition info open">
-        <div class="details-summary admonition-title">
-            <i class="icon fas fa-info-circle fa-fw"></i>说明<i class="details-icon fas fa-angle-right fa-fw"></i>
-        </div>
-        <div class="details-content">
-            <div class="admonition-content">必须首先完整编译一次固件才能单独编译 ipk</div>
-        </div>
-    </div>
-<p>当需要单独更新 OpenWRT 某个插件或者需要增加安装某个插件的时候，可以单独编译对应的 ipk 插件进行安装，而不必编译整个系统。</p>
-<h3 id="下载源码" class="headerLink">
-    <a href="#%e4%b8%8b%e8%bd%bd%e6%ba%90%e7%a0%81" class="header-mark"></a>下载源码</h3><p>使用 <code>git clone</code> 对应的源码插件到下面的文件夹中</p>
-<h3 id="存放路径" class="headerLink">
-    <a href="#%e5%ad%98%e6%94%be%e8%b7%af%e5%be%84" class="header-mark"></a>存放路径</h3><div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">~/lede/package
-</span></span></code></pre></td></tr></table>
-</div>
-</div><h3 id="配置" class="headerLink">
-    <a href="#%e9%85%8d%e7%bd%ae" class="header-mark"></a>配置</h3><div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">make menuconfig
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>然后进入对应的子菜单中找到对应插件按 <M> 表示选中插件，但不编译进固件。</p>
-<h3 id="编译" class="headerLink">
-    <a href="#%e7%bc%96%e8%af%91" class="header-mark"></a>编译</h3><div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">make package/xxxxx/compile <span class="nv">V</span><span class="o">=</span><span class="m">99</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>xxxxx 就是你需要单独编译的程序。</p>
-<h3 id="ipk-生成路径" class="headerLink">
-    <a href="#ipk-%e7%94%9f%e6%88%90%e8%b7%af%e5%be%84" class="header-mark"></a>ipk 生成路径</h3><div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">~/lede/bin/packages/x86_64/xxxx
-</span></span></code></pre></td></tr></table>
-</div>
-</div><h3 id="上传-ipk-至路由器" class="headerLink">
-    <a href="#%e4%b8%8a%e4%bc%a0-ipk-%e8%87%b3%e8%b7%af%e7%94%b1%e5%99%a8" class="header-mark"></a>上传 ipk 至路由器</h3><div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">scp xxxxxxx.ipk root@192.168.1.1:/tmp
-</span></span></code></pre></td></tr></table>
-</div>
-</div><h3 id="安装" class="headerLink">
-    <a href="#%e5%ae%89%e8%a3%85" class="header-mark"></a>安装</h3><div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">opkg install /tmp/xxxxx.ipk
-</span></span></code></pre></td></tr></table>
-</div>
-</div>]]></description>
 </item></channel>
 </rss>
