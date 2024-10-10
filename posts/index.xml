@@ -191,7 +191,7 @@
         <name>TechKoala</name>
     </author><guid>https://www.techkoala.net/google_one_vpn/</guid>
     <description><![CDATA[<blockquote>
-<p>连接 Google One VPN并避免 1G 断开。</p>
+<p>Google 取消了 Google One 订阅用户的 VPN 功能，本文已实质性失效</p>
 </blockquote>
 <blockquote>
 <p><code>更新</code>
@@ -201,12 +201,8 @@
 <h2 id="机制说明" class="headerLink">
     <a href="#%e6%9c%ba%e5%88%b6%e8%af%b4%e6%98%8e" class="header-mark"></a>机制说明</h2><p>首先，要想愉快使用，需要明确下面 Google One VPN 的下面几点机制：</p>
 <ol>
-<li>
-<p>目前仅 Android 手机可以正常连接。（当然如果你在 iPhone 上使用境外卡或使用 Android 虚拟机依然是可以的，但此不在本文讨论范围）</p>
-</li>
-<li>
-<p>该服务仅在如下国家提供（且对于大陆来说，通常只有部分地区有实用性）：</p>
-</li>
+<li>目前仅 Android 手机可以正常连接。（当然如果你在 iPhone 上使用境外卡或使用 Android 虚拟机依然是可以的，但此不在本文讨论范围）</li>
+<li>该服务仅在如下国家提供（且对于大陆来说，通常只有部分地区有实用性）：</li>
 </ol>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
