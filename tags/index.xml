@@ -4,7 +4,21 @@
         <link>https://www.techkoala.net/tags/</link>
         <description>Tags - 标签 - TechKoala - Input/Output</description>
         <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>admin@techkoala.net (TechKoala)</managingEditor>
-            <webMaster>admin@techkoala.net (TechKoala)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Mon, 09 Sep 2024 23:21:54 &#43;0800</lastBuildDate><atom:link href="https://www.techkoala.net/tags/" rel="self" type="application/rss+xml" /><item>
+            <webMaster>admin@techkoala.net (TechKoala)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Fri, 11 Oct 2024 23:45:31 &#43;0800</lastBuildDate><atom:link href="https://www.techkoala.net/tags/" rel="self" type="application/rss+xml" /><item>
+    <title>Linux</title>
+    <link>https://www.techkoala.net/tags/linux/</link>
+    <pubDate>Fri, 11 Oct 2024 23:45:31 &#43;0800</pubDate><author>
+        <name>TechKoala</name>
+    </author><guid>https://www.techkoala.net/tags/linux/</guid>
+    <description><![CDATA[]]></description>
+</item><item>
+    <title>Translation</title>
+    <link>https://www.techkoala.net/tags/translation/</link>
+    <pubDate>Fri, 11 Oct 2024 23:45:31 &#43;0800</pubDate><author>
+        <name>TechKoala</name>
+    </author><guid>https://www.techkoala.net/tags/translation/</guid>
+    <description><![CDATA[]]></description>
+</item><item>
     <title>Follow</title>
     <link>https://www.techkoala.net/tags/follow/</link>
     <pubDate>Mon, 09 Sep 2024 23:21:54 &#43;0800</pubDate><author>
@@ -59,20 +73,6 @@
     <pubDate>Fri, 20 Jan 2023 11:20:05 &#43;0800</pubDate><author>
         <name>TechKoala</name>
     </author><guid>https://www.techkoala.net/tags/wi-fi/</guid>
-    <description><![CDATA[]]></description>
-</item><item>
-    <title>Hyper-V</title>
-    <link>https://www.techkoala.net/tags/hyper-v/</link>
-    <pubDate>Thu, 02 Sep 2021 11:25:59 &#43;0800</pubDate><author>
-        <name>TechKoala</name>
-    </author><guid>https://www.techkoala.net/tags/hyper-v/</guid>
-    <description><![CDATA[]]></description>
-</item><item>
-    <title>Linux</title>
-    <link>https://www.techkoala.net/tags/linux/</link>
-    <pubDate>Thu, 02 Sep 2021 11:25:59 &#43;0800</pubDate><author>
-        <name>TechKoala</name>
-    </author><guid>https://www.techkoala.net/tags/linux/</guid>
     <description><![CDATA[]]></description>
 </item></channel>
 </rss>

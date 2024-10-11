@@ -4,7 +4,14 @@
         <link>https://www.techkoala.net/categories/</link>
         <description>Categories - 分类 - TechKoala - Input/Output</description>
         <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>admin@techkoala.net (TechKoala)</managingEditor>
-            <webMaster>admin@techkoala.net (TechKoala)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Mon, 09 Sep 2024 23:21:54 &#43;0800</lastBuildDate><atom:link href="https://www.techkoala.net/categories/" rel="self" type="application/rss+xml" /><item>
+            <webMaster>admin@techkoala.net (TechKoala)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Fri, 11 Oct 2024 23:45:31 &#43;0800</lastBuildDate><atom:link href="https://www.techkoala.net/categories/" rel="self" type="application/rss+xml" /><item>
+    <title>Linux</title>
+    <link>https://www.techkoala.net/categories/linux/</link>
+    <pubDate>Fri, 11 Oct 2024 23:45:31 &#43;0800</pubDate><author>
+        <name>TechKoala</name>
+    </author><guid>https://www.techkoala.net/categories/linux/</guid>
+    <description><![CDATA[]]></description>
+</item><item>
     <title>RSS</title>
     <link>https://www.techkoala.net/categories/rss/</link>
     <pubDate>Mon, 09 Sep 2024 23:21:54 &#43;0800</pubDate><author>
@@ -31,13 +38,6 @@
     <pubDate>Thu, 02 Sep 2021 11:25:59 &#43;0800</pubDate><author>
         <name>TechKoala</name>
     </author><guid>https://www.techkoala.net/categories/vm/</guid>
-    <description><![CDATA[]]></description>
-</item><item>
-    <title>Linux</title>
-    <link>https://www.techkoala.net/categories/linux/</link>
-    <pubDate>Fri, 04 Jun 2021 11:06:47 &#43;0800</pubDate><author>
-        <name>TechKoala</name>
-    </author><guid>https://www.techkoala.net/categories/linux/</guid>
     <description><![CDATA[]]></description>
 </item><item>
     <title>Software</title>

@@ -2,12 +2,16 @@
     xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
     xmlns:xhtml="http://www.w3.org/1999/xhtml"
     ><url>
-            <loc>https://www.techkoala.net/categories/</loc><lastmod>2024-10-10T23:40:14&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>1</priority></url><url>
+            <loc>https://www.techkoala.net/categories/</loc><lastmod>2024-10-12T00:06:28&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>1</priority></url><url>
+            <loc>https://www.techkoala.net/tags/linux/</loc><lastmod>2024-10-12T00:06:28&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>1</priority></url><url>
+            <loc>https://www.techkoala.net/categories/linux/</loc><lastmod>2024-10-12T00:06:28&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>1</priority></url><url>
+            <loc>https://www.techkoala.net/posts/</loc><lastmod>2024-10-12T00:06:28&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>1</priority></url><url>
+            <loc>https://www.techkoala.net/tags/</loc><lastmod>2024-10-12T00:06:28&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>1</priority></url><url>
+            <loc>https://www.techkoala.net/</loc><lastmod>2024-10-12T00:06:28&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>1</priority></url><url>
+            <loc>https://www.techkoala.net/tags/translation/</loc><lastmod>2024-10-12T00:06:28&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>1</priority></url><url>
+            <loc>https://www.techkoala.net/server_setup_basics/</loc><lastmod>2024-10-12T00:06:28&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>1</priority></url><url>
             <loc>https://www.techkoala.net/tags/follow/</loc><lastmod>2024-10-10T23:36:17&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>1</priority></url><url>
-            <loc>https://www.techkoala.net/posts/</loc><lastmod>2024-10-10T23:40:14&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>1</priority></url><url>
             <loc>https://www.techkoala.net/categories/rss/</loc><lastmod>2024-10-10T23:36:17&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>1</priority></url><url>
-            <loc>https://www.techkoala.net/tags/</loc><lastmod>2024-10-10T23:40:14&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>1</priority></url><url>
-            <loc>https://www.techkoala.net/</loc><lastmod>2024-10-10T23:40:14&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>1</priority></url><url>
             <loc>https://www.techkoala.net/follow/</loc><lastmod>2024-10-10T23:36:17&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>1</priority></url><url>
             <loc>https://www.techkoala.net/tags/couchdb/</loc><lastmod>2023-10-11T17:54:00&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
             <loc>https://www.techkoala.net/tags/flyio/</loc><lastmod>2023-10-11T17:54:00&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
@@ -23,12 +27,10 @@
             <loc>https://www.techkoala.net/categories/wirelesscommunication/</loc><lastmod>2023-01-20T11:46:10&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
             <loc>https://www.techkoala.net/wi-fi7_synopsis/</loc><lastmod>2023-01-20T11:33:23&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
             <loc>https://www.techkoala.net/tags/hyper-v/</loc><lastmod>2022-05-28T20:40:38&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
-            <loc>https://www.techkoala.net/tags/linux/</loc><lastmod>2022-05-28T20:40:38&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
             <loc>https://www.techkoala.net/categories/vm/</loc><lastmod>2022-05-28T20:40:38&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
             <loc>https://www.techkoala.net/resize_vm_lvm_disk_size/</loc><lastmod>2021-09-02T12:32:23&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
             <loc>https://www.techkoala.net/offline/</loc><lastmod>2021-06-04T16:49:56&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
             <loc>https://www.techkoala.net/tags/commands/</loc><lastmod>2022-05-28T20:40:38&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
-            <loc>https://www.techkoala.net/categories/linux/</loc><lastmod>2022-05-28T20:40:38&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
             <loc>https://www.techkoala.net/tags/trick/</loc><lastmod>2021-06-21T12:04:11&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
             <loc>https://www.techkoala.net/bash_tricks/</loc><lastmod>2021-06-21T12:04:11&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
             <loc>https://www.techkoala.net/tags/docker/</loc><lastmod>2021-06-03T00:28:31&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
@@ -91,7 +93,6 @@
             <loc>https://www.techkoala.net/tags/hash/</loc><lastmod>2022-05-28T20:40:38&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
             <loc>https://www.techkoala.net/tags/sha-2/</loc><lastmod>2022-05-28T20:40:38&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
             <loc>https://www.techkoala.net/tags/sha-256/</loc><lastmod>2022-05-28T20:40:38&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
-            <loc>https://www.techkoala.net/tags/translation/</loc><lastmod>2022-05-28T20:40:38&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
             <loc>https://www.techkoala.net/learn_sha_2_step_by_step/</loc><lastmod>2022-05-28T20:40:38&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
             <loc>https://www.techkoala.net/hash_functions/</loc><lastmod>2022-05-28T20:40:38&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
             <loc>https://www.techkoala.net/scp/</loc><lastmod>2022-05-28T20:40:38&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
